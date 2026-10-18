@@ -27,6 +27,34 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 | --- | --- | --- |
 | `SpoilageSpeed` | `1` | How fast food spoils, times the game's speed: 0.5 is half as fast, 2 is twice as fast. 0.1 to 5. A powered fridge that keeps food slower than the room keeps its own speed. Food already lying somewhere picks up the new speed the next time it is moved or stored. |
 
+## Power
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `BatteryMultiplier` | `1` | Batteries hold this many times the game's power. 0.1 to 10. |
+
+## Visitors
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `NoDoorSmasher` | `false` | The angry neighbour's "Midnight Door Pounding" never happens. |
+| `NoDebtCollector` | `false` | The loan shark never comes to collect: no warning texts, no "Midnight Visitors", no revenge or stalking nights, no feeding task. Best turned on before the first visit; a visit already under way finishes as usual. |
+
+## Weather
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `RandomWeather` | `false` | Rolls new weather for the 100-day story from the chances below. Cold waves and the story's fixed-weather days stay as in the game, and the difficulty still makes weather milder or harsher. Endless mode is not changed. Takes effect from the next hour; the forecast follows it. |
+| `WeatherSeed` | `1` | Any whole number. The same number always rolls the same weather; change it for different weather. |
+| `ClearChance` | `34` | Share of Clear weather. |
+| `CloudyChance` | `28` | Share of Cloudy weather. |
+| `RainChance` | `20` | Share of Rainy weather. |
+| `HeavyRainChance` | `4` | Share of Heavy Rain. |
+| `ContinuousRainChance` | `9` | Share of Continuous Rain. |
+| `SmogChance` | `5` | Share of Heavy Smog. |
+
+The chances are shares, 0 to 100 each, so they need not add up to 100; 0 means never. The defaults are the game's own mix once cold waves are set aside. Each stretch of one weather within a day gets one roll, so the weather does not flicker hour to hour.
+
 ## Climate
 
 | Setting | Default | What it does |

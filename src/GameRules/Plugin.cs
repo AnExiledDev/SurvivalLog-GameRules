@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
@@ -12,7 +13,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.1.0";
+    private const string Version = "0.2.0";
 
     public override void Load()
     {
@@ -21,16 +22,21 @@ public sealed class Plugin : BasePlugin
         log.TrimIfLarge();
 
         var settings = BindRules();
+        var visitors = BindVisitors();
+        var weather = BindWeather();
         var pool = BindPool(log.Write);
         var harmony = new Harmony(Guid);
 
         log.Write($"===== Game Rules {Version} started");
         StartRestartCap(settings, log.Write);
         RulePatches.Apply(harmony, settings, log.Write);
+        VisitorPatches.Apply(harmony, visitors, log.Write);
 
         if (settings.ChangesSolar) SolarDetour.Apply(settings, log.Write);
 
         StartPool(harmony, pool, log.Write);
+        StartTables(settings, weather, log.Write);
+        StartTicker(log.Write);
     }
 
     private RuleSettings BindRules()
@@ -58,7 +64,58 @@ public sealed class Plugin : BasePlugin
                 new ConfigDescription(
                     "How fast food spoils, times the game's speed: 0.5 is half as fast, 2 is twice as fast. 1 is the game's own. Fridges that keep food slower than the room keep their own speed. Food already lying somewhere picks up a new speed the next time it is moved or stored.\n" +
                     "食物腐败的速度，为游戏原本速度的倍数：0.5 为一半速度，2 为两倍速度。1 为游戏原本的数值。比房间保鲜更好的冰箱保持自己的速度。已经放好的食物在下次移动或存放时才会换成新的速度。",
-                    new AcceptableValueRange<float>(0.1f, 5f))).Value);
+                    new AcceptableValueRange<float>(0.1f, 5f))).Value,
+            Config.Bind("Power", "BatteryMultiplier", game.BatteryMultiplier,
+                new ConfigDescription(
+                    "Batteries hold this many times the game's power: 2 holds twice as much. 1 is the game's own.\n" +
+                    "蓄电池的容量为游戏原本的这么多倍：2 为两倍。1 为游戏原本的数值。",
+                    new AcceptableValueRange<float>(0.1f, 10f))).Value);
+    }
+
+    private VisitorBlock BindVisitors()
+    {
+        var game = VisitorBlock.Game;
+
+        return new VisitorBlock(
+            Config.Bind("Visitors", "NoDoorSmasher", game.NoDoorSmasher,
+                "The angry neighbour never comes pounding on your door at night (Midnight Door Pounding).\n" +
+                "愤怒的邻居不会在深夜来砸门（「深夜砸门」）。").Value,
+            Config.Bind("Visitors", "NoDebtCollector", game.NoDebtCollector,
+                "The loan shark never comes to collect: no warning text, no Midnight Visitors, no revenge nights. A loan you take is yours to keep. Best turned on before the first visit.\n" +
+                "放贷人不会上门催收：没有警告短信，没有「深夜来客」，也没有报复的夜晚。借来的钱不用还。最好在第一次上门前开启。").Value);
+    }
+
+    private WeatherSettings BindWeather()
+    {
+        var game = WeatherSettings.Game;
+        var randomWeather = Config.Bind("Weather", "RandomWeather", game.RandomWeather,
+            "Rolls new weather for the 100-day story from the chances below, in place of the game's fixed weather. Cold waves and the story's fixed-weather days stay as in the game, and the difficulty still makes weather milder or harsher. Endless mode is not changed. Takes effect from the next hour; the forecast follows it.\n" +
+            "按下方的概率为 100 天剧情重新生成天气，取代游戏固定的天气。寒潮和剧情固定天气的日子与游戏原本相同，难度仍会让天气变好或变差。无尽模式不受影响。从下一个小时起生效，天气预报也会随之改变。").Value;
+        var seed = Config.Bind("Weather", "WeatherSeed", game.Seed,
+            "Any whole number. The same number always rolls the same weather, so a reload keeps it; change it for different weather.\n" +
+            "任意整数。相同的数字总是生成相同的天气，所以读档后保持不变；换一个数字即可得到不同的天气。").Value;
+
+        return new WeatherSettings(randomWeather, seed, new[]
+        {
+            Chance(WeatherSettings.Clear, "ClearChance", "Clear", "晴天", game),
+            Chance(WeatherSettings.Cloudy, "CloudyChance", "Cloudy", "阴天", game),
+            Chance(WeatherSettings.Rain, "RainChance", "Rainy", "雨天", game),
+            Chance(WeatherSettings.HeavyRain, "HeavyRainChance", "Heavy Rain", "暴雨", game),
+            Chance(WeatherSettings.ContinuousRain, "ContinuousRainChance", "Continuous Rain", "持续阴雨", game),
+            Chance(WeatherSettings.Smog, "SmogChance", "Heavy Smog", "大雾霾天", game),
+        });
+    }
+
+    /// <summary>One weather's share. The defaults are the game's own mix once cold waves are set aside.</summary>
+    private WeatherChance Chance(int weather, string key, string english, string chinese, WeatherSettings game)
+    {
+        var gameChance = game.Chances.First(chance => chance.Weather == weather).Chance;
+
+        return new WeatherChance(weather, Config.Bind("Weather", key, gameChance,
+            new ConfigDescription(
+                $"The chance of {english} with RandomWeather on. The chances are shares, so they need not add up to 100; 0 means never.\n" +
+                $"开启 RandomWeather 后「{chinese}」的概率。各项概率按比例分配，加起来不必等于 100；0 表示从不出现。",
+                new AcceptableValueRange<float>(0f, 100f))).Value);
     }
 
     private PoolSettings BindPool(System.Action<string> log)
@@ -84,10 +141,24 @@ public sealed class Plugin : BasePlugin
     {
         if (!settings.NoRestartLimit) return;
 
-        RulesTicker.Log = log;
         RulesTicker.Checks.Add(new RestartCapField(new RestartKeeper(), log).Tick);
-        AddComponent<RulesTicker>();
         log("restarts never run out");
+    }
+
+    private static void StartTables(RuleSettings settings, WeatherSettings weather, System.Action<string> log)
+    {
+        if (weather.IsActive) RulesTicker.Checks.Add(new WeatherTable(weather, log).Tick);
+
+        if (settings.ChangesBattery) RulesTicker.Checks.Add(new BatteryTable(settings.BatteryMultiplier, log).Tick);
+    }
+
+    /// <summary>One Unity object runs every check, so it is only added when a setting needs one.</summary>
+    private void StartTicker(System.Action<string> log)
+    {
+        if (RulesTicker.Checks.Count == 0) return;
+
+        RulesTicker.Log = log;
+        AddComponent<RulesTicker>();
     }
 
     private static void StartPool(Harmony harmony, PoolSettings pool, System.Action<string> log)

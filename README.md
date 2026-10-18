@@ -1,6 +1,6 @@
 # Game Rules
 
-Change some of Survival Log's own rules: restarts, mold, solar power, food spoilage and how far heaters reach.
+Change some of Survival Log's own rules: restarts, mold, solar power, batteries, food spoilage, night visitors, the weather and how far heaters reach.
 
 Every setting starts at the game's own value, so with a fresh config the mod changes nothing. Turn on only what you want.
 
@@ -11,6 +11,10 @@ Every setting starts at the game's own value, so with a fresh config the mod cha
 - **Solar multiplier**: solar panels make more (or less) power, from 0.1x to 10x.
 - **Solar in bad weather**: in storms and heavy rain the game's panels make nothing. This gives them a share of a cloudy day's power instead.
 - **Spoilage speed**: food spoils slower or faster, from 0.1x to 5x.
+- **Battery multiplier**: batteries hold more (or less) power, from 0.1x to 10x.
+- **No door-smasher**: the angry neighbour's "Midnight Door Pounding" never happens.
+- **No debt collector**: the loan shark's night visits, warning texts, revenge and stalking nights never happen.
+- **Random weather**: the weather is rolled from chances you set, for example less rain late in the game. Cold waves and the game's fixed story days keep the game's weather.
 - **Whole-floor heat**: running heaters, AC units and stoves can warm the Indoor zone and the Sunroom together, and the Terrace and the Basement can join. This is the Whole Floor Climate mod, moved in here.
 - **Log file**: the mod writes what it changed, and any failure, to `BepInEx\game-rules.log`.
 
@@ -20,6 +24,8 @@ Game Rules adds no data of its own to your save, and you can remove it at any ti
 
 - **Spoilage speed and fridges**: a powered fridge that keeps food slower than the room keeps its own speed. Food already lying somewhere picks up the new speed the next time it is moved or stored.
 - **Solar in bad weather** has no effect at night, and none on a panel that no light reaches.
+- **Random weather** changes the weather from the next hour on, and the forecast shows the new weather. The same seed always rolls the same weather, so a reload keeps it. Turning it off brings back the game's weather after a restart of the game.
+- **No debt collector** works best turned on before the loan shark's first visit. A visit already under way finishes as usual.
 - **Whole-floor heat** makes rooms warm up more easily, so warm-room progress is easier to reach.
 
 ## Moving from Whole Floor Climate
