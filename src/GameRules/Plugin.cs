@@ -63,16 +63,16 @@ public sealed class Plugin : BasePlugin
 
     private PoolSettings BindPool(System.Action<string> log)
     {
-        var hadPoolSection = ClimateMove.HasPoolSection(Config);
+        var hadPoolSection = ClimateMove.HasClimateSection(Config);
         var game = PoolSettings.Default;
-        var indoorAndSunroom = Config.Bind("Pool", "IndoorAndSunroom", game.IndoorAndSunroom,
+        var indoorAndSunroom = Config.Bind("Climate", "IndoorAndSunroom", game.IndoorAndSunroom,
             "Running AC units, heaters and stoves in the Indoor zone or the Sunroom warm both. Off: each warms only its own zone, as in the game.\n" +
             "室内或阳光房中运行的空调、电暖器和暖炉会同时温暖这两处。关闭后各自只温暖所在的区域，与游戏原本相同。");
-        var terrace = Config.Bind("Pool", "Terrace", game.Terrace,
-            "The Terrace joins Indoor's pool. The game gives the Terrace no device heat at all; on, it gets the whole pool's device heat, and devices on the Terrace warm the pool.\n" +
+        var terrace = Config.Bind("Climate", "Terrace", game.Terrace,
+            "The Terrace shares heat with the Indoor zone. The game gives the Terrace no device heat at all; on, it gets the device heat of every zone sharing with Indoor, and devices on the Terrace warm those zones too.\n" +
             "露台加入室内的共享范围。游戏本身不给露台任何设备热量；开启后露台获得整个共享范围的设备热量，露台上的设备也会温暖共享范围。");
-        var basement = Config.Bind("Pool", "Basement", game.Basement,
-            "The Basement joins Indoor's pool: its devices warm the pool and the pool's devices warm the Basement. Off: the Basement keeps its own heat, as in the game.\n" +
+        var basement = Config.Bind("Climate", "Basement", game.Basement,
+            "The Basement shares heat with the Indoor zone: its devices warm the zones sharing with Indoor, and their devices warm the Basement. Off: the Basement keeps its own heat, as in the game.\n" +
             "地下室加入室内的共享范围：地下室的设备温暖共享范围，共享范围的设备也温暖地下室。关闭后地下室保持自己的热量，与游戏原本相同。");
 
         ClimateMove.ImportOldPool(Config, hadPoolSection, new[] { indoorAndSunroom, terrace, basement }, log);
@@ -94,7 +94,7 @@ public sealed class Plugin : BasePlugin
     {
         if (pool != PoolSettings.Default && ClimateMove.IsOldModInstalled())
         {
-            log("Whole Floor Climate is still installed, so it keeps sharing the heat and this mod's Pool settings wait; remove WholeFloorClimate.dll to use them");
+            log("Whole Floor Climate is still installed, so it keeps sharing the heat and this mod's Climate settings wait; remove WholeFloorClimate.dll to use them");
 
             return;
         }

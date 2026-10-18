@@ -14,7 +14,7 @@ internal static class ClimateMove
     private const string OldPluginFile = "WholeFloorClimate.dll";
 
     /// <summary>
-    /// Copies the Pool switches from the old mod's config the first time this mod's config gets a Pool section, so a
+    /// Copies the old mod's Pool switches (its section name) the first time this mod's config gets a Climate section, so a
     /// player who moves over keeps the zones they picked. Never throws: a failed copy only leaves the defaults.
     /// </summary>
     public static void ImportOldPool(ConfigFile config, bool hadPoolSection, ConfigEntry<bool>[] poolEntries, Action<string> log)
@@ -35,20 +35,20 @@ internal static class ClimateMove
             }
 
             config.Save();
-            log($"copied the Pool settings from Whole Floor Climate's config ({string.Join(", ", oldValues.Select(pair => $"{pair.Key}={pair.Value}"))})");
+            log($"copied the heat sharing settings from Whole Floor Climate's config ({string.Join(", ", oldValues.Select(pair => $"{pair.Key}={pair.Value}"))})");
         }
         catch (Exception ex)
         {
-            log($"could not copy the Pool settings from Whole Floor Climate's config, the defaults stand: {ex.Message}");
+            log($"could not copy the heat sharing settings from Whole Floor Climate's config, the defaults stand: {ex.Message}");
         }
     }
 
-    /// <summary>True when this mod's config file already holds a Pool section, read before anything is bound.</summary>
-    public static bool HasPoolSection(ConfigFile config)
+    /// <summary>True when this mod's config file already holds a Climate section, read before anything is bound.</summary>
+    public static bool HasClimateSection(ConfigFile config)
     {
         try
         {
-            return File.Exists(config.ConfigFilePath) && File.ReadAllText(config.ConfigFilePath).Contains("[Pool]");
+            return File.Exists(config.ConfigFilePath) && File.ReadAllText(config.ConfigFilePath).Contains("[Climate]");
         }
         catch (Exception)
         {

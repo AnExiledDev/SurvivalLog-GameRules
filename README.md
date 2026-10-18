@@ -24,7 +24,7 @@ Game Rules adds no data of its own to your save, and you can remove it at any ti
 
 ## Moving from Whole Floor Climate
 
-Game Rules copies your Pool settings from Whole Floor Climate's config the first time it starts. Then delete `WholeFloorClimate.dll` from `BepInEx\plugins`. While it is still installed, Game Rules leaves the heat to it so nothing is counted twice, and says so in its log.
+The first time it starts, Game Rules copies your heat sharing settings from Whole Floor Climate's config (its `[Pool]` section) into its own `[Climate]` section. Then delete `WholeFloorClimate.dll` from `BepInEx\plugins`. While it is still installed, Game Rules leaves the heat to it so nothing is counted twice, and says so in its log.
 
 ## Requirements
 

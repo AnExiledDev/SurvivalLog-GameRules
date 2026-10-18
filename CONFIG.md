@@ -27,13 +27,13 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 | --- | --- | --- |
 | `SpoilageSpeed` | `1` | How fast food spoils, times the game's speed: 0.5 is half as fast, 2 is twice as fast. 0.1 to 5. A powered fridge that keeps food slower than the room keeps its own speed. Food already lying somewhere picks up the new speed the next time it is moved or stored. |
 
-## Pool
+## Climate
 
 | Setting | Default | What it does |
 | --- | --- | --- |
 | `IndoorAndSunroom` | `false` | Running AC units, heaters and stoves in the Indoor zone or the Sunroom warm both. Off: each warms only its own zone, as in the game. |
-| `Terrace` | `false` | The Terrace joins the Indoor zone's pool. The game gives the Terrace no device heat at all; on, it gets the whole pool's device heat, and devices on the Terrace warm the pool. |
-| `Basement` | `false` | The Basement joins the Indoor zone's pool: its devices warm the pool and the pool's devices warm the Basement. Off: the Basement keeps its own heat, as in the game. |
+| `Terrace` | `false` | The Terrace shares heat with the Indoor zone. The game gives the Terrace no device heat at all; on, it gets the device heat of every zone sharing with Indoor, and devices on the Terrace warm those zones too. |
+| `Basement` | `false` | The Basement shares heat with the Indoor zone: its devices warm the zones sharing with Indoor, and their devices warm the Basement. Off: the Basement keeps its own heat, as in the game. |
 
 The Indoor zone is always the anchor, and each setting adds its zone to it. Cold storage never joins. The greenhouse on the terrace counts as the Sunroom in the game, so `IndoorAndSunroom` covers it, not `Terrace`.
 

@@ -34,9 +34,9 @@ internal static class PoolPatches
             return;
         }
 
-        Hook(harmony, nameof(EnvAreaHelper.SumDeviceHeat), nameof(PoolDeviceHeat), "heated zones in the pool share their device heat");
-        Hook(harmony, nameof(EnvAreaHelper.GetAreaTemperature), nameof(AddExtraWarmth), "pool zones the game gives no device heat get the pool's");
-        Hook(harmony, nameof(EnvAreaHelper.IsAreaAcPowered), nameof(PoolAcPowered), "an AC running in one pool zone counts for every pool zone");
+        Hook(harmony, nameof(EnvAreaHelper.SumDeviceHeat), nameof(PoolDeviceHeat), "zones sharing heat add up their device heat");
+        Hook(harmony, nameof(EnvAreaHelper.GetAreaTemperature), nameof(AddExtraWarmth), "sharing zones the game gives no device heat get the shared heat");
+        Hook(harmony, nameof(EnvAreaHelper.IsAreaAcPowered), nameof(PoolAcPowered), "an AC running in one sharing zone counts for every sharing zone");
         log($"device heat is shared by {climate.Pool.Describe()}");
     }
 
@@ -67,11 +67,11 @@ internal static class PoolPatches
 
             __result = _climate.DeviceHeat(areaId, gameHeat);
 
-            if (__result != gameHeat) LogOnce("heat", $"first pooled device heat: {Zones.Name(areaId)} {gameHeat} in the game, {__result} with the pool");
+            if (__result != gameHeat) LogOnce("heat", $"first shared device heat: {Zones.Name(areaId)} {gameHeat} in the game, {__result} shared");
         }
         catch (Exception ex)
         {
-            LogOnce("heat failure", $"pooling device heat failed, zones keep the game's heat (logged once): {ex}");
+            LogOnce("heat failure", $"sharing device heat failed, zones keep the game's heat (logged once): {ex}");
         }
     }
 
@@ -86,11 +86,11 @@ internal static class PoolPatches
 
             __result = _climate.Temperature(areaId, gameTemperature);
 
-            if (__result != gameTemperature) LogOnce("warmth", $"first pool warmth for a zone the game gives no device heat: {Zones.Name(areaId)} {gameTemperature} in the game, {__result} with the pool");
+            if (__result != gameTemperature) LogOnce("warmth", $"first shared warmth for a zone the game gives no device heat: {Zones.Name(areaId)} {gameTemperature} in the game, {__result} with the pool");
         }
         catch (Exception ex)
         {
-            LogOnce("warmth failure", $"adding pool warmth failed, zones keep the game's temperature (logged once): {ex}");
+            LogOnce("warmth failure", $"adding shared warmth failed, zones keep the game's temperature (logged once): {ex}");
         }
     }
 
@@ -103,11 +103,11 @@ internal static class PoolPatches
         {
             __result = _climate.IsAcPowered(areaId, gameSaysPowered: false);
 
-            if (__result) LogOnce("ac", $"first pooled AC: {Zones.Name(areaId)} has no AC of its own, an AC elsewhere in the pool counts");
+            if (__result) LogOnce("ac", $"first shared AC: {Zones.Name(areaId)} has no AC of its own, an AC in a zone sharing heat with it counts");
         }
         catch (Exception ex)
         {
-            LogOnce("ac failure", $"pooling the AC check failed, zones keep the game's answer (logged once): {ex}");
+            LogOnce("ac failure", $"sharing the AC check failed, zones keep the game's answer (logged once): {ex}");
         }
     }
 
