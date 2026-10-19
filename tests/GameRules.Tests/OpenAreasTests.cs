@@ -15,6 +15,8 @@ public sealed class OpenAreasTests
     private const int ColdStorageKey = 61201;
     private const int GarageKey = 61210;
     private const int ColdWaveStrikes = 20200;
+    private const bool AfterDisaster = false;
+    private const bool BeforeDisaster = true;
 
     [Theory]
     [InlineData(WageSlave)]
@@ -23,7 +25,7 @@ public sealed class OpenAreasTests
     {
         var tags = new HashSet<string> { "TAG_STAIRS_BROKEN", "TAG_CELLAR_BLOCKED", "SOME_STORY_TAG" };
 
-        var change = OpenAreas.Plan(role, tags.Contains);
+        var change = OpenAreas.Plan(role, AfterDisaster, tags.Contains);
 
         Assert.Equal(new[] { OpenAreas.SecondFloor, OpenAreas.Basement }, change.Add);
         Assert.Equal(new[] { "TAG_STAIRS_BROKEN", "TAG_CELLAR_BLOCKED" }, change.Remove);
@@ -32,7 +34,7 @@ public sealed class OpenAreasTests
     [Fact]
     public void A_warehouse_run_opens_the_second_floor_and_every_locked_room()
     {
-        var change = OpenAreas.Plan(WarehouseManager, _ => false);
+        var change = OpenAreas.Plan(WarehouseManager, AfterDisaster, _ => false);
 
         Assert.Equal(
             new[] { OpenAreas.SecondFloor, OpenAreas.ColdStorage, OpenAreas.RightHut, OpenAreas.LeftHut, OpenAreas.Garage },
@@ -45,7 +47,7 @@ public sealed class OpenAreasTests
     {
         var tags = new HashSet<string> { OpenAreas.SecondFloor, OpenAreas.Garage };
 
-        var change = OpenAreas.Plan(WarehouseManager, tags.Contains);
+        var change = OpenAreas.Plan(WarehouseManager, AfterDisaster, tags.Contains);
 
         Assert.Equal(new[] { OpenAreas.ColdStorage, OpenAreas.RightHut, OpenAreas.LeftHut }, change.Add);
     }
@@ -55,13 +57,13 @@ public sealed class OpenAreasTests
     {
         var tags = new HashSet<string> { OpenAreas.SecondFloor, OpenAreas.Basement };
 
-        Assert.True(OpenAreas.Plan(WageSlave, tags.Contains).IsEmpty);
+        Assert.True(OpenAreas.Plan(WageSlave, AfterDisaster, tags.Contains).IsEmpty);
     }
 
     [Fact]
     public void A_role_with_no_locked_areas_gets_nothing()
     {
-        Assert.True(OpenAreas.Plan(Veteran, _ => false).IsEmpty);
+        Assert.True(OpenAreas.Plan(Veteran, AfterDisaster, _ => false).IsEmpty);
     }
 
     [Fact]
@@ -88,19 +90,13 @@ public sealed class OpenAreasTests
         Assert.False(OpenAreas.SkipsEvent(ColdWaveStrikes, _ => true));
     }
 
-    [Fact]
-    public void A_spot_on_an_opened_floor_can_be_built_on_before_the_disaster()
+    [Theory]
+    [InlineData(WageSlave)]
+    [InlineData(WarehouseManager)]
+    public void Nothing_opens_before_the_disaster(int role)
     {
-        var tags = new HashSet<string> { OpenAreas.Basement };
+        var tags = new HashSet<string> { "TAG_STAIRS_BROKEN", "TAG_CELLAR_BLOCKED" };
 
-        Assert.False(OpenAreas.IsFloorStillLocked(OpenAreas.Basement, tags.Contains));
-        Assert.True(OpenAreas.IsFloorStillLocked(OpenAreas.SecondFloor, tags.Contains));
-    }
-
-    [Fact]
-    public void A_spot_on_a_floor_without_a_lock_is_never_locked()
-    {
-        Assert.False(OpenAreas.IsFloorStillLocked(null, _ => false));
-        Assert.False(OpenAreas.IsFloorStillLocked("", _ => false));
+        Assert.True(OpenAreas.Plan(role, BeforeDisaster, tags.Contains).IsEmpty);
     }
 }

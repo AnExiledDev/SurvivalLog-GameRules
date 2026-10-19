@@ -44,7 +44,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 
 | Setting | Default | What it does |
 | --- | --- | --- |
-| `StartWithAllAreasOpen` | `false` | Every area you would open with a key or a repair is open from the start, before and after the disaster: the second floor and basement for the Wage Slave and the Student; the second floor, cold storage, garage and both side rooms for the Warehouse Manager. You can walk there and build there right away. The story events that would open them are skipped, along with their rewards. Also opens them in a save already under way. |
+| `StartWithAllAreasOpen` | `false` | Every area you would open with a key or a repair is open as soon as the disaster hits: the second floor and basement for the Wage Slave and the Student; the second floor, cold storage, garage and both side rooms for the Warehouse Manager. You can walk there and build there right away. The story events that would open them are skipped, along with their rewards. Before the disaster they stay locked: the pre-disaster house is a separate map with no way onto the other floors. Also opens them in a save already past the disaster. |
 
 ## Weather
 

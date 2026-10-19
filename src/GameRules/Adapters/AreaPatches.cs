@@ -8,12 +8,10 @@ using HarmonyLib;
 namespace GameRules.Adapters;
 
 /// <summary>
-/// The game's side of opened areas. The story events that open an area are built by
-/// DynamicEventManager.CreateDynamicEventArgs, whose callers all handle it returning nothing, so an event for an area
-/// that is already open is never built. Before the disaster the game greys out every building spot on a key-locked
-/// floor through ConfigManager.IsMapSlotOnUnlockableFloor, whatever the tags say; a spot whose floor tag is there is
-/// reported as open instead. Both targets were checked in GameAssembly.dll: no relative jump or call in their first 14
-/// bytes. Static because Harmony patches are.
+/// Skips the story events that would open an area that is already open. They are built by
+/// DynamicEventManager.CreateDynamicEventArgs, whose callers all handle it returning nothing, so such an event is never
+/// built. The target was checked in GameAssembly.dll: no relative jump or call in its first 14 bytes. Static because
+/// Harmony patches are.
 /// </summary>
 internal static class AreaPatches
 {
@@ -28,9 +26,6 @@ internal static class AreaPatches
             new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) },
             new HarmonyMethod(typeof(AreaPatches), nameof(SkipOpeningEvent)), null,
             "the events that open an area are skipped once it is open");
-        Hook(harmony, typeof(ConfigManager), nameof(ConfigManager.IsMapSlotOnUnlockableFloor), new[] { typeof(string) },
-            null, new HarmonyMethod(typeof(AreaPatches), nameof(OpenSpotOnOpenedFloor)),
-            "opened floors can be built on before the disaster");
     }
 
     private static void Hook(Harmony harmony, Type type, string target, Type[] parameters, HarmonyMethod? prefix, HarmonyMethod? postfix, string what)
@@ -70,35 +65,6 @@ internal static class AreaPatches
 
             return true;
         }
-    }
-
-    /// <summary>Only ever turns a locked answer into an open one, and only for a floor whose tag is there; a failure keeps the game's answer.</summary>
-    private static void OpenSpotOnOpenedFloor(ConfigManager __instance, string slotName, ref bool __result)
-    {
-        try
-        {
-            if (!__result || RunTags() is not { } tags) return;
-
-            if (OpenAreas.IsFloorStillLocked(FloorTag(__instance, slotName), tags.HasTag)) return;
-
-            __result = false;
-        }
-        catch (Exception ex)
-        {
-            LogOnce("spot failure", $"checking a building spot failed, it stays as the game has it (logged once): {ex}");
-        }
-    }
-
-    /// <summary>The tag that opens the floor a building spot is on, or null when the spot or its floor is unknown.</summary>
-    private static string? FloorTag(ConfigManager config, string slotName)
-    {
-        if (string.IsNullOrEmpty(slotName) || !config.TryGetMapSlotByName(slotName, out var slot) || slot == null) return null;
-
-        var points = config._Config_MapPoint_Dict;
-
-        return points != null && points.TryGetValue(slot._MapID_k__BackingField, out var point) && point != null
-            ? point._UnlockTag_k__BackingField
-            : null;
     }
 
     private static TagManager? RunTags() => GameSingleton.Existing<BattleLogicWorld>()?._TagManager;

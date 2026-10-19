@@ -14,7 +14,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.4.0";
+    private const string Version = "0.4.1";
 
     public override void Load()
     {
@@ -103,8 +103,8 @@ public sealed class Plugin : BasePlugin
 
     private bool BindAreas() =>
         Config.Bind("Areas", "StartWithAllAreasOpen", false, new ConfigDescription(
-            "Every area you would open with a key or a repair is open from the start, before and after the disaster: the second floor and basement for the Wage Slave and the Student; the second floor, cold storage, garage and both side rooms for the Warehouse Manager. You can walk there and build there right away, and the story events that would open them are skipped, along with their rewards. Also opens them in a save already under way. Takes effect at the next game start.\n" +
-            "所有原本需要钥匙或修理才能打开的区域从一开始就是打开的，灾难前后都是：打工仔和大学生的二楼和地下室；仓库管理员的二楼、冷库、车库和两侧的小屋。可以直接走过去并在那里建造，原本用来打开这些区域的剧情事件及其奖励会被跳过。对已经开始的存档同样生效。下次启动游戏时生效。",
+            "Every area you would open with a key or a repair is open as soon as the disaster hits: the second floor and basement for the Wage Slave and the Student; the second floor, cold storage, garage and both side rooms for the Warehouse Manager. You can walk there and build there right away, and the story events that would open them are skipped, along with their rewards. Before the disaster they stay locked. Also opens them in a save already past the disaster. Takes effect at the next game start.\n" +
+            "所有原本需要钥匙或修理才能打开的区域在灾难发生时立即打开：打工仔和大学生的二楼和地下室；仓库管理员的二楼、冷库、车库和两侧的小屋。可以直接走过去并在那里建造，原本用来打开这些区域的剧情事件及其奖励会被跳过。灾难前这些区域仍然锁着。对已经过了灾难的存档同样生效。下次启动游戏时生效。",
             null, "ModManager.Restart")).Value;
 
     private WeatherSettings BindWeather()
@@ -191,7 +191,7 @@ public sealed class Plugin : BasePlugin
 
         AreaPatches.Apply(harmony, log);
         RulesTicker.Checks.Add(new AreaOpener(log).Tick);
-        log("every locked area opens once a run loads");
+        log("every locked area opens once the disaster has hit");
     }
 
     private static void UsePool(Harmony harmony, PoolSettings pool, System.Action<string> log)

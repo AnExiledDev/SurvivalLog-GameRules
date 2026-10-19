@@ -11,9 +11,10 @@ public sealed record AreaChange(IReadOnlyList<string> Add, IReadOnlyList<string>
 }
 
 /// <summary>
-/// Starts a run with every locked area open. The game opens an area by adding a tag (the Wage Slave's and Student's
-/// second floor and basement, the Warehouse Manager's second floor, cold storage, garage and two side rooms), and
-/// reads that tag for navigation, building and the floor menu, so adding the tags opens the areas. The story events
+/// Opens every locked area once the disaster has happened. The game opens an area by adding a tag (the Wage Slave's and
+/// Student's second floor and basement, the Warehouse Manager's second floor, cold storage, garage and two side rooms),
+/// and reads that tag for navigation, building and the floor menu, so adding the tags opens the areas. Before the
+/// disaster the house is a separate map with no way onto the other floors, so nothing is opened there. The story events
 /// that would open an area again (finding the key, clearing the stairs) are skipped once its tag is there.
 /// </summary>
 public static class OpenAreas
@@ -47,9 +48,14 @@ public static class OpenAreas
         [61210] = Garage, [61211] = Garage,
     };
 
-    /// <summary>What to change for this role. Only missing tags are added and only present blockers removed, so an open run changes nothing.</summary>
-    public static AreaChange Plan(int role, Func<string, bool> hasTag)
+    /// <summary>
+    /// What to change for this role. Nothing before the disaster; after it only missing tags are added and only present
+    /// blockers removed, so an open run changes nothing.
+    /// </summary>
+    public static AreaChange Plan(int role, bool isBeforeDisaster, Func<string, bool> hasTag)
     {
+        if (isBeforeDisaster) return new AreaChange(Array.Empty<string>(), Array.Empty<string>());
+
         var (areas, blockers) = role switch
         {
             WageSlave or Student => (HouseAreas, HouseBlockers),
@@ -63,11 +69,4 @@ public static class OpenAreas
     /// <summary>An event that opens an area is skipped once that area is already open.</summary>
     public static bool SkipsEvent(int eventId, Func<string, bool> hasTag) =>
         OpeningEvents.TryGetValue(eventId, out var area) && hasTag(area);
-
-    /// <summary>
-    /// Whether a spot on a key-locked floor still counts as locked for building before the disaster. The game greys out
-    /// every such spot until the disaster; one whose floor tag is already there is open.
-    /// </summary>
-    public static bool IsFloorStillLocked(string? floorTag, Func<string, bool> hasTag) =>
-        !string.IsNullOrEmpty(floorTag) && !hasTag(floorTag);
 }
