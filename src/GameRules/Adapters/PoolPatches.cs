@@ -21,8 +21,13 @@ internal static class PoolPatches
     private static PooledClimate _climate = new(new HeatPool(new PoolSettings(false, false, false)), new GameClimate());
     private static Action<string> _log = _ => { };
     private static readonly HashSet<string> LoggedOnce = new();
+    private static bool _isHooked;
 
-    public static void Apply(Harmony harmony, PooledClimate climate, Action<string> log)
+    /// <summary>
+    /// Called on the main thread at start and after each change. The hooks go in the first time a zone joins Indoor and
+    /// stay in; a zone that leaves keeps the game's answers from the next reading on.
+    /// </summary>
+    public static void Use(Harmony harmony, PooledClimate climate, Action<string> log)
     {
         _climate = climate;
         _log = log;
@@ -34,9 +39,15 @@ internal static class PoolPatches
             return;
         }
 
-        Hook(harmony, nameof(EnvAreaHelper.SumDeviceHeat), nameof(PoolDeviceHeat), "zones sharing heat add up their device heat");
-        Hook(harmony, nameof(EnvAreaHelper.GetAreaTemperature), nameof(AddExtraWarmth), "sharing zones the game gives no device heat get the shared heat");
-        Hook(harmony, nameof(EnvAreaHelper.IsAreaAcPowered), nameof(PoolAcPowered), "an AC running in one sharing zone counts for every sharing zone");
+        if (!_isHooked)
+        {
+            _isHooked = true;
+
+            Hook(harmony, nameof(EnvAreaHelper.SumDeviceHeat), nameof(PoolDeviceHeat), "zones sharing heat add up their device heat");
+            Hook(harmony, nameof(EnvAreaHelper.GetAreaTemperature), nameof(AddExtraWarmth), "sharing zones the game gives no device heat get the shared heat");
+            Hook(harmony, nameof(EnvAreaHelper.IsAreaAcPowered), nameof(PoolAcPowered), "an AC running in one sharing zone counts for every sharing zone");
+        }
+
         log($"device heat is shared by {climate.Pool.Describe()}");
     }
 

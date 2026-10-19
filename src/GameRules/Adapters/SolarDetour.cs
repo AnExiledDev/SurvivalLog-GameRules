@@ -38,16 +38,40 @@ internal static unsafe class SolarDetour
     private static RuleSettings _settings = RuleSettings.Game;
     private static Action<string> _log = _ => { };
     private static CalcSolarOutput? _original;
+    private static bool _isTried;
     private static readonly HashSet<string> LoggedOnce = new();
 
     // Kept in a static field so the collector never frees the function the game calls.
     private static readonly CalcSolarOutput Replacement = OnCalcSolarOutput;
 
-    public static void Apply(RuleSettings settings, Action<string> log)
+    /// <summary>
+    /// Called on the main thread at start and after each change. The detour is placed the first time the panels change and
+    /// stays; back at the game's numbers, it hands the game's own output through.
+    /// </summary>
+    public static void Use(RuleSettings settings, Action<string> log)
     {
         _settings = settings;
         _log = log;
 
+        if (!settings.ChangesSolar)
+        {
+            log("solar panels make the game's output");
+
+            return;
+        }
+
+        if (!_isTried)
+        {
+            _isTried = true;
+
+            Place(log);
+        }
+
+        if (_original != null) log($"solar panels make {settings.SolarMultiplier:0.##}x the game's output, and {settings.BadWeatherSolar:0.##} of a cloudy day's in storms and heavy rain");
+    }
+
+    private static void Place(Action<string> log)
+    {
         try
         {
             var target = TargetAddress();
@@ -69,7 +93,6 @@ internal static unsafe class SolarDetour
             }
 
             _original = Marshal.GetDelegateForFunctionPointer<CalcSolarOutput>(original);
-            log($"solar panels make {settings.SolarMultiplier:0.##}x the game's output, and {settings.BadWeatherSolar:0.##} of a cloudy day's in storms and heavy rain");
         }
         catch (Exception ex)
         {

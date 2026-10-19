@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+- Settings changed on the Mod Manager's Mods screen take effect at once, except NoRestartLimit, BatteryMultiplier, StartWithAllAreasOpen and the Weather settings, which take effect at the next game start.
+- The Mods screen shows the mod's name, description, category and links.
+- Needs Exiled's Toolkit 0.4.0 or newer.
+
 ## 0.3.0
 
 - Start with all areas open: the second floor and basement, or the Warehouse Manager's second floor and locked rooms, are open from the start and can be built on before the disaster. Works on a save already under way. The events that would open them are skipped.

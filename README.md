@@ -38,12 +38,14 @@ The first time it starts, Game Rules copies your heat sharing settings from Whol
 
 - Survival Log 1.1.18902. Built and tested on this version; a game update can break it until the mod is updated.
 - The [BepInEx Pack for Survival Log](https://www.nexusmods.com/survivallog/mods/12), the BepInEx 6 (IL2CPP) build for the game.
+- [Exiled's Toolkit](https://github.com/AnExiledDev/SurvivalLog-ExiledToolkit) 0.4.0 or newer, which applies changed settings at once. Game Rules does not load without it.
 
 ## Install
 
 1. Install the [BepInEx Pack for Survival Log](https://www.nexusmods.com/survivallog/mods/12) (if no other mods were installed before, start the game once so BepInEx finishes setup, then quit).
-2. Download `GameRules-x.y.z.zip` from the [latest release](https://github.com/AnExiledDev/SurvivalLog-GameRules/releases/latest) or from Nexus Mods.
-3. Extract the zip into the game folder (the folder with `SurvivalLog.exe`). When asked, merge the folders. The result should be:
+2. Install Exiled's Toolkit: download `ExiledToolkit-x.y.z.zip` from [its latest release](https://github.com/AnExiledDev/SurvivalLog-ExiledToolkit/releases/latest) or from Nexus Mods, and extract it into the game folder (the folder with `SurvivalLog.exe`).
+3. Download `GameRules-x.y.z.zip` from the [latest release](https://github.com/AnExiledDev/SurvivalLog-GameRules/releases/latest) or from Nexus Mods.
+4. Extract the zip into the game folder (the folder with `SurvivalLog.exe`). When asked, merge the folders. The result should be:
    `C:\Program Files (x86)\Steam\steamapps\common\Survival Log\BepInEx\plugins\GameRules.dll`
 
 ## Uninstall
@@ -52,11 +54,11 @@ Delete `GameRules.dll` from the `BepInEx\plugins` folder. For a clean slate, als
 
 ## Configuration
 
-Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Edit it while the game is closed; changes apply at the next game start. Each setting in the cfg file is explained in English and Simplified Chinese. See [CONFIG.md](CONFIG.md) for every setting.
+Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. Changed on the Mods screen, every setting takes effect at once except `NoRestartLimit`, `BatteryMultiplier`, `StartWithAllAreasOpen` and the `Weather` settings, which take effect at the next game start. Each setting in the cfg file is explained in English and Simplified Chinese. See [CONFIG.md](CONFIG.md) for every setting.
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.1.0 started`, followed by one line for each rule that is on. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.4.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
 
 ## Feedback and bug reports
 

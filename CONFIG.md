@@ -1,6 +1,6 @@
 # Game Rules settings
 
-Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Edit the file while the game is closed; changes apply at the next game start. Delete the file to get the defaults back. Every default is the game's own rule.
+Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. Changed on the Mods screen, every setting takes effect at once except `NoRestartLimit`, `BatteryMultiplier`, `StartWithAllAreasOpen` and the `Weather` settings, which take effect at the next game start. Delete the file to get the defaults back. Every default is the game's own rule.
 
 ## Restarts
 
@@ -50,7 +50,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 
 | Setting | Default | What it does |
 | --- | --- | --- |
-| `RandomWeather` | `false` | Rolls new weather for the 100-day story from the chances below. Cold waves and the story's fixed-weather days stay as in the game, and the difficulty still makes weather milder or harsher. Endless mode is not changed. Takes effect from the next hour; the forecast follows it. |
+| `RandomWeather` | `false` | Rolls new weather for the 100-day story from the chances below. Cold waves and the story's fixed-weather days stay as in the game, and the difficulty still makes weather milder or harsher. Endless mode is not changed. Takes effect at the next game start, from the first hour played; the forecast follows it. |
 | `WeatherSeed` | `1` | Any whole number. The same number always rolls the same weather; change it for different weather. |
 | `ClearChance` | `34` | Share of Clear weather. |
 | `CloudyChance` | `28` | Share of Cloudy weather. |

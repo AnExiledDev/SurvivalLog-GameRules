@@ -18,35 +18,54 @@ internal static class VisitorPatches
     private static VisitorBlock _block = VisitorBlock.Game;
     private static Action<string> _log = _ => { };
     private static readonly HashSet<string> LoggedOnce = new();
+    private static bool _isEventHooked;
+    private static bool _isTextHooked;
 
-    public static void Apply(Harmony harmony, VisitorBlock block, Action<string> log)
+    /// <summary>
+    /// Called on the main thread at start and after each change. Each hook goes in the first time a block needs it and
+    /// stays in; with a block turned off, those visitors and texts come as in the game again.
+    /// </summary>
+    public static void Use(Harmony harmony, VisitorBlock block, Action<string> log)
     {
-        if (!block.BlocksAny) return;
-
         _block = block;
         _log = log;
 
-        var who = block.NoDoorSmasher && block.NoDebtCollector ? "the door-smasher and the debt collector"
-            : block.NoDoorSmasher ? "the door-smasher" : "the debt collector";
-
-        Hook(harmony, typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
-            new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) }, nameof(SkipBlockedEvent), $"{who} no longer visit");
-
-        if (block.NoDebtCollector)
+        if (block.BlocksAny && !_isEventHooked)
         {
-            Hook(harmony, typeof(PhoneSMSManager), nameof(PhoneSMSManager.DeliverSMS), new[] { typeof(int), typeof(int) },
-                nameof(SkipBlockedText), "the debt collector's warning text is no longer sent");
+            _isEventHooked = true;
+
+            Hook(harmony, typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
+                new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) }, nameof(SkipBlockedEvent));
         }
+
+        if (block.NoDebtCollector && !_isTextHooked)
+        {
+            _isTextHooked = true;
+
+            Hook(harmony, typeof(PhoneSMSManager), nameof(PhoneSMSManager.DeliverSMS), new[] { typeof(int), typeof(int) }, nameof(SkipBlockedText));
+        }
+
+        log(Describe(block));
     }
 
-    private static void Hook(Harmony harmony, Type type, string target, Type[] parameters, string prefix, string what)
+    private static string Describe(VisitorBlock block)
+    {
+        if (block.NoDoorSmasher && block.NoDebtCollector) return "the door-smasher and the debt collector no longer visit, and the debt collector's warning text is no longer sent";
+
+        if (block.NoDoorSmasher) return "the door-smasher no longer visits; the debt collector comes as in the game";
+
+        if (block.NoDebtCollector) return "the debt collector no longer visits and its warning text is no longer sent; the door-smasher comes as in the game";
+
+        return "the door-smasher and the debt collector come as in the game";
+    }
+
+    private static void Hook(Harmony harmony, Type type, string target, Type[] parameters, string prefix)
     {
         try
         {
             var method = AccessTools.Method(type, target, parameters) ?? throw new MissingMethodException($"{type.Name}.{target}");
 
             harmony.Patch(method, prefix: new HarmonyMethod(typeof(VisitorPatches), prefix));
-            _log(what);
         }
         catch (Exception ex)
         {

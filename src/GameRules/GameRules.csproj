@@ -12,6 +12,7 @@
     <GameDir Condition="'$(GameDir)' == ''">D:\Games\Survival Log\Survival Log</GameDir>
     <BepInExCore>$(GameDir)\BepInEx\core</BepInExCore>
     <Interop>$(GameDir)\BepInEx\interop</Interop>
+    <ToolkitDll Condition="'$(ToolkitDll)' == ''">D:\devnew\game-mods\SurvivalLog\mods\sl-exiled-toolkit\src\ExiledToolkit\bin\Release\ExiledToolkit.dll</ToolkitDll>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +25,18 @@
     <Reference Include="$(Interop)\Il2Cppmscorlib.dll" Private="false" />
     <Reference Include="$(Interop)\Il2CppSystem.Core.dll" Private="false" />
     <Reference Include="$(Interop)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(ToolkitDll)" Private="false" />
+  </ItemGroup>
+
+  <!-- What the Mod Manager's Mods screen shows about this mod. -->
+  <ItemGroup>
+    <AssemblyMetadata Include="ModManager.Name" Value="Game Rules&#10;游戏规则" />
+    <AssemblyMetadata Include="ModManager.Description" Value="Change some of the game's own rules: restarts, mold, solar power, batteries, food spoilage, night visitors, locked areas, the weather and heat sharing.&#10;修改游戏自身的一些规则：重生次数、霉菌、太阳能、蓄电池、食物腐败、夜间访客、锁住的区域、天气和热量共享。" />
+    <AssemblyMetadata Include="ModManager.Author" Value="AnExiledDev" />
+    <AssemblyMetadata Include="ModManager.Category" Value="Gameplay" />
+    <AssemblyMetadata Include="ModManager.GameVersion" Value="1.1.18902" />
+    <AssemblyMetadata Include="ModManager.Settings" Value="Live" />
+    <AssemblyMetadata Include="ModManager.GitHub" Value="AnExiledDev/SurvivalLog-GameRules" />
   </ItemGroup>
 
 </Project>
