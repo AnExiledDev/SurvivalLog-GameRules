@@ -3,7 +3,6 @@ using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
-using ExiledToolkit;
 using GameRules.Adapters;
 using GameRules.Core;
 using HarmonyLib;
@@ -11,7 +10,7 @@ using HarmonyLib;
 namespace GameRules;
 
 [BepInPlugin(Guid, "Game Rules", Version)]
-[BepInDependency(ExiledToolkit.Plugin.Guid, ">=0.4.0")]
+[BepInDependency(OptionalLive.ToolkitGuid, BepInDependency.DependencyFlags.SoftDependency)]
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
@@ -19,6 +18,8 @@ public sealed class Plugin : BasePlugin
 
     public override void Load()
     {
+        if (!OptionalLive.IsToolkitInstalled) Log.LogInfo(OptionalLive.MissingNote);
+
         var log = new RulesLog(Log, Path.Combine(Paths.BepInExRootPath, "game-rules.log"));
 
         log.TrimIfLarge();
@@ -34,7 +35,7 @@ public sealed class Plugin : BasePlugin
         log.Write($"===== Game Rules {Version} started");
         StartRestartCap(startRules, log.Write);
 
-        LiveSettings.Watch(() =>
+        OptionalLive.Watch(() =>
         {
             var settings = rules.Read();
 
@@ -42,10 +43,10 @@ public sealed class Plugin : BasePlugin
             SolarDetour.Use(settings, log.Write);
         }, rules.StopMoldSpread, rules.SolarMultiplier, rules.BadWeatherOutput, rules.SpoilageSpeed);
 
-        LiveSettings.Watch(() => VisitorPatches.Use(harmony, new VisitorBlock(visitors.NoDoorSmasher.Value, visitors.NoDebtCollector.Value), log.Write),
+        OptionalLive.Watch(() => VisitorPatches.Use(harmony, new VisitorBlock(visitors.NoDoorSmasher.Value, visitors.NoDebtCollector.Value), log.Write),
             visitors.NoDoorSmasher, visitors.NoDebtCollector);
 
-        LiveSettings.Watch(() => UsePool(harmony, pool.Read(), log.Write), pool.IndoorAndSunroom, pool.Terrace, pool.Basement);
+        OptionalLive.Watch(() => UsePool(harmony, pool.Read(), log.Write), pool.IndoorAndSunroom, pool.Terrace, pool.Basement);
 
         StartOpenAreas(harmony, openAreas, log.Write);
         StartTables(startRules, weather, log.Write);
@@ -116,7 +117,7 @@ public sealed class Plugin : BasePlugin
         var seed = Config.Bind("Weather", "WeatherSeed", game.Seed, new ConfigDescription(
             "Any whole number. The same number always rolls the same weather, so a reload keeps it; change it for different weather. Takes effect at the next game start.\n" +
             "任意整数。相同的数字总是生成相同的天气，所以读档后保持不变；换一个数字即可得到不同的天气。下次启动游戏时生效。",
-            null, "ModManager.Restart")).Value;
+            null, "ModManager.Restart", "ModManager.ShowWhen=RandomWeather")).Value;
 
         return new WeatherSettings(randomWeather, seed, new[]
         {
@@ -138,7 +139,7 @@ public sealed class Plugin : BasePlugin
             new ConfigDescription(
                 $"The chance of {english} with RandomWeather on. The chances are shares, so they need not add up to 100; 0 means never. Takes effect at the next game start.\n" +
                 $"开启 RandomWeather 后「{chinese}」的概率。各项概率按比例分配，加起来不必等于 100；0 表示从不出现。下次启动游戏时生效。",
-                new AcceptableValueRange<float>(0f, 100f), "ModManager.Restart")).Value);
+                new AcceptableValueRange<float>(0f, 100f), "ModManager.Restart", "ModManager.ShowWhen=RandomWeather")).Value);
     }
 
     private PoolEntries BindPool(System.Action<string> log)
