@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- Start with all areas open: the second floor and basement, or the Warehouse Manager's second floor and locked rooms, are open from the start and can be built on before the disaster. Works on a save already under way. The events that would open them are skipped.
+
+Off by default.
+
 ## 0.2.0
 
 - Battery multiplier: batteries hold 0.1x to 10x the game's power.

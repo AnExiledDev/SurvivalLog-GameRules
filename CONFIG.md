@@ -40,6 +40,12 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 | `NoDoorSmasher` | `false` | The angry neighbour's "Midnight Door Pounding" never happens. |
 | `NoDebtCollector` | `false` | The loan shark never comes to collect: no warning texts, no "Midnight Visitors", no revenge or stalking nights, no feeding task. Best turned on before the first visit; a visit already under way finishes as usual. |
 
+## Areas
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `StartWithAllAreasOpen` | `false` | Every area you would open with a key or a repair is open from the start, before and after the disaster: the second floor and basement for the Wage Slave and the Student; the second floor, cold storage, garage and both side rooms for the Warehouse Manager. You can walk there and build there right away. The story events that would open them are skipped, along with their rewards. Also opens them in a save already under way. |
+
 ## Weather
 
 | Setting | Default | What it does |

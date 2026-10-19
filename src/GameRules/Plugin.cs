@@ -13,7 +13,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.2.0";
+    private const string Version = "0.3.0";
 
     public override void Load()
     {
@@ -25,6 +25,7 @@ public sealed class Plugin : BasePlugin
         var visitors = BindVisitors();
         var weather = BindWeather();
         var pool = BindPool(log.Write);
+        var openAreas = BindAreas();
         var harmony = new Harmony(Guid);
 
         log.Write($"===== Game Rules {Version} started");
@@ -35,6 +36,7 @@ public sealed class Plugin : BasePlugin
         if (settings.ChangesSolar) SolarDetour.Apply(settings, log.Write);
 
         StartPool(harmony, pool, log.Write);
+        StartOpenAreas(harmony, openAreas, log.Write);
         StartTables(settings, weather, log.Write);
         StartTicker(log.Write);
     }
@@ -84,6 +86,11 @@ public sealed class Plugin : BasePlugin
                 "The loan shark never comes to collect: no warning text, no Midnight Visitors, no revenge nights. A loan you take is yours to keep. Best turned on before the first visit.\n" +
                 "放贷人不会上门催收：没有警告短信，没有「深夜来客」，也没有报复的夜晚。借来的钱不用还。最好在第一次上门前开启。").Value);
     }
+
+    private bool BindAreas() =>
+        Config.Bind("Areas", "StartWithAllAreasOpen", false,
+            "Every area you would open with a key or a repair is open from the start, before and after the disaster: the second floor and basement for the Wage Slave and the Student; the second floor, cold storage, garage and both side rooms for the Warehouse Manager. You can walk there and build there right away, and the story events that would open them are skipped, along with their rewards. Also opens them in a save already under way.\n" +
+            "所有原本需要钥匙或修理才能打开的区域从一开始就是打开的，灾难前后都是：打工仔和大学生的二楼和地下室；仓库管理员的二楼、冷库、车库和两侧的小屋。可以直接走过去并在那里建造，原本用来打开这些区域的剧情事件及其奖励会被跳过。对已经开始的存档同样生效。").Value;
 
     private WeatherSettings BindWeather()
     {
@@ -159,6 +166,15 @@ public sealed class Plugin : BasePlugin
 
         RulesTicker.Log = log;
         AddComponent<RulesTicker>();
+    }
+
+    private static void StartOpenAreas(Harmony harmony, bool openAreas, System.Action<string> log)
+    {
+        if (!openAreas) return;
+
+        AreaPatches.Apply(harmony, log);
+        RulesTicker.Checks.Add(new AreaOpener(log).Tick);
+        log("every locked area opens once a run loads");
     }
 
     private static void StartPool(Harmony harmony, PoolSettings pool, System.Action<string> log)

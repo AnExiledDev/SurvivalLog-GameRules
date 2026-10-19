@@ -1,6 +1,6 @@
 # Game Rules
 
-Change some of Survival Log's own rules: restarts, mold, solar power, batteries, food spoilage, night visitors, the weather and how far heaters reach.
+Change some of Survival Log's own rules: restarts, mold, solar power, batteries, food spoilage, night visitors, locked areas, the weather and how far heaters reach.
 
 Every setting starts at the game's own value, so with a fresh config the mod changes nothing. Turn on only what you want.
 
@@ -14,11 +14,12 @@ Every setting starts at the game's own value, so with a fresh config the mod cha
 - **Battery multiplier**: batteries hold more (or less) power, from 0.1x to 10x.
 - **No door-smasher**: the angry neighbour's "Midnight Door Pounding" never happens.
 - **No debt collector**: the loan shark's night visits, warning texts, revenge and stalking nights never happen.
+- **Start with all areas open**: the second floor and basement (Wage Slave, Student), or the second floor, cold storage, garage and both side rooms (Warehouse Manager), are open from the start, before and after the disaster. You can walk there and build there right away. Works on a save already under way.
 - **Random weather**: the weather is rolled from chances you set, for example less rain late in the game. Cold waves and the game's fixed story days keep the game's weather.
 - **Whole-floor heat**: running heaters, AC units and stoves can warm the Indoor zone and the Sunroom together, and the Terrace and the Basement can join. This is the Whole Floor Climate mod, moved in here.
 - **Log file**: the mod writes what it changed, and any failure, to `BepInEx\game-rules.log`.
 
-Game Rules adds no data of its own to your save, and you can remove it at any time.
+Game Rules adds no data of its own to your save, and you can remove it at any time. Areas opened by **Start with all areas open** stay open in that save after the mod is removed, the same as areas opened in the game.
 
 ## Known issues and limits
 
@@ -26,6 +27,7 @@ Game Rules adds no data of its own to your save, and you can remove it at any ti
 - **Solar in bad weather** has no effect at night, and none on a panel that no light reaches.
 - **Random weather** changes the weather from the next hour on, and the forecast shows the new weather. The same seed always rolls the same weather, so a reload keeps it. Turning it off brings back the game's weather after a restart of the game.
 - **No debt collector** works best turned on before the loan shark's first visit. A visit already under way finishes as usual.
+- **Start with all areas open** skips the story events that would open those areas (finding the keys, clearing the stairs and the cellar), so their rewards and story are skipped too. An event already under way in a loaded save stays in the event list. Opening both floors may unlock the matching achievement. Building spots unlocked with talents are not changed.
 - **Whole-floor heat** makes rooms warm up more easily, so warm-room progress is easier to reach.
 
 ## Moving from Whole Floor Climate
