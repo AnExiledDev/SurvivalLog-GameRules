@@ -69,4 +69,11 @@ public static class OpenAreas
     /// <summary>An event that opens an area is skipped once that area is already open.</summary>
     public static bool SkipsEvent(int eventId, Func<string, bool> hasTag) =>
         OpeningEvents.TryGetValue(eventId, out var area) && hasTag(area);
+
+    /// <summary>
+    /// The opening events whose area is already open. One that was running before the area opened (a loaded save, or
+    /// the event started before the disaster) is still on the task list, so these are ended.
+    /// </summary>
+    public static IReadOnlyList<int> StaleEvents(Func<string, bool> hasTag) =>
+        OpeningEvents.Where(entry => hasTag(entry.Value)).Select(entry => entry.Key).ToList();
 }

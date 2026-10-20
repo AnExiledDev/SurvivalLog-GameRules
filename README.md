@@ -59,7 +59,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.4.1 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.4.2 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
 
 ## Feedback and bug reports
 

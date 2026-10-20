@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GameCore.HotUpdate;
 using GameCore.HotUpdate.Battle;
 using GameCore.HotUpdate.Battle.Logic;
@@ -17,6 +18,7 @@ internal sealed class AreaOpener
     private const float CheckSeconds = 1f;
 
     private readonly Action<string> _log;
+    private readonly HashSet<int> _reportedRefusals = new();
     private float _nextCheckAt;
 
     public AreaOpener(Action<string> log)
@@ -30,8 +32,14 @@ internal sealed class AreaOpener
 
         _nextCheckAt = now + CheckSeconds;
 
-        if (ReadyRun() is not var (tags, role, isBeforeDisaster)) return;
+        if (ReadyRun() is not var (tags, events, role, isBeforeDisaster)) return;
 
+        OpenLockedAreas(tags, role, isBeforeDisaster);
+        EndStaleEvents(tags, events);
+    }
+
+    private void OpenLockedAreas(TagManager tags, int role, bool isBeforeDisaster)
+    {
         var change = OpenAreas.Plan(role, isBeforeDisaster, tags.HasTag);
 
         if (change.IsEmpty) return;
@@ -43,7 +51,22 @@ internal sealed class AreaOpener
         _log($"opened the locked areas: added {string.Join(", ", change.Add)}; removed {(change.Remove.Count > 0 ? string.Join(", ", change.Remove) : "nothing")}");
     }
 
-    private static (TagManager Tags, int Role, bool IsBeforeDisaster)? ReadyRun()
+    /// <summary>
+    /// Ends an opening task that was already on the task list when its area opened, such as Repair Stairs from a saved
+    /// run. The game's own cancel removes it from the list; it refuses while events are locked and is tried again then.
+    /// </summary>
+    private void EndStaleEvents(TagManager tags, DynamicEventManager events)
+    {
+        foreach (var eventId in OpenAreas.StaleEvents(tags.HasTag))
+        {
+            if (!events.IsEventRunning(eventId)) continue;
+
+            if (events.CancelTaskEvent(eventId)) _log($"ended task {eventId}, its area is already open");
+            else if (_reportedRefusals.Add(eventId)) _log($"the game would not end task {eventId} yet; trying again each second");
+        }
+    }
+
+    private static (TagManager Tags, DynamicEventManager Events, int Role, bool IsBeforeDisaster)? ReadyRun()
     {
         var main = GameSingleton.Existing<BattleMain>();
         var world = GameSingleton.Existing<BattleLogicWorld>();
@@ -55,8 +78,9 @@ internal sealed class AreaOpener
 
         var tags = world._TagManager;
         var clock = world._GameTimeManager;
+        var events = world._DynamicEventManager;
 
-        return tags == null || clock == null ? null : (tags, save.PlayerSelectId, clock.WorldStateType == WorldStateType.PreDisaster);
+        return tags == null || clock == null || events == null ? null : (tags, events, save.PlayerSelectId, clock.WorldStateType == WorldStateType.PreDisaster);
     }
 
     private static Il2CppSystem.Collections.Generic.List<string> ToGameList(System.Collections.Generic.IEnumerable<string> tags)

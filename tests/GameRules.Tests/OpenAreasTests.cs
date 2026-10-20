@@ -11,6 +11,7 @@ public sealed class OpenAreasTests
     private const int WarehouseManager = 3;
     private const int Veteran = 4;
     private const int FindSecondFloorKey = 30028;
+    private const int RepairTheStairs = 51502;
     private const int ClearTheCellar = 40420;
     private const int ColdStorageKey = 61201;
     private const int GarageKey = 61210;
@@ -88,6 +89,29 @@ public sealed class OpenAreasTests
     public void Other_events_are_never_skipped()
     {
         Assert.False(OpenAreas.SkipsEvent(ColdWaveStrikes, _ => true));
+    }
+
+    [Fact]
+    public void A_running_repair_the_stairs_task_is_ended_once_the_second_floor_is_open()
+    {
+        var tags = new HashSet<string> { OpenAreas.SecondFloor };
+
+        var stale = OpenAreas.StaleEvents(tags.Contains);
+
+        Assert.Contains(RepairTheStairs, stale);
+        Assert.Contains(FindSecondFloorKey, stale);
+    }
+
+    [Fact]
+    public void Tasks_for_areas_still_locked_are_left_running()
+    {
+        var tags = new HashSet<string> { OpenAreas.SecondFloor };
+
+        var stale = OpenAreas.StaleEvents(tags.Contains);
+
+        Assert.DoesNotContain(ClearTheCellar, stale);
+        Assert.DoesNotContain(GarageKey, stale);
+        Assert.Empty(OpenAreas.StaleEvents(_ => false));
     }
 
     [Theory]
