@@ -1,5 +1,5 @@
 Name: Game Rules
-Summary: Change some of the game's own rules: restarts, mold, solar power, batteries, food spoilage, night visitors, locked areas, the weather and heat sharing. 修改游戏自身的一些规则：重生次数、霉菌、太阳能、蓄电池、食物腐败、夜间访客、锁住的区域、天气和热量共享。
+Summary: Change some of Survival Log's own rules: no restart limit, no mold spreading, stronger solar power and batteries, slower food spoilage, no door-smasher or debt collector, all areas open when the disaster hits, random weather and heat shared across the floor. Every setting starts at the game's own value, so turn on only what you want.
 
 Description (BBCode):
 Change some of Survival Log's own rules: restarts, mold, solar power, batteries, food spoilage, night visitors, locked areas, the weather and how far heaters reach.
