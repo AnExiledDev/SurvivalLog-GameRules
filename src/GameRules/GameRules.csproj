@@ -34,7 +34,7 @@
     <AssemblyMetadata Include="ModManager.Description" Value="Change some of the game's own rules: restarts, mold, solar power, batteries, food spoilage, night visitors, locked areas, the weather and heat sharing.&#10;修改游戏自身的一些规则：重生次数、霉菌、太阳能、蓄电池、食物腐败、夜间访客、锁住的区域、天气和热量共享。" />
     <AssemblyMetadata Include="ModManager.Author" Value="AnExiledDev" />
     <AssemblyMetadata Include="ModManager.Category" Value="Gameplay" />
-    <AssemblyMetadata Include="ModManager.GameVersion" Value="1.1.18902" />
+    <AssemblyMetadata Include="ModManager.GameVersion" Value="1.1.19131" />
     <AssemblyMetadata Include="ModManager.Settings" Value="Restart" />
     <AssemblyMetadata Include="ModManager.GitHub" Value="AnExiledDev/SurvivalLog-GameRules" />
     <AssemblyMetadata Include="ModManager.Changelog" Value="https://github.com/AnExiledDev/SurvivalLog-GameRules/blob/main/CHANGELOG.md" />

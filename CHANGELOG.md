@@ -4,6 +4,8 @@
 
 - With Start with all areas open, a Repair Stairs task or other area task that was already on the task list (from a saved run) is ended once its area is open.
 
+- After a game update, a hook that can no longer be placed is logged as an error, so the Mod Manager can mark the mod as maybe needing an update.
+
 ## 0.4.1
 
 - Start with all areas open now opens the areas when the disaster hits, not before. Before the disaster the house is a separate map with no way onto the other floors, so opened floors could not be reached there. Building spots on those floors are no longer opened before the disaster.
