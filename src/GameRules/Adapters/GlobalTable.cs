@@ -10,7 +10,8 @@ namespace GameRules.Adapters;
 /// <summary>
 /// Writes the settings groups' changes into the game's GlobalSetting table. Every GameKey.GlobalSetting_X getter fills
 /// the static field GameKey._GlobalSetting_X from the table entry (Params1 for an int getter, Params2 for a float one)
-/// only while the field is 0, and trusts the field from then on, so both the entry and the field are written. Checked
+/// only while the field is 0, and trusts the field from then on, so both the entry and the field are written. An int
+/// entry whose Params2 matches its Params1 gets Params2 written too, for game code that reads the key by name. Checked
 /// every second: the table loads after the plugin, and a reload builds fresh entries holding the game's values.
 /// </summary>
 internal sealed class GlobalTable
@@ -66,6 +67,7 @@ internal sealed class GlobalTable
         {
             var value = (int)Math.Round(target);
 
+            if (entry._Params1_k__BackingField != value && IntEntry.KeepsParams2InStep(entry._Params1_k__BackingField, entry._Params2_k__BackingField)) entry._Params2_k__BackingField = value;
             if (entry._Params1_k__BackingField != value) entry._Params1_k__BackingField = value;
             if (!Equals(slot.Field.GetValue(null), value)) slot.Field.SetValue(null, value);
 
