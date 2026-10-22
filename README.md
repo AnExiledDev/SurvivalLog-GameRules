@@ -1,6 +1,6 @@
 # Game Rules
 
-Change some of Survival Log's own rules: restarts, mold, solar power, batteries, food spoilage, night visitors, locked areas, the weather and how far heaters reach.
+Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, power and the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
 
 Every setting starts at the game's own value, so with a fresh config the mod changes nothing. Turn on only what you want.
 
@@ -17,6 +17,18 @@ Every setting starts at the game's own value, so with a fresh config the mod cha
 - **Start with all areas open**: the second floor and basement (Wage Slave, Student), or the second floor, cold storage, garage and both side rooms (Warehouse Manager), open as soon as the disaster hits. You can walk there and build there right away. Works on a save already past the disaster, and on one from before it once the disaster comes.
 - **Random weather**: the weather is rolled from chances you set, for example less rain late in the game. Cold waves and the game's fixed story days keep the game's weather.
 - **Whole-floor heat**: running heaters, AC units and stoves can warm the Indoor zone and the Sunroom together, and the Terrace and the Basement can join. This is the Whole Floor Climate mod, moved in here.
+- **Food**: raw food sickness chance, and Appetite Loss from eating the same food: turn it off, or make it shorter, longer, milder or harsher.
+- **Mold**: Disinfectant Spray radius and cost, how fast moldy food spoils, how often mold spreads, how many items it reaches, and how many items start moldy.
+- **Rats**: how often rats visit, and how long a rat stays before it escapes.
+- **Sickness**: turn off the Outbreak crisis, or only its worsening; set the Wind Chill and High Temperature chances in a cold wave.
+- **Power and the house**: how much power devices use, a later city power cut or none at all, no Blackout panic, and no heavy rain leaks.
+- **Cold**: how cold cold waves are, and extra levels of Personal Cold Resistance.
+- **Stray zombies**: turn them off, or set their start day, the time between visits, visits per day, how many at once, how often a crawler leads them, and what they drop.
+- **Hordes**: story hordes always at full strength, and more or less horde loot.
+- **Neighbour and companion**: they never die, or the rescue deadline comes later.
+- **Strangers you support**: how much trust they lose, how often mishaps hit them, and which mishaps can happen.
+- **Commissions**: how often new commissions and Aid Platform requests arrive.
+- **Thoughts, morale, crafting and reach**: how often your character thinks out loud, morale from music and perfect harvests, the vase morale limit, full crafting proficiency from lower-level recipes, and how far away you can pick up items.
 - **Log file**: the mod writes what it changed, and any failure, to `BepInEx\game-rules.log`.
 
 Game Rules adds no data of its own to your save, and you can remove it at any time. Areas opened by **Start with all areas open** stay open in that save after the mod is removed, the same as areas opened in the game.
@@ -30,6 +42,10 @@ Game Rules adds no data of its own to your save, and you can remove it at any ti
 - **Start with all areas open** skips the story events that would open those areas (finding the keys, clearing the stairs and the cellar), so their rewards and story are skipped too. An event already under way in a loaded save stays in the event list. Opening both floors may unlock the matching achievement. Building spots unlocked with talents are not changed.
 - **Start with all areas open** only opens areas after the disaster. Before the disaster, the house you play in is technically a separate map from the one after it, and that map has no way onto the other floors or into the locked rooms. Making them work there would be a monumental effort, so the areas open at the start of the post-disaster game instead. Before the disaster they stay locked, the same as in the game.
 - **Whole-floor heat** makes rooms warm up more easily, so warm-room progress is easier to reach.
+- **Rat visit chance** does not apply during a Rat Infestation.
+- **Device power use** does not change cooking and shredding jobs, the compressor, defenses firing or the signal station.
+- **No power cut** also means the events that follow the cut, and the diesel generator start, never come. A cut that already happened is not undone.
+- **Cold wave strength** also changes whether strangers you support count the day as cold.
 
 ## Moving from Whole Floor Climate
 
@@ -59,7 +75,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.4.2 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.5.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
 
 ## Feedback and bug reports
 

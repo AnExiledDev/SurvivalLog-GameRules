@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.5.0
+
+- Food: raw food sickness chance, and Appetite Loss from eating the same food can be turned off, made shorter or longer, and made milder or harsher.
+- Mold: Disinfectant Spray radius and cost, how fast moldy food spoils, how often mold spreads, how many items it spreads to, and how many items start moldy.
+- Rats: rat visit chance, and how long a rat stays before it escapes.
+- Sickness: turn off the Outbreak crisis or only its worsening, and set the Wind Chill and High Temperature chances in a cold wave.
+- Power: how much power devices use, a later city power cut or none at all, and no Blackout panic.
+- House: no heavy rain leaks.
+- Cold: how cold cold waves are, and extra levels of Personal Cold Resistance.
+- Stray zombies: turn them off, or set their start day, the time between visits, visits per day, how many at once, how often a crawler leads them, and what they drop.
+- Hordes: keep story hordes at full strength, and scale horde loot.
+- Companions: the neighbour and your companion can be kept from dying, or given a later rescue deadline.
+- Strangers: how much trust strangers you support lose, how often they suffer mishaps, and which mishaps can happen.
+- How often new commissions and Aid Platform requests arrive.
+- How often your character thinks out loud, morale from music and perfect harvests, the vase morale limit, full crafting proficiency from lower-level recipes, and how far away you can pick up items.
+
 ## 0.4.2
 
 - With Start with all areas open, a Repair Stairs task or other area task that was already on the task list (from a saved run) is ended once its area is open.

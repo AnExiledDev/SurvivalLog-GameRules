@@ -1,8 +1,8 @@
 Name: Game Rules
-Summary: Change some of Survival Log's own rules: no restart limit, no mold spreading, stronger solar power and batteries, slower food spoilage, no door-smasher or debt collector, all areas open when the disaster hits, random weather and heat shared across the floor. Every setting starts at the game's own value, so turn on only what you want.
+Summary: Change Survival Log's own rules: no restart limit, slower spoilage, stronger solar and batteries, milder mold, rats, sickness and cold, no power cut, fewer stray zombies, a neighbour who never dies and more. About 70 settings for food, power, zombies, visitors, morale and weather. Every setting starts at the game's own value, so turn on only what you want.
 
 Description (BBCode):
-Change some of Survival Log's own rules: restarts, mold, solar power, batteries, food spoilage, night visitors, locked areas, the weather and how far heaters reach.
+Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, power and the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
 
 Every setting starts at the game's own value, so with a fresh config the mod changes nothing. Turn on only what you want.
 
@@ -18,6 +18,18 @@ Every setting starts at the game's own value, so with a fresh config the mod cha
 [*][b]No debt collector[/b]: the loan shark's night visits, warning texts, revenge and stalking nights never happen.[/*]
 [*][b]Start with all areas open[/b]: the second floor and basement (Wage Slave, Student), or the second floor, cold storage, garage and both side rooms (Warehouse Manager), open as soon as the disaster hits. You can walk there and build there right away. Works on a save already past the disaster, and on one from before it once the disaster comes.[/*]
 [*][b]Random weather[/b]: the weather is rolled from chances you set, for example less rain late in the game. Cold waves and the game's fixed story days keep the game's weather.[/*]
+[*][b]Food[/b]: raw food sickness chance, and Appetite Loss from eating the same food: turn it off, or make it shorter, longer, milder or harsher.[/*]
+[*][b]Mold[/b]: Disinfectant Spray radius and cost, how fast moldy food spoils, how often mold spreads, how many items it reaches, and how many items start moldy.[/*]
+[*][b]Rats[/b]: how often rats visit, and how long a rat stays before it escapes.[/*]
+[*][b]Sickness[/b]: turn off the Outbreak crisis, or only its worsening; set the Wind Chill and High Temperature chances in a cold wave.[/*]
+[*][b]Power and the house[/b]: how much power devices use, a later city power cut or none at all, no Blackout panic, and no heavy rain leaks.[/*]
+[*][b]Cold[/b]: how cold cold waves are, and extra levels of Personal Cold Resistance.[/*]
+[*][b]Stray zombies[/b]: turn them off, or set their start day, the time between visits, visits per day, how many at once, how often a crawler leads them, and what they drop.[/*]
+[*][b]Hordes[/b]: story hordes always at full strength, and more or less horde loot.[/*]
+[*][b]Neighbour and companion[/b]: they never die, or the rescue deadline comes later.[/*]
+[*][b]Strangers you support[/b]: how much trust they lose, how often mishaps hit them, and which mishaps can happen.[/*]
+[*][b]Commissions[/b]: how often new commissions and Aid Platform requests arrive.[/*]
+[*][b]Thoughts, morale, crafting and reach[/b]: how often your character thinks out loud, morale from music and perfect harvests, the vase morale limit, full crafting proficiency from lower-level recipes, and how far away you can pick up items.[/*]
 [*][b]Whole-floor heat[/b]: running heaters, AC units and stoves can warm the Indoor zone and the Sunroom together, and the Terrace and the Basement can join. This is the Whole Floor Climate mod, moved in here. Its settings are copied over the first time Game Rules starts; then delete [font=Courier New]WholeFloorClimate.dll[/font].[/*]
 [/list]
 
@@ -33,6 +45,10 @@ Works in English and Chinese.
 [*][b]Solar in bad weather[/b] has no effect at night, and none on a panel that no light reaches.[/*]
 [*][b]Random weather[/b] changes the weather from the next hour on, and the forecast shows the new weather. The same seed always rolls the same weather, so a reload keeps it.[/*]
 [*][b]No debt collector[/b] works best turned on before the loan shark's first visit. A visit already under way finishes as usual.[/*]
+[*][b]Rat visit chance[/b] does not apply during a Rat Infestation.[/*]
+[*][b]Device power use[/b] does not change cooking and shredding jobs, the compressor, defenses firing or the signal station.[/*]
+[*][b]No power cut[/b] also means the events that follow the cut, and the diesel generator start, never come. A cut that already happened is not undone.[/*]
+[*][b]Cold wave strength[/b] also changes whether strangers you support count the day as cold.[/*]
 [/list]
 
 [size=5]Requirements[/size]
@@ -68,7 +84,7 @@ Open source under MIT: [url=https://github.com/AnExiledDev/SurvivalLog-GameRules
 [line]
 [size=5]简体中文[/size]
 
-修改 Survival Log 自身的一些规则：重生次数、霉菌、太阳能、蓄电池、食物腐败、夜间访客、锁住的区域、天气，以及暖气能覆盖多大范围。
+修改 Survival Log 自身的一些规则：重生次数、食物和霉菌、老鼠和疾病、电力和房屋、寒冷、零散丧尸和尸潮、夜间访客、邻居、你支援的陌生人、心态、锁住的区域、天气，以及暖气能覆盖多大范围。
 
 每项设置的默认值都是游戏原本的数值，所以全新的配置不会改变任何东西。只开启你想要的即可。
 
@@ -84,6 +100,18 @@ Open source under MIT: [url=https://github.com/AnExiledDev/SurvivalLog-GameRules
 [*][b]没有催债人[/b]：放贷人的深夜上门、警告短信、报复和跟踪的夜晚都不会发生。[/*]
 [*][b]所有区域都打开[/b]：打工仔和大学生的二楼和地下室，或仓库管理员的二楼、冷库、车库和两侧的小屋，在灾难发生时立即打开。可以直接走过去并在那里建造。对已经过了灾难的存档同样生效；灾难前的存档在灾难到来时打开。[/*]
 [*][b]随机天气[/b]：天气按你设置的概率生成，比如游戏后期少下雨。寒潮和剧情固定天气的日子与游戏原本相同。[/*]
+[*][b]食物[/b]：生吃食物后生病的几率；重复进食导致的「厌食」可以关闭，也可以调整持续时间和对食物效果的影响。[/*]
+[*][b]霉菌[/b]：「消毒喷雾」的清理范围和消耗、发霉食物的腐坏速度、「霉菌」的扩散间隔、每次扩散的物品数和初始发霉物品数。[/*]
+[*][b]老鼠[/b]：老鼠来访的几率，以及老鼠逃走前停留的时间。[/*]
+[*][b]疾病[/b]：关闭「疫病」危机，或只关闭「疫病加重」；调整寒潮中患上「风寒」和「发烧」的几率。[/*]
+[*][b]电力与房屋[/b]：电器耗电倍率、推迟停电或永不停电、关闭「停电恐慌」、不再出现「暴雨侵袭」漏雨。[/*]
+[*][b]寒冷[/b]：「寒潮」等寒冷天气的强度倍率，以及额外的「个人抗寒」等级。[/*]
+[*][b]零散丧尸[/b]：可以关闭，也可以设置开始天数、间隔、每天次数、同时数量、由「爬行者丧尸」带领的几率和击杀掉落。[/*]
+[*][b]尸潮[/b]：剧情「尸潮」总是全部强度，以及「尸潮」战利品倍率。[/*]
+[*][b]邻居和同行者[/b]：她们不会死亡，或者推迟救助期限。[/*]
+[*][b]你支援的陌生人[/b]：每天失去的「信赖」、「遭灾」的几率，以及哪些灾祸可以发生。[/*]
+[*][b]委托[/b]：新委托和「救助平台」新求助出现的频率。[/*]
+[*][b]想法、心态、生产和拾取[/b]：角色自言自语的频率、听歌和完美收获带来的「心态」、花瓶的心态上限、低等级配方给予全部「熟练度」，以及拾取掉落物的距离。[/*]
 [*][b]整层供暖[/b]：运行中的电暖器、空调和暖炉可以同时温暖室内和阳光房，露台和地下室也可以加入。这就是 Whole Floor Climate 模组，现在合并到这里。Game Rules 第一次启动时会复制它的设置，之后请删除 [font=Courier New]WholeFloorClimate.dll[/font]。[/*]
 [/list]
 
@@ -99,6 +127,10 @@ Game Rules 不会往存档里写入自己的数据，你可以随时移除它。
 [*][b]恶劣天气太阳能[/b]在夜间没有效果，对照不到光的太阳能板也没有效果。[/*]
 [*][b]随机天气[/b]从下一个小时起改变天气，天气预报也会显示新的天气。相同的种子总是生成相同的天气，所以读档后保持不变。[/*]
 [*][b]没有催债人[/b]最好在放贷人第一次上门前开启。已经在进行中的上门会照常结束。[/*]
+[*][b]老鼠来访几率[/b]在「鼠患」期间不生效。[/*]
+[*][b]电器耗电倍率[/b]不影响烹饪和粉碎工作、压缩机、防御设施开火和信号站。[/*]
+[*][b]永不停电[/b]停电之后的事件和柴油发电机的启动也不会出现。已经发生的停电不会恢复。[/*]
+[*][b]寒潮强度[/b]也会影响你支援的陌生人是否把当天算作寒冷。[/*]
 [/list]
 
 [size=5]前置要求[/size]
