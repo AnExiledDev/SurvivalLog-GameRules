@@ -5,6 +5,7 @@ using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using GameRules.Adapters;
 using GameRules.Core;
+using GameRules.Settings;
 using HarmonyLib;
 
 namespace GameRules;
@@ -50,7 +51,19 @@ public sealed class Plugin : BasePlugin
 
         StartOpenAreas(harmony, openAreas, log.Write);
         StartTables(startRules, weather, log.Write);
+        StartGroups(harmony, log.Write);
         StartTicker(log.Write);
+    }
+
+    /// <summary>Each group binds its own settings; their GlobalSetting changes all go through one table writer.</summary>
+    private void StartGroups(Harmony harmony, System.Action<string> log)
+    {
+        var table = new TableChanges();
+
+        FoodAndHealthRules.Start(Config, harmony, table, log);
+        HouseAndZombieRules.Start(Config, harmony, table, log);
+        PeopleAndMoraleRules.Start(Config, harmony, table, log);
+        RulesTicker.Checks.Add(new GlobalTable(table, log).Tick);
     }
 
     private RuleEntries BindRules()
