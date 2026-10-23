@@ -146,6 +146,12 @@ The first time Game Rules starts, it copies these three from Whole Floor Climate
 | --- | --- | --- |
 | `NeverDie` | `false` | The neighbour and your companion never die. When the game would let one die, she stays at her weakest instead and can still be rescued. |
 | `RescueDeadline` | `21` | The day after the disaster on which the neighbour and your companion die if you have not started helping them. 21 to 120. |
+| `DeclineTime` | `1` | How long the neighbour and your companion take to drop one condition level when you send nothing, times the game's 48 game hours. 0.5 to 5. |
+| `BasketReturnTime` | `1` | How long the basket takes to come back after you send it, times the game's time (16 to 18 game hours, less when she is weak). 0.5 to 3. |
+| `CrisisChance` | `1` | How likely the neighbour is to ask for help with a crisis after two days without a basket, times the game's 25%. 0 to 3. |
+| `DislikePenalty` | `1` | Affinity the neighbour and your companion lose when you send food they dislike. 0 to 5. |
+| `StruggleCount` | `3` | How many times the neighbour and your companion can pull through when near death, if you send enough food in time. 0 to 10. |
+| `ReturnGifts` | `1` | How many gifts the neighbour sends back in the basket, times the game's one gift per 10 value sent. 0.5 to 5. |
 
 ## Strangers
 

@@ -49,6 +49,12 @@ internal static class PeopleAndMoraleRules
         private readonly ConfigEntry<float> _vaseMoraleCap;
         private readonly ConfigEntry<bool> _fullCraftingXp;
         private readonly ConfigEntry<float> _pickupReach;
+        private readonly ConfigEntry<float> _declineTime;
+        private readonly ConfigEntry<float> _basketReturnTime;
+        private readonly ConfigEntry<float> _crisisChance;
+        private readonly ConfigEntry<int> _dislikePenalty;
+        private readonly ConfigEntry<int> _struggleCount;
+        private readonly ConfigEntry<float> _returnGifts;
 
         public Entries(ConfigFile config)
         {
@@ -62,6 +68,36 @@ internal static class PeopleAndMoraleRules
                     "The day after the disaster on which the neighbour and your companion die if you have not started helping them. 21 is the game's own.\n" +
                     "灾难后的第几天，如果还没开始帮助邻居和同行者，她们就会死去。21 为游戏原本的数值。",
                     new AcceptableValueRange<int>(PeopleSettings.GameRescueDeadline, 120)));
+            _declineTime = config.Bind("Companions", "DeclineTime", game.DeclineTime,
+                new ConfigDescription(
+                    "How long the neighbour and your companion take to drop one condition level when you send nothing, times the game's time (48 game hours): 2 is twice as slow. 1 is the game's own.\n" +
+                    "不送物资时，邻居和同行者的状况下降一级所需的时间，为游戏原本的倍数（48 游戏小时）：2 为下降慢一倍。1 为游戏原本的数值。",
+                    new AcceptableValueRange<float>(0.5f, 5f)));
+            _basketReturnTime = config.Bind("Companions", "BasketReturnTime", game.BasketReturnTime,
+                new ConfigDescription(
+                    "How long the basket takes to come back after you send it, times the game's time (16 to 18 game hours, less when she is weak): 0.5 is twice as fast. 1 is the game's own.\n" +
+                    "送出后「篮子」回来所需的时间，为游戏原本的倍数（16 到 18 游戏小时，虚弱时更短）：0.5 为快一倍。1 为游戏原本的数值。",
+                    new AcceptableValueRange<float>(0.5f, 3f)));
+            _crisisChance = config.Bind("Companions", "CrisisChance", game.CrisisChance,
+                new ConfigDescription(
+                    "How likely the neighbour is to ask for help with a crisis after two days without a basket, times the game's chance (25%). 0 means never. 1 is the game's own.\n" +
+                    "两天没有收到「篮子」后，邻居遇到「危机」向你求助的几率，为游戏原本的倍数（25%）。0 为永不发生。1 为游戏原本的数值。",
+                    new AcceptableValueRange<float>(0f, 3f)));
+            _dislikePenalty = config.Bind("Companions", "DislikePenalty", game.DislikePenalty,
+                new ConfigDescription(
+                    "Affinity the neighbour and your companion lose when you send food they dislike. 0 means none. 1 is the game's own.\n" +
+                    "送去邻居和同行者不喜欢的食物时失去的好感度。0 为不减少。1 为游戏原本的数值。",
+                    new AcceptableValueRange<int>(0, 5)));
+            _struggleCount = config.Bind("Companions", "StruggleCount", game.StruggleCount,
+                new ConfigDescription(
+                    "How many times the neighbour and your companion can pull through when near death, if you send enough food in time. 0 means none. 3 is the game's own.\n" +
+                    "邻居和同行者濒死时，如果你及时送去足够的食物，她们能挺过来的次数。0 为没有。3 为游戏原本的数值。",
+                    new AcceptableValueRange<int>(0, 10)));
+            _returnGifts = config.Bind("Companions", "ReturnGifts", game.ReturnGifts,
+                new ConfigDescription(
+                    "How many gifts the neighbour sends back in the basket, times the game's count (one gift per 10 value you send): 2 is about twice as many. 1 is the game's own.\n" +
+                    "邻居放在「篮子」里回赠的礼物数量，为游戏原本的倍数（你送出的每 10 点价值回赠一件）：2 为大约两倍。1 为游戏原本的数值。",
+                    new AcceptableValueRange<float>(0.5f, 5f)));
             _trustLoss = config.Bind("Strangers", "TrustLoss", game.TrustLoss,
                 new ConfigDescription(
                     "How much trust strangers you support lose each day when they go hungry or their letters go unanswered, times the game's loss. 0 means trust never drops. 1 is the game's own.\n" +
@@ -118,7 +154,8 @@ internal static class PeopleAndMoraleRules
             All = new ConfigEntryBase[]
             {
                 _neverDie, _rescueDeadline, _trustLoss, _mishapChance, _commissionChance, _aidPlatformChance,
-                _thoughtFrequency, _moraleGains, _vaseMoraleCap, _fullCraftingXp, _pickupReach,
+                _thoughtFrequency, _moraleGains, _vaseMoraleCap, _fullCraftingXp, _pickupReach, _declineTime,
+                _basketReturnTime, _crisisChance, _dislikePenalty, _struggleCount, _returnGifts,
             }.Concat(_mishapsOff.Values).ToArray();
         }
 
@@ -136,7 +173,13 @@ internal static class PeopleAndMoraleRules
             _moraleGains.Value,
             _vaseMoraleCap.Value,
             _fullCraftingXp.Value,
-            _pickupReach.Value);
+            _pickupReach.Value,
+            _declineTime.Value,
+            _basketReturnTime.Value,
+            _crisisChance.Value,
+            _dislikePenalty.Value,
+            _struggleCount.Value,
+            _returnGifts.Value);
 
         private static ConfigEntry<bool> BindMishapOff(ConfigFile config, Mishap mishap, string english, string chinese) =>
             config.Bind("Strangers", $"No{mishap}Mishap", false,

@@ -25,7 +25,7 @@ Every setting starts at the game's own value, so with a fresh config the mod cha
 - **Cold**: how cold cold waves are, and extra levels of Personal Cold Resistance.
 - **Stray zombies**: turn them off, or set their start day, the time between visits, visits per day, how many at once, how often a crawler leads them, and what they drop.
 - **Hordes**: story hordes always at full strength, and more or less horde loot.
-- **Neighbour and companion**: they never die, or the rescue deadline comes later.
+- **Neighbour and companion**: they never die, or the rescue deadline comes later. They can also drop condition more slowly, pull through near death more often, and lose less affinity for food they dislike; the basket can come back sooner with more gifts, and crises can come less often.
 - **Strangers you support**: how much trust they lose, how often mishaps hit them, and which mishaps can happen.
 - **Commissions**: how often new commissions and Aid Platform requests arrive.
 - **Thoughts, morale, crafting and reach**: how often your character thinks out loud, morale from music and perfect harvests, the vase morale limit, full crafting proficiency from lower-level recipes, and how far away you can pick up items.
@@ -75,7 +75,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.5.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.6.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
 
 ## Feedback and bug reports
 

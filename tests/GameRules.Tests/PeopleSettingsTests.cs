@@ -79,6 +79,55 @@ public sealed class PeopleSettingsTests
         Assert.Equal(3f, Value(changes, "Vase_MoraleCap", 1f));
     }
 
+    [Fact]
+    public void A_slower_decline_stretches_the_hours_between_condition_drops_for_both()
+    {
+        var changes = (PeopleSettings.Game with { DeclineTime = 2f }).TableChanges().ToList();
+
+        Assert.Equal(96f, Value(changes, "Neighbor_TierDropHours", 48f));
+        Assert.Equal(96f, Value(changes, "Companion_TierDropHours", 48f));
+    }
+
+    [Fact]
+    public void A_faster_basket_shortens_every_return_delay_including_weak_and_dying()
+    {
+        var changes = (PeopleSettings.Game with { BasketReturnTime = 0.5f }).TableChanges().ToList();
+
+        Assert.Equal(8f, Value(changes, "Neighbor_ReturnDelayHourMin", 16f));
+        Assert.Equal(9f, Value(changes, "Neighbor_ReturnDelayHourMax", 18f));
+        Assert.Equal(4f, Value(changes, "Neighbor_WeakReturnDelayHour", 8f));
+        Assert.Equal(1f, Value(changes, "Neighbor_DyingReturnDelayHour", 2f));
+        Assert.Equal(4f, Value(changes, "Companion_WeakReturnDelayHour", 8f));
+        Assert.Equal(1f, Value(changes, "Companion_DyingReturnDelayHour", 2f));
+    }
+
+    [Fact]
+    public void No_crises_zeroes_the_crisis_chance()
+    {
+        var changes = (PeopleSettings.Game with { CrisisChance = 0f }).TableChanges().ToList();
+
+        Assert.Equal(0f, Value(changes, "Neighbor_CrisisProb", 0.25f));
+    }
+
+    [Fact]
+    public void More_return_gifts_divide_the_sent_value_by_less()
+    {
+        var changes = (PeopleSettings.Game with { ReturnGifts = 2f }).TableChanges().ToList();
+
+        Assert.Equal(5f, Value(changes, "Neighbor_GiftValuePerReturn", 10f));
+    }
+
+    [Fact]
+    public void Dislike_penalty_and_struggle_count_are_set_for_both()
+    {
+        var changes = (PeopleSettings.Game with { DislikePenalty = 0, StruggleCount = 5 }).TableChanges().ToList();
+
+        Assert.Equal(0f, Value(changes, "Neighbor_DislikeAffinityPenalty", 1f));
+        Assert.Equal(0f, Value(changes, "Companion_DislikeAffinityPenalty", 1f));
+        Assert.Equal(5f, Value(changes, "Neighbor_StruggleMaxCount", 3f));
+        Assert.Equal(5f, Value(changes, "Companion_StruggleMaxCount", 3f));
+    }
+
     private static float Value(System.Collections.Generic.List<TableChange> changes, string key, float gameValue) =>
         changes.Single(change => change.Key == key).Apply(gameValue);
 }

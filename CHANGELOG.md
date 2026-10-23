@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+- Neighbour and companion: how fast they drop a condition level, how long the basket takes to come back, the neighbour's crisis chance, the affinity lost for disliked food, how many times they can pull through near death, and how many gifts come back in the basket.
+
 ## 0.5.0
 
 - Food: raw food sickness chance, and Appetite Loss from eating the same food can be turned off, made shorter or longer, and made milder or harsher.
