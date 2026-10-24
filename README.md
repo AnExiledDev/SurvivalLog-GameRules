@@ -53,7 +53,7 @@ The first time it starts, Game Rules copies your heat sharing settings from Whol
 
 ## Requirements
 
-- Survival Log 1.1.19131. Built and tested on this version; a game update can break it until the mod is updated.
+- Survival Log 1.1.19611. Built and tested on this version; a game update can break it until the mod is updated.
 - The [BepInEx Pack for Survival Log](https://www.nexusmods.com/survivallog/mods/12), the BepInEx 6 (IL2CPP) build for the game.
 - Optional: [Exiled's Toolkit](https://github.com/AnExiledDev/SurvivalLog-ExiledToolkit) 0.4.0 or newer. With it, settings changed on the Mod Manager's Mods screen take effect without restarting the game. Without it, they take effect at the next game start.
 
@@ -61,7 +61,7 @@ The first time it starts, Game Rules copies your heat sharing settings from Whol
 
 1. Install the [BepInEx Pack for Survival Log](https://www.nexusmods.com/survivallog/mods/12) (if no other mods were installed before, start the game once so BepInEx finishes setup, then quit).
 2. Optional, to change settings without a restart: install Exiled's Toolkit. Download `ExiledToolkit-x.y.z.zip` from [its latest release](https://github.com/AnExiledDev/SurvivalLog-ExiledToolkit/releases/latest) or from [Nexus Mods](https://www.nexusmods.com/survivallog/mods/61), and extract it into the game folder (the folder with `SurvivalLog.exe`).
-3. Download `GameRules-x.y.z.zip` from the [latest release](https://github.com/AnExiledDev/SurvivalLog-GameRules/releases/latest) or from Nexus Mods.
+3. Download `GameRules-x.y.z.zip` from the [latest release](https://github.com/AnExiledDev/SurvivalLog-GameRules/releases/latest) or from [Nexus Mods](https://www.nexusmods.com/survivallog/mods/84).
 4. Extract the zip into the game folder (the folder with `SurvivalLog.exe`). When asked, merge the folders. The result should be:
    `C:\Program Files (x86)\Steam\steamapps\common\Survival Log\BepInEx\plugins\GameRules.dll`
 
