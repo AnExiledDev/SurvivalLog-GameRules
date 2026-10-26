@@ -21,20 +21,25 @@ public sealed class RulesTicker : MonoBehaviour
     {
     }
 
+    private int _nextCheck;
+
+    /// <summary>
+    /// One check per frame, in turn. Each check runs on its own 1-2 second timer, and all of them started together,
+    /// so running them all every frame put every table read on the same frame.
+    /// </summary>
     private void Update()
     {
-        var now = Time.realtimeSinceStartup;
+        if (Checks.Count == 0) return;
 
-        foreach (var check in Checks)
+        _nextCheck = (_nextCheck + 1) % Checks.Count;
+
+        try
         {
-            try
-            {
-                check(now);
-            }
-            catch (Exception ex)
-            {
-                ReportFailure(ex);
-            }
+            Checks[_nextCheck](Time.realtimeSinceStartup);
+        }
+        catch (Exception ex)
+        {
+            ReportFailure(ex);
         }
     }
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1
+
+- Less stutter with shared device heat on: each zone's heat is read from the game once per frame instead of dozens of times, and the once-a-second checks no longer all run on the same frame.
+- Made for Survival Log 1.1.19611.
+
 ## 0.6.0
 
 - Neighbour and companion: how fast they drop a condition level, how long the basket takes to come back, the neighbour's crisis chance, the affinity lost for disliked food, how many times they can pull through near death, and how many gifts come back in the basket.

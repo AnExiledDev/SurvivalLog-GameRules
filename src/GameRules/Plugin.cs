@@ -15,7 +15,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.6.0";
+    private const string Version = "0.6.1";
 
     public override void Load()
     {
@@ -215,7 +215,7 @@ public sealed class Plugin : BasePlugin
             pool = PoolSettings.Default;
         }
 
-        PoolPatches.Use(harmony, new PooledClimate(new HeatPool(pool), new GameClimate()), log);
+        PoolPatches.Use(harmony, new PooledClimate(new HeatPool(pool), new FrameClimate(new GameClimate(), () => UnityEngine.Time.frameCount)), log);
     }
 
     private sealed record RuleEntries(

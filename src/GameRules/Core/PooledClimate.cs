@@ -1,3 +1,5 @@
+using System;
+
 namespace GameRules.Core;
 
 /// <summary>
@@ -10,16 +12,22 @@ public sealed class PooledClimate
 {
     private readonly IGameClimate _game;
 
+    // Made once: the hooks run dozens of times a frame, and a method group passed as a Func is a new object each call.
+    private readonly Func<int, int> _heatIn;
+    private readonly Func<int, bool> _acPoweredIn;
+
     public PooledClimate(HeatPool pool, IGameClimate game)
     {
         Pool = pool;
         _game = game;
+        _heatIn = game.DeviceHeatIn;
+        _acPoweredIn = game.IsAcPoweredIn;
     }
 
     public HeatPool Pool { get; }
 
     /// <summary>The answer for SumDeviceHeat(zone), given the game's.</summary>
-    public int DeviceHeat(int zone, int gameHeat) => Pool.DeviceHeatFor(zone, gameHeat, _game.DeviceHeatIn);
+    public int DeviceHeat(int zone, int gameHeat) => Pool.DeviceHeatFor(zone, gameHeat, _heatIn);
 
     /// <summary>The answer for GetAreaTemperature(zone), given the game's (which already holds the pooled device heat).</summary>
     public int Temperature(int zone, int gameTemperature)
@@ -30,9 +38,9 @@ public sealed class PooledClimate
 
         if (takesDeviceHeat is not { } gameWarmsWithDevices) return gameTemperature;
 
-        return gameTemperature + Pool.ExtraWarmth(zone, gameWarmsWithDevices, _game.DeviceHeatIn);
+        return gameTemperature + Pool.ExtraWarmth(zone, gameWarmsWithDevices, _heatIn);
     }
 
     /// <summary>The answer for IsAreaAcPowered(zone), given the game's.</summary>
-    public bool IsAcPowered(int zone, bool gameSaysPowered) => Pool.IsAcPoweredFor(zone, gameSaysPowered, _game.IsAcPoweredIn);
+    public bool IsAcPowered(int zone, bool gameSaysPowered) => Pool.IsAcPoweredFor(zone, gameSaysPowered, _acPoweredIn);
 }

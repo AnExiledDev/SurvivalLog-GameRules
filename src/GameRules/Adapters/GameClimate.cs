@@ -15,25 +15,43 @@ internal sealed class GameClimate : IGameClimate
 
     public static bool IsReadingGame => _isReadingGame;
 
-    public int DeviceHeatIn(int zone) => ReadGame(() => EnvAreaHelper.SumDeviceHeat(zone));
-
-    public bool? TakesDeviceHeat(int zone) => GameSingleton.Existing<ConfigManager>()?.Get_Config_EnvArea(zone)?.DeviceHeat;
-
-    public bool IsAcPoweredIn(int zone) => ReadGame(() => EnvAreaHelper.IsAreaAcPowered(zone));
-
-    private static T ReadGame<T>(Func<T> read)
+    public int DeviceHeatIn(int zone)
     {
-        var wasReading = _isReadingGame;
-
-        _isReadingGame = true;
+        var wasReading = StartReading();
 
         try
         {
-            return read();
+            return EnvAreaHelper.SumDeviceHeat(zone);
         }
         finally
         {
             _isReadingGame = wasReading;
         }
+    }
+
+    public bool? TakesDeviceHeat(int zone) => GameSingleton.Existing<ConfigManager>()?.Get_Config_EnvArea(zone)?.DeviceHeat;
+
+    public bool IsAcPoweredIn(int zone)
+    {
+        var wasReading = StartReading();
+
+        try
+        {
+            return EnvAreaHelper.IsAreaAcPowered(zone);
+        }
+        finally
+        {
+            _isReadingGame = wasReading;
+        }
+    }
+
+    /// <summary>No lambda here: these run dozens of times a frame, and a closure is a new object each call.</summary>
+    private static bool StartReading()
+    {
+        var wasReading = _isReadingGame;
+
+        _isReadingGame = true;
+
+        return wasReading;
     }
 }
