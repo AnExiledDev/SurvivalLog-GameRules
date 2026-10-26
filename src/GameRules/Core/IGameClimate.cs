@@ -14,4 +14,13 @@ public interface IGameClimate
 
     /// <summary>Whether an AC is running in the zone itself (the game's IsAreaAcPowered).</summary>
     bool IsAcPoweredIn(int zone);
+
+    /// <summary>Which save and which config tables are loaded. Read once a frame, so it must be free to read.</summary>
+    LoadedGame CurrentGame();
 }
+
+/// <summary>
+/// The loaded run and config tables, told apart by the game's own objects: loading a save makes a new world, and
+/// loading the configs again makes a new config manager. Zero for one the game has not made.
+/// </summary>
+public readonly record struct LoadedGame(long World, long Config);

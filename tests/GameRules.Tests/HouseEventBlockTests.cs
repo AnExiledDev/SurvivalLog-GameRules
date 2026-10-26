@@ -62,6 +62,44 @@ public sealed class HouseEventBlockTests
         Assert.False(block.BlocksEvent(HeavyRainWageSlave, CutDay));
     }
 
+    /// <summary>The event hook reads the game day only for an event that needs it; for every other event the day must not matter.</summary>
+    [Theory]
+    [InlineData(HeavyRainShared)]
+    [InlineData(HeavyRainWageSlave)]
+    [InlineData(HeavyRainStudent)]
+    [InlineData(HeavyRainWarehouseManager)]
+    [InlineData(LeakInTheEaves)]
+    [InlineData(0)]
+    public void An_event_that_is_not_the_power_cut_is_answered_the_same_without_the_day(int eventId)
+    {
+        Assert.False(HouseEventBlock.ReadsDay(eventId));
+
+        foreach (var block in EveryBlock())
+        {
+            foreach (var day in new[] { 0, CutDay - 1, CutDay, CutDay + 9, CutDay + 10, 999 })
+            {
+                Assert.Equal(block.BlocksEvent(eventId, day), block.BlocksEvent(eventId, null));
+            }
+        }
+    }
+
+    [Theory]
+    [InlineData(PowerCutWageSlave)]
+    [InlineData(PowerCutStudent)]
+    [InlineData(PowerCutWarehouseManager)]
+    public void The_power_cut_is_answered_with_the_day(int eventId)
+    {
+        Assert.True(HouseEventBlock.ReadsDay(eventId));
+    }
+
+    private static IEnumerable<HouseEventBlock> EveryBlock()
+    {
+        foreach (var delay in new[] { 0, 1, 10 })
+        foreach (var noPowerCut in new[] { false, true })
+        foreach (var noStormLeaks in new[] { false, true })
+            yield return new HouseEventBlock(delay, noPowerCut, noStormLeaks);
+    }
+
     [Fact]
     public void No_storm_leaks_stops_every_heavy_rain_event_but_leaves_the_power_cut_and_the_eaves()
     {

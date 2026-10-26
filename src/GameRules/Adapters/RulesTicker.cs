@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace GameRules.Adapters;
@@ -23,9 +24,13 @@ public sealed class RulesTicker : MonoBehaviour
 
     private int _nextCheck;
 
+    /// <summary>The checks only compare times with each other, so any steady clock will do.</summary>
+    private static readonly long Start = Stopwatch.GetTimestamp();
+
     /// <summary>
     /// One check per frame, in turn. Each check runs on its own 1-2 second timer, and all of them started together,
-    /// so running them all every frame put every table read on the same frame.
+    /// so running them all every frame put every table read on the same frame. The time comes from .NET's own clock:
+    /// Unity's Time.realtimeSinceStartup through interop boxes its answer on every frame.
     /// </summary>
     private void Update()
     {
@@ -35,7 +40,7 @@ public sealed class RulesTicker : MonoBehaviour
 
         try
         {
-            Checks[_nextCheck](Time.realtimeSinceStartup);
+            Checks[_nextCheck]((float)((Stopwatch.GetTimestamp() - Start) / (double)Stopwatch.Frequency));
         }
         catch (Exception ex)
         {

@@ -4,9 +4,10 @@ using System.Collections.Generic;
 namespace GameRules.Core;
 
 /// <summary>
-/// Remembers the game's answers for the rest of a frame. The game asks a zone's temperature dozens of times a frame,
-/// and each pooled answer reads every other pool zone; a device's heat and an AC's power do not change within a frame,
-/// so each zone is read from the game once per frame.
+/// Remembers the game's answers. The game asks a zone's temperature dozens of times a frame, and each pooled answer
+/// reads every other pool zone; a device's heat and an AC's power do not change within a frame, so each zone is read
+/// from the game once per frame. Whether a zone takes device heat is config data, so it is read once per loaded save
+/// and config tables.
 /// </summary>
 public sealed class FrameClimate : IGameClimate
 {
@@ -16,6 +17,7 @@ public sealed class FrameClimate : IGameClimate
     private readonly Dictionary<int, bool> _acPowered = new();
     private readonly Dictionary<int, bool?> _takesHeat = new();
     private int _cachedFrame = int.MinValue;
+    private LoadedGame _cachedGame;
 
     public FrameClimate(IGameClimate game, Func<int> frame)
     {
@@ -59,6 +61,8 @@ public sealed class FrameClimate : IGameClimate
         }
     }
 
+    public LoadedGame CurrentGame() => _game.CurrentGame();
+
     private void ForgetOlderFrames()
     {
         var frame = _frame();
@@ -68,6 +72,16 @@ public sealed class FrameClimate : IGameClimate
         _cachedFrame = frame;
         _heat.Clear();
         _acPowered.Clear();
+        ForgetOtherGames();
+    }
+
+    private void ForgetOtherGames()
+    {
+        var game = _game.CurrentGame();
+
+        if (game == _cachedGame) return;
+
+        _cachedGame = game;
         _takesHeat.Clear();
     }
 }

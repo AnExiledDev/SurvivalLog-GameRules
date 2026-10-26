@@ -61,7 +61,12 @@ public sealed class HeatPool
     {
         if (gameWarmsWithDevices || !Contains(zone)) return 0;
 
-        return _members.Sum(heatIn);
+        // A plain loop: this runs dozens of times a frame, and LINQ over an array makes a new enumerator each call.
+        var total = 0;
+
+        foreach (var member in _members) total = checked(total + heatIn(member));
+
+        return total;
     }
 
     /// <summary>
@@ -73,7 +78,12 @@ public sealed class HeatPool
     {
         if (gameSaysPowered || !Contains(zone)) return gameSaysPowered;
 
-        return _members.Any(member => member != zone && poweredIn(member));
+        foreach (var member in _members)
+        {
+            if (member != zone && poweredIn(member)) return true;
+        }
+
+        return false;
     }
 
     public string Describe() =>

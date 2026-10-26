@@ -12,7 +12,14 @@ public sealed class TableChanges
 {
     private readonly Dictionary<string, IReadOnlyList<TableChange>> _byGroup = new();
 
-    public void Set(string group, IEnumerable<TableChange> changes) => _byGroup[group] = changes.ToList();
+    /// <summary>Goes up with every <see cref="Set"/>, so a reader can tell the changes are the ones it already has.</summary>
+    public int Version { get; private set; }
+
+    public void Set(string group, IEnumerable<TableChange> changes)
+    {
+        _byGroup[group] = changes.ToList();
+        Version++;
+    }
 
     /// <summary>One change per key. Two groups never share a key; if they did, the later group in name order wins.</summary>
     public IReadOnlyDictionary<string, TableChange> ByKey()

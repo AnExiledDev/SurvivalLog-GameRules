@@ -18,6 +18,8 @@ internal static class PeoplePatches
     private static float _mishapChance = 1f;
     private static bool _isDeathHooked;
     private static bool _isMishapHooked;
+    private static bool _hasLoggedNeighbour;
+    private static bool _hasLoggedCompanion;
     private static Action<string> _log = _ => { };
 
     /// <summary>
@@ -73,19 +75,24 @@ internal static class PeoplePatches
 
     private static void NeighbourChecked(ref bool __result) => __result = NeighbourGuard.CheckResult(__result);
 
-    private static bool NeighbourDies() => AllowsDeath(NeighbourGuard, "the neighbour");
+    private static bool NeighbourDies() => AllowsDeath(NeighbourGuard, "the neighbour", ref _hasLoggedNeighbour);
 
     private static void CompanionCheck() => CompanionGuard.CheckStarts();
 
     private static void CompanionChecked(ref bool __result) => __result = CompanionGuard.CheckResult(__result);
 
-    private static bool CompanionDies() => AllowsDeath(CompanionGuard, "the companion");
+    private static bool CompanionDies() => AllowsDeath(CompanionGuard, "the companion", ref _hasLoggedCompanion);
 
-    private static bool AllowsDeath(DeathGuard guard, string who)
+    /// <summary>A kept-alive death can come back on every survival check, so its line is only built the first time.</summary>
+    private static bool AllowsDeath(DeathGuard guard, string who, ref bool hasLogged)
     {
         var allows = guard.AllowsDeath();
 
-        if (!allows) LogOnce("death " + who, $"{who} would have died; kept alive at the weakest stage (logged once per game start)");
+        if (!allows && !hasLogged)
+        {
+            hasLogged = true;
+            LogOnce("death " + who, $"{who} would have died; kept alive at the weakest stage (logged once per game start)");
+        }
 
         return allows;
     }

@@ -18,8 +18,8 @@ internal sealed class GlobalTable
 {
     private const float CheckSeconds = 1f;
 
-    private readonly TableChanges _changes;
     private readonly TableKeeper _keeper = new();
+    private readonly TableKeys _keys;
     private readonly Dictionary<string, Slot?> _slots = new();
     private readonly Dictionary<string, float> _reported = new();
     private readonly Action<string> _log;
@@ -27,7 +27,7 @@ internal sealed class GlobalTable
 
     public GlobalTable(TableChanges changes, Action<string> log)
     {
-        _changes = changes;
+        _keys = new TableKeys(changes, _keeper);
         _log = log;
     }
 
@@ -37,17 +37,21 @@ internal sealed class GlobalTable
 
         _nextCheckAt = now + CheckSeconds;
 
+        // The key list is only rebuilt when a setting changes; with nothing to keep, the game is not read at all.
+        var keys = _keys.Keys;
+
+        if (keys.Count == 0) return;
+
         var table = GameSingleton.Existing<ConfigManager>()?._Config_GlobalSetting_Dict;
 
         if (table == null || table.Count == 0) return;
 
-        var changes = _changes.ByKey();
-        var keys = new HashSet<string>(_keeper.Keys);
+        var changes = _keys.ByKey;
 
-        keys.UnionWith(changes.Keys);
-
-        foreach (var key in keys)
+        for (var i = 0; i < keys.Count; i++)
         {
+            var key = keys[i];
+
             if (SlotFor(key) is not { } slot || !table.TryGetValue(slot.TableKey, out var entry) || entry == null) continue;
 
             changes.TryGetValue(key, out var change);
@@ -69,13 +73,13 @@ internal sealed class GlobalTable
 
             if (entry._Params1_k__BackingField != value && IntEntry.KeepsParams2InStep(entry._Params1_k__BackingField, entry._Params2_k__BackingField)) entry._Params2_k__BackingField = value;
             if (entry._Params1_k__BackingField != value) entry._Params1_k__BackingField = value;
-            if (!Equals(slot.Field.GetValue(null), value)) slot.Field.SetValue(null, value);
+            if (slot.GetInt!() != value) slot.SetInt!(value);
 
             return;
         }
 
         if (entry._Params2_k__BackingField != target) entry._Params2_k__BackingField = target;
-        if (!Equals(slot.Field.GetValue(null), target)) slot.Field.SetValue(null, target);
+        if (!slot.GetFloat!().Equals(target)) slot.SetFloat!(target);
     }
 
     /// <summary>Logged when a key's value changes, not every second.</summary>
@@ -97,21 +101,42 @@ internal sealed class GlobalTable
 
         var field = AccessTools.Property(typeof(GameKey), "_GlobalSetting_" + key);
         var tableKey = AccessTools.Property(typeof(GameKey), "Key_GlobalSetting_" + key)?.GetValue(null) as string ?? key;
-        Slot? slot = null;
+        var slot = field == null ? null : Slot.For(field, tableKey);
 
-        if (field != null && (field.PropertyType == typeof(int) || field.PropertyType == typeof(float)))
-        {
-            slot = new Slot(field, tableKey, field.PropertyType == typeof(int));
-        }
-        else
-        {
-            _log($"{HookFailure.Prefix} the game value {key}: the game has no such setting, so it keeps the game's rule");
-        }
+        if (slot == null) _log($"{HookFailure.Prefix} the game value {key}: the game has no such setting, so it keeps the game's rule");
 
         _slots[key] = slot;
 
         return slot;
     }
 
-    private sealed record Slot(PropertyInfo Field, string TableKey, bool IsInt);
+    /// <summary>
+    /// The static field is read and written through typed delegates made once: through reflection every read and write
+    /// boxes the value, for every key, every second.
+    /// </summary>
+    private sealed record Slot(string TableKey, bool IsInt, Func<int>? GetInt, Action<int>? SetInt, Func<float>? GetFloat, Action<float>? SetFloat)
+    {
+        /// <summary>Null for a field that is not a static int or float with both a getter and a setter.</summary>
+        public static Slot? For(PropertyInfo field, string tableKey)
+        {
+            var getter = field.GetGetMethod(nonPublic: true);
+            var setter = field.GetSetMethod(nonPublic: true);
+
+            if (getter is not { IsStatic: true } || setter is not { IsStatic: true }) return null;
+
+            if (field.PropertyType == typeof(int))
+            {
+                return new Slot(tableKey, IsInt: true,
+                    (Func<int>)Delegate.CreateDelegate(typeof(Func<int>), getter), (Action<int>)Delegate.CreateDelegate(typeof(Action<int>), setter), null, null);
+            }
+
+            if (field.PropertyType == typeof(float))
+            {
+                return new Slot(tableKey, IsInt: false,
+                    null, null, (Func<float>)Delegate.CreateDelegate(typeof(Func<float>), getter), (Action<float>)Delegate.CreateDelegate(typeof(Action<float>), setter));
+            }
+
+            return null;
+        }
+    }
 }

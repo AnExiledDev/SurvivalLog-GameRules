@@ -18,6 +18,8 @@ internal static class VisitorPatches
     private static VisitorBlock _block = VisitorBlock.Game;
     private static Action<string> _log = _ => { };
     private static readonly HashSet<string> LoggedOnce = new();
+    private static readonly FirstTime LoggedEvents = new();
+    private static readonly FirstTime LoggedTexts = new();
     private static bool _isEventHooked;
     private static bool _isTextHooked;
 
@@ -85,7 +87,7 @@ internal static class VisitorPatches
             if (!_block.BlocksEvent(eventId)) return true;
 
             __result = null;
-            LogOnce($"event {eventId}", $"turned away event {eventId} (logged once per event)");
+            if (LoggedEvents.Of(eventId)) _log($"turned away event {eventId} (logged once per event)");
 
             return false;
         }
@@ -103,7 +105,7 @@ internal static class VisitorPatches
         {
             if (!_block.BlocksText(smsId)) return true;
 
-            LogOnce($"text {smsId}", $"held back the debt collector's warning text {smsId}");
+            if (LoggedTexts.Of(smsId)) _log($"held back the debt collector's warning text {smsId}");
 
             return false;
         }

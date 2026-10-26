@@ -1,3 +1,5 @@
+using System;
+
 namespace GameRules.Core;
 
 /// <summary>
@@ -11,6 +13,9 @@ public readonly record struct SolarResult(float Power, bool ClearsBadWeather);
 
 public static class SolarRules
 {
+    /// <summary>The game's reason text for a panel stopped by the weather, compared in place without copying it out.</summary>
+    public static bool IsBadWeatherReason(ReadOnlySpan<char> reason) => reason.SequenceEqual("bad_weather".AsSpan());
+
     /// <summary>
     /// Bad weather: the game gives nothing, so the panel gets <see cref="RuleSettings.BadWeatherSolar"/> of a cloudy
     /// day's light; a panel standing where no light reaches (AreaLightMul 0) still makes nothing. Then every output is

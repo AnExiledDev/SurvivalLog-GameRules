@@ -1,5 +1,6 @@
 # Game versions each version of Game Rules is known to work on.
 # mod version = game versions, separated by commas
+0.6.2 = 1.1.19611
 0.6.1 = 1.1.19611
 0.6.0 = 1.1.19131, 1.1.19611
 0.5.0 = 1.1.19131

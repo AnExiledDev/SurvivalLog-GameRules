@@ -43,6 +43,8 @@ internal sealed class FakeHouse : IGameClimate
 
     public bool IsAcPoweredIn(int zone) => _devices.Any(device => device.Zone == zone && device.IsAc);
 
+    public LoadedGame CurrentGame() => default;
+
     /// <summary>The game's GetAreaTemperature without the mod.</summary>
     public int GameTemperature(int zone) => Weather[zone] + (TakesDeviceHeat(zone) == true ? DeviceHeatIn(zone) : 0);
 

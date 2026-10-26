@@ -39,6 +39,8 @@ internal static unsafe class SolarDetour
     private static Action<string> _log = _ => { };
     private static CalcSolarOutput? _original;
     private static bool _isTried;
+    private static bool _hasLoggedChange;
+    private static int _basePowerOffset;
     private static readonly HashSet<string> LoggedOnce = new();
 
     // Kept in a static field so the collector never frees the function the game calls.
@@ -82,6 +84,9 @@ internal static unsafe class SolarDetour
 
                 return;
             }
+
+            // Found before the detour goes in, so every call already has it.
+            _basePowerOffset = FindBasePowerOffset();
 
             var hook = DobbyHookExport();
 
@@ -155,18 +160,24 @@ internal static unsafe class SolarDetour
         return returned;
     }
 
+    /// <summary>
+    /// Runs for every panel each time the grid is worked out, so nothing here makes an object: the config's base power
+    /// and the weather reason are read in place rather than through interop wrappers and a copied string.
+    /// </summary>
     private static void Adjust(IntPtr result, IntPtr elecConfig)
     {
-        if (result == IntPtr.Zero || elecConfig == IntPtr.Zero) return;
+        // Back at the game's numbers the detour stays in but changes nothing, so it reads nothing either.
+        if (!_settings.ChangesSolar || result == IntPtr.Zero || elecConfig == IntPtr.Zero) return;
 
         var output = (byte*)result;
         var reasonPointer = *(IntPtr*)(output + ReasonOffset);
         var reading = new SolarReading(
             Power: *(float*)(output + PowerOffset),
-            BasePower: new Config_FurnitureElectrical(elecConfig).BasePower,
+            BasePower: BasePowerOf(elecConfig),
             AreaLightMul: *(float*)(output + AreaLightMulOffset),
             Efficiency: *(float*)(output + EfficiencyOffset),
-            IsBadWeather: reasonPointer != IntPtr.Zero && IL2CPP.Il2CppStringToManaged(reasonPointer) == "bad_weather");
+            IsBadWeather: reasonPointer != IntPtr.Zero && SolarRules.IsBadWeatherReason(
+                new ReadOnlySpan<char>((char*)(void*)IL2CPP.il2cpp_string_chars(reasonPointer), IL2CPP.il2cpp_string_length(reasonPointer))));
         var adjusted = SolarRules.Apply(reading, _settings);
 
         *(float*)(output + PowerOffset) = adjusted.Power;
@@ -174,7 +185,30 @@ internal static unsafe class SolarDetour
         // The game shows a reason only for a panel making nothing, and a null reason is its own "running".
         if (adjusted.ClearsBadWeather) *(IntPtr*)(output + ReasonOffset) = IntPtr.Zero;
 
-        if (adjusted.Power != reading.Power) LogOnce("solar", $"first changed solar output: {reading.Power:0.##} in the game, {adjusted.Power:0.##} with the mod");
+        if (adjusted.Power != reading.Power && !_hasLoggedChange)
+        {
+            _hasLoggedChange = true;
+            LogOnce("solar", $"first changed solar output: {reading.Power:0.##} in the game, {adjusted.Power:0.##} with the mod");
+        }
+    }
+
+    /// <summary>The config's BasePower, read from its field; through the wrapper it is a new object and a boxed read.</summary>
+    private static float BasePowerOf(IntPtr elecConfig) =>
+        _basePowerOffset > 0 ? *(float*)((byte*)elecConfig + _basePowerOffset) : new Config_FurnitureElectrical(elecConfig).BasePower;
+
+    /// <summary>0 when the field is not found, and BasePower is then read through the wrapper as before.</summary>
+    private static int FindBasePowerOffset()
+    {
+        try
+        {
+            var field = IL2CPP.GetIl2CppField(Il2CppClassPointerStore<Config_FurnitureElectrical>.NativeClassPtr, "<BasePower>k__BackingField");
+
+            return field == IntPtr.Zero ? 0 : (int)IL2CPP.il2cpp_field_get_offset(field);
+        }
+        catch (Exception)
+        {
+            return 0;
+        }
     }
 
     private static void LogOnce(string key, string message)

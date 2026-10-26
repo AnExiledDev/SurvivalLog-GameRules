@@ -21,6 +21,7 @@ internal static class HouseZombiePatches
     private const string ColdResistEffect = "Buff/AE_PersonalColdResist";
 
     private static readonly HashSet<string> LoggedOnce = new();
+    private static readonly FirstTime LoggedEvents = new();
     private static readonly Random LootRoll = new();
     private static HouseZombieSettings _settings = HouseZombieSettings.Game;
     private static HouseEventBlock _events = HouseEventBlock.Game;
@@ -130,10 +131,11 @@ internal static class HouseZombiePatches
 
             var eventId = config._EventId_k__BackingField;
 
-            if (!_events.BlocksEvent(eventId, GameDay())) return true;
+            // Every event the game builds passes through here, so the day is only read for the power cut.
+            if (!_events.BlocksEvent(eventId, HouseEventBlock.ReadsDay(eventId) ? GameDay() : null)) return true;
 
             __result = null;
-            LogOnce($"event {eventId}", $"held back event {eventId} (logged once per event)");
+            if (LoggedEvents.Of(eventId)) _log($"held back event {eventId} (logged once per event)");
 
             return false;
         }

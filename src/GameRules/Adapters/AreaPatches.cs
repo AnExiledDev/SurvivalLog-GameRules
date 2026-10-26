@@ -17,6 +17,7 @@ internal static class AreaPatches
 {
     private static Action<string> _log = _ => { };
     private static readonly HashSet<string> LoggedOnce = new();
+    private static readonly FirstTime LoggedEvents = new();
 
     public static void Apply(Harmony harmony, Action<string> log)
     {
@@ -48,14 +49,17 @@ internal static class AreaPatches
     {
         try
         {
-            if (config == null || RunTags() is not { } tags) return true;
+            if (config == null) return true;
 
             var eventId = config._EventId_k__BackingField;
+
+            // Every event the game builds passes through here, so the save's tags are only read for an opening event.
+            if (!OpenAreas.OpensArea(eventId) || RunTags() is not { } tags) return true;
 
             if (!OpenAreas.SkipsEvent(eventId, tags.HasTag)) return true;
 
             __result = null;
-            LogOnce($"event {eventId}", $"skipped event {eventId}, its area is already open (logged once per event)");
+            if (LoggedEvents.Of(eventId)) _log($"skipped event {eventId}, its area is already open (logged once per event)");
 
             return false;
         }

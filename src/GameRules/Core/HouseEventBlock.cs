@@ -22,6 +22,9 @@ public sealed record HouseEventBlock(int PowerCutDelay, bool NoPowerCut, bool No
 
     public bool BlocksAny => PowerCutDelay > 0 || NoPowerCut || NoStormLeaks;
 
+    /// <summary>Whether the answer for this event depends on the day; for every other event the day need not be read.</summary>
+    public static bool ReadsDay(int eventId) => PowerCutEvents.Contains(eventId);
+
     /// <summary>
     /// Whether the event is held back on <paramref name="gameDay"/> (counted from 0). An unknown day lets a delayed
     /// power cut through, so a failed read keeps the game's rule.

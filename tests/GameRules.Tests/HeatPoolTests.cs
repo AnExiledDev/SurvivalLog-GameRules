@@ -144,6 +144,28 @@ public sealed class HeatPoolTests
     }
 
     [Fact]
+    public void A_pool_member_the_game_gives_no_device_heat_gets_every_members_heat_once()
+    {
+        Assert.Equal((Zones.Indoor + Zones.Sunroom + Zones.Terrace + Zones.Basement) * 10,
+            Everything.ExtraWarmth(Zones.Terrace, gameWarmsWithDevices: false, zone => zone * 10));
+    }
+
+    [Fact]
+    public void A_zone_shares_any_other_members_ac_and_only_reads_the_others()
+    {
+        var asked = new List<int>();
+
+        Assert.True(Everything.IsAcPoweredFor(Zones.Indoor, gameSaysPowered: false, zone =>
+        {
+            asked.Add(zone);
+
+            return zone == Zones.Basement;
+        }));
+        Assert.Equal(new[] { Zones.Sunroom, Zones.Terrace, Zones.Basement }, asked);
+        Assert.False(Everything.IsAcPoweredFor(Zones.Indoor, gameSaysPowered: false, _ => false));
+    }
+
+    [Fact]
     public void A_zone_the_game_does_not_know_keeps_its_numbers()
     {
         const int unknownZone = 9;

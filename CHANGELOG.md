@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.2
+
+- Less stutter with shared device heat, solar panel settings and the other rules turned on.
+- Made for Survival Log 1.1.19611.
+
 ## 0.6.1
 
 - Less stutter with shared device heat on: each zone's heat is read from the game once per frame instead of dozens of times, and the once-a-second checks no longer all run on the same frame.

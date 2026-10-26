@@ -14,6 +14,9 @@ public sealed class TableKeeper
     /// <summary>Every key the mod has changed at some point, so a key dropped from the changes still gets its value back.</summary>
     public IEnumerable<string> Keys => _seen.Keys;
 
+    /// <summary>True until the mod changes a value: with no changes asked for either, there is nothing to put back.</summary>
+    public bool IsEmpty => _seen.Count == 0;
+
     /// <summary>
     /// The value the key should hold, or null for a key the mod has never changed and does not change now.
     /// <paramref name="entryId"/> tells table entries apart; <paramref name="entryValue"/> is what the entry holds.

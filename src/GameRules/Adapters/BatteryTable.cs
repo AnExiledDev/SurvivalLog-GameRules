@@ -18,6 +18,10 @@ internal sealed class BatteryTable
     private readonly float _multiplier;
     private readonly Action<string> _log;
     private readonly HashSet<IntPtr> _scaledRows = new();
+
+    // The table last walked, held so the game cannot free it and build the next one at the same address.
+    private Il2CppSystem.Collections.Generic.Dictionary<int, Config_FurnitureElectrical>? _walked;
+    private int _walkedCount;
     private float _nextCheckAt;
 
     public BatteryTable(float multiplier, Action<string> log)
@@ -34,7 +38,14 @@ internal sealed class BatteryTable
 
         var rows = GameSingleton.Existing<ConfigManager>()?._Config_FurnitureElectrical_Dict;
 
-        if (rows == null || rows.Count == 0) return;
+        if (rows == null) return;
+
+        var count = rows.Count;
+
+        if (count == 0) return;
+
+        // Every row was scaled when this table was last walked, and walking it again makes a new object per row.
+        if (_walked != null && _walked.Pointer == rows.Pointer && count == _walkedCount) return;
 
         var scaled = 0;
 
@@ -50,6 +61,9 @@ internal sealed class BatteryTable
             row._Capacity_k__BackingField = capacity;
             scaled++;
         }
+
+        _walked = rows;
+        _walkedCount = count;
 
         if (scaled > 0) _log($"{scaled} battery types now hold {_multiplier:0.##}x the game's power");
     }

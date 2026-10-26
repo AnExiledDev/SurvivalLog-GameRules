@@ -91,6 +91,44 @@ public sealed class OpenAreasTests
         Assert.False(OpenAreas.SkipsEvent(ColdWaveStrikes, _ => true));
     }
 
+    /// <summary>The event hook reads the save's tags only for an opening event; that is only safe if no other event can be skipped.</summary>
+    [Theory]
+    [InlineData(FindSecondFloorKey)]
+    [InlineData(RepairTheStairs)]
+    [InlineData(ClearTheCellar)]
+    [InlineData(ColdStorageKey)]
+    [InlineData(GarageKey)]
+    [InlineData(ColdWaveStrikes)]
+    [InlineData(0)]
+    public void Only_an_event_that_opens_an_area_can_ever_be_skipped(int eventId)
+    {
+        Assert.Equal(OpenAreas.SkipsEvent(eventId, _ => true), OpenAreas.OpensArea(eventId));
+    }
+
+    [Fact]
+    public void An_opening_event_is_one_that_opens_an_area_and_a_cold_wave_is_not()
+    {
+        Assert.True(OpenAreas.OpensArea(FindSecondFloorKey));
+        Assert.False(OpenAreas.OpensArea(ColdWaveStrikes));
+    }
+
+    [Fact]
+    public void Every_stale_task_comes_from_an_event_that_opens_an_area()
+    {
+        foreach (var eventId in OpenAreas.StaleEvents(_ => true)) Assert.True(OpenAreas.OpensArea(eventId));
+    }
+
+    [Fact]
+    public void A_run_with_everything_open_plans_no_change_however_often_it_is_checked()
+    {
+        var tags = new HashSet<string> { OpenAreas.SecondFloor, OpenAreas.ColdStorage, OpenAreas.RightHut, OpenAreas.LeftHut, OpenAreas.Garage };
+
+        var first = OpenAreas.Plan(WarehouseManager, AfterDisaster, tags.Contains);
+
+        Assert.True(first.IsEmpty);
+        Assert.Same(first, OpenAreas.Plan(WarehouseManager, AfterDisaster, tags.Contains));
+    }
+
     [Fact]
     public void A_running_repair_the_stairs_task_is_ended_once_the_second_floor_is_open()
     {

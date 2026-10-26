@@ -55,6 +55,32 @@ public sealed class SolarRulesTests
         Assert.Equal(new SolarResult(0f, false), SolarRules.Apply(Storm(areaLight: 0f), settings));
     }
 
+    /// <summary>The panel hook skips its reads whenever the settings change no solar output; that skip is only safe while this holds.</summary>
+    [Theory]
+    [InlineData(0f)]
+    [InlineData(-1f)]
+    public void Settings_that_change_no_solar_output_leave_every_panel_as_the_game_has_it(float badWeatherSolar)
+    {
+        var settings = RuleSettings.Game with { BadWeatherSolar = badWeatherSolar };
+
+        Assert.False(settings.ChangesSolar);
+        Assert.Equal(new SolarResult(24f, false), SolarRules.Apply(Sunny(), settings));
+        Assert.Equal(new SolarResult(0f, false), SolarRules.Apply(Storm(), settings));
+        Assert.Equal(new SolarResult(7f, false), SolarRules.Apply(new SolarReading(7f, BasePower, 0.5f, 1.2f, IsBadWeather: true), settings));
+    }
+
+    [Theory]
+    [InlineData("bad_weather", true)]
+    [InlineData("bad_weathe", false)]
+    [InlineData("bad_weather_", false)]
+    [InlineData("Bad_weather", false)]
+    [InlineData("night", false)]
+    [InlineData("", false)]
+    public void Only_the_games_exact_bad_weather_reason_counts_as_bad_weather(string reason, bool isBadWeather)
+    {
+        Assert.Equal(isBadWeather, SolarRules.IsBadWeatherReason(reason.AsSpan()));
+    }
+
     [Fact]
     public void Good_weather_output_is_never_replaced_by_the_bad_weather_share()
     {

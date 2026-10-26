@@ -19,6 +19,7 @@ internal sealed class AreaOpener
 
     private readonly Action<string> _log;
     private readonly HashSet<int> _reportedRefusals = new();
+    private readonly TagMemo _tagMemo = new();
     private float _nextCheckAt;
 
     public AreaOpener(Action<string> log)
@@ -34,15 +35,27 @@ internal sealed class AreaOpener
 
         if (ReadyRun() is not var (tags, events, role, isBeforeDisaster)) return;
 
-        OpenLockedAreas(tags, role, isBeforeDisaster);
-        EndStaleEvents(tags, events);
+        _tagMemo.Use(tags.HasTag);
+
+        try
+        {
+            OpenLockedAreas(tags, role, isBeforeDisaster);
+            EndStaleEvents(events);
+        }
+        finally
+        {
+            _tagMemo.Use(null);
+        }
     }
 
     private void OpenLockedAreas(TagManager tags, int role, bool isBeforeDisaster)
     {
-        var change = OpenAreas.Plan(role, isBeforeDisaster, tags.HasTag);
+        var change = OpenAreas.Plan(role, isBeforeDisaster, _tagMemo.HasTag);
 
         if (change.IsEmpty) return;
+
+        // The stale-task check after this reads the tags as they now are.
+        _tagMemo.Forget();
 
         if (change.Remove.Count > 0) tags.RemoveTags(ToGameList(change.Remove));
 
@@ -55,10 +68,14 @@ internal sealed class AreaOpener
     /// Ends an opening task that was already on the task list when its area opened, such as Repair Stairs from a saved
     /// run. The game's own cancel removes it from the list; it refuses while events are locked and is tried again then.
     /// </summary>
-    private void EndStaleEvents(TagManager tags, DynamicEventManager events)
+    private void EndStaleEvents(DynamicEventManager events)
     {
-        foreach (var eventId in OpenAreas.StaleEvents(tags.HasTag))
+        var stale = OpenAreas.StaleEvents(_tagMemo.HasTag);
+
+        for (var i = 0; i < stale.Count; i++)
         {
+            var eventId = stale[i];
+
             if (!events.IsEventRunning(eventId)) continue;
 
             if (events.CancelTaskEvent(eventId)) _log($"ended task {eventId}, its area is already open");

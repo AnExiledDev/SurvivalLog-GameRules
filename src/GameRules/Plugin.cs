@@ -15,7 +15,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.6.1";
+    private const string Version = "0.6.2";
 
     public override void Load()
     {
@@ -47,7 +47,7 @@ public sealed class Plugin : BasePlugin
         OptionalLive.Watch(() => VisitorPatches.Use(harmony, new VisitorBlock(visitors.NoDoorSmasher.Value, visitors.NoDebtCollector.Value), log.Write),
             visitors.NoDoorSmasher, visitors.NoDebtCollector);
 
-        OptionalLive.Watch(() => UsePool(harmony, pool.Read(), log.Write), pool.IndoorAndSunroom, pool.Terrace, pool.Basement);
+        OptionalLive.Watch(() => UsePool(harmony, pool.Read(), log), pool.IndoorAndSunroom, pool.Terrace, pool.Basement);
 
         StartOpenAreas(harmony, openAreas, log.Write);
         StartTables(startRules, weather, log.Write);
@@ -207,15 +207,15 @@ public sealed class Plugin : BasePlugin
         log("every locked area opens once the disaster has hit");
     }
 
-    private static void UsePool(Harmony harmony, PoolSettings pool, System.Action<string> log)
+    private static void UsePool(Harmony harmony, PoolSettings pool, RulesLog log)
     {
         if (pool != PoolSettings.Default && ClimateMove.IsOldModInstalled())
         {
-            log("Whole Floor Climate is still installed, so it keeps sharing the heat and this mod's Climate settings wait; remove WholeFloorClimate.dll to use them");
+            log.Write("Whole Floor Climate is still installed, so it keeps sharing the heat and this mod's Climate settings wait; remove WholeFloorClimate.dll to use them");
             pool = PoolSettings.Default;
         }
 
-        PoolPatches.Use(harmony, new PooledClimate(new HeatPool(pool), new FrameClimate(new GameClimate(), () => UnityEngine.Time.frameCount)), log);
+        PoolPatches.Use(harmony, new PooledClimate(new HeatPool(pool), new FrameClimate(new GameClimate(), UnityFrame.Count)), log.Write, log.WriteFileOnly);
     }
 
     private sealed record RuleEntries(

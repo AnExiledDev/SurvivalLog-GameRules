@@ -45,6 +45,24 @@ public sealed class TableKeeperTests
     }
 
     [Fact]
+    public void The_keeper_has_nothing_to_put_back_until_the_mod_changes_a_value()
+    {
+        var keeper = new TableKeeper();
+
+        keeper.Target("RatVisit_BaseChance", 1, 0.05f, change: null);
+
+        Assert.True(keeper.IsEmpty);
+
+        keeper.Target("ThinkCD", 1, 3600f, new ScaleBy("ThinkCD", 2f));
+
+        Assert.False(keeper.IsEmpty);
+
+        keeper.Target("ThinkCD", 1, 7200f, change: null);
+
+        Assert.False(keeper.IsEmpty);
+    }
+
+    [Fact]
     public void Each_group_replaces_only_its_own_changes()
     {
         var changes = new TableChanges();

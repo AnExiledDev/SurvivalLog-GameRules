@@ -16,6 +16,7 @@ internal static class RulePatches
     private static bool _isMoldStopped;
     private static bool _isMoldHooked;
     private static bool _isSpoilageHooked;
+    private static bool _hasLoggedScale;
     private static Action<string> _log = _ => { };
     private static readonly HashSet<string> LoggedOnce = new();
 
@@ -75,7 +76,12 @@ internal static class RulePatches
 
             __result = SpoilageScale.Apply(gameScale, _spoilageSpeed);
 
-            if (__result != gameScale) LogOnce("spoilage", $"first scaled food decay: zone {areaId} {gameScale:0.###} in the game, {__result:0.###} with the mod");
+            // Runs for every food item, so the line is only built while it is still unlogged.
+            if (__result != gameScale && !_hasLoggedScale)
+            {
+                _hasLoggedScale = true;
+                LogOnce("spoilage", $"first scaled food decay: zone {areaId} {gameScale:0.###} in the game, {__result:0.###} with the mod");
+            }
         }
         catch (Exception ex)
         {

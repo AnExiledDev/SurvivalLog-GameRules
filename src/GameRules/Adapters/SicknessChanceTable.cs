@@ -45,6 +45,9 @@ internal sealed class SicknessChanceTable
 
         _nextCheckAt = now + CheckSeconds;
 
+        // At the game's chances, with none ever changed, there is nothing to write or put back, so the game is not read.
+        if (_changes.Count == 0 && _keeper.IsEmpty) return;
+
         var rows = GameSingleton.Existing<ConfigManager>()?._Config_Effect_Dict;
 
         if (rows == null || rows.Count == 0) return;

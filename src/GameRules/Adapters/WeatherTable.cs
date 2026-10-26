@@ -67,8 +67,18 @@ internal sealed class WeatherTable
             if (row != null) byHour[(row._Day_k__BackingField, row._Hour_k__BackingField)] = row;
         }
 
+        // Each weather's config row is looked up once: the table holds a handful of weathers over a hundred days.
+        var coldWaves = new Dictionary<int, bool>();
+
+        bool IsKeptWeather(int weather)
+        {
+            if (!coldWaves.TryGetValue(weather, out var isColdWave)) coldWaves[weather] = isColdWave = IsColdWave(config, weather);
+
+            return isColdWave;
+        }
+
         var table = byHour.Select(pair => new WeatherHour(pair.Key.Day, pair.Key.Hour, pair.Value._WeatherID_k__BackingField));
-        var changes = WeatherShuffle.Plan(table, _settings, weather => IsColdWave(config, weather), anchorDays.Contains);
+        var changes = WeatherShuffle.Plan(table, _settings, IsKeptWeather, anchorDays.Contains);
 
         foreach (var change in changes) byHour[(change.Day, change.Hour)]._WeatherID_k__BackingField = change.Weather;
 

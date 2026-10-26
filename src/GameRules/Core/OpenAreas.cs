@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GameRules.Core;
 
@@ -37,6 +36,8 @@ public static class OpenAreas
 
     private static readonly string[] WarehouseAreas = { SecondFloor, ColdStorage, RightHut, LeftHut, Garage };
 
+    private static readonly AreaChange Nothing = new(Array.Empty<string>(), Array.Empty<string>());
+
     /// <summary>Each area's tag and the events that open it: the key or repair story and its forced follow-ups.</summary>
     private static readonly Dictionary<int, string> OpeningEvents = new()
     {
@@ -52,9 +53,10 @@ public static class OpenAreas
     /// What to change for this role. Nothing before the disaster; after it only missing tags are added and only present
     /// blockers removed, so an open run changes nothing.
     /// </summary>
+    /// <remarks>Checked every second, so an open run (the usual answer) makes no new objects: plain loops, and one shared empty change.</remarks>
     public static AreaChange Plan(int role, bool isBeforeDisaster, Func<string, bool> hasTag)
     {
-        if (isBeforeDisaster) return new AreaChange(Array.Empty<string>(), Array.Empty<string>());
+        if (isBeforeDisaster) return Nothing;
 
         var (areas, blockers) = role switch
         {
@@ -63,8 +65,26 @@ public static class OpenAreas
             _ => (Array.Empty<string>(), Array.Empty<string>()),
         };
 
-        return new AreaChange(areas.Where(tag => !hasTag(tag)).ToList(), blockers.Where(hasTag).ToList());
+        List<string>? add = null;
+        List<string>? remove = null;
+
+        foreach (var tag in areas)
+        {
+            if (!hasTag(tag)) (add ??= new List<string>()).Add(tag);
+        }
+
+        foreach (var tag in blockers)
+        {
+            if (hasTag(tag)) (remove ??= new List<string>()).Add(tag);
+        }
+
+        if (add == null && remove == null) return Nothing;
+
+        return new AreaChange(add ?? (IReadOnlyList<string>)Array.Empty<string>(), remove ?? (IReadOnlyList<string>)Array.Empty<string>());
     }
+
+    /// <summary>Whether the event is one that opens an area; only those need the save's tags.</summary>
+    public static bool OpensArea(int eventId) => OpeningEvents.ContainsKey(eventId);
 
     /// <summary>An event that opens an area is skipped once that area is already open.</summary>
     public static bool SkipsEvent(int eventId, Func<string, bool> hasTag) =>
@@ -74,6 +94,15 @@ public static class OpenAreas
     /// The opening events whose area is already open. One that was running before the area opened (a loaded save, or
     /// the event started before the disaster) is still on the task list, so these are ended.
     /// </summary>
-    public static IReadOnlyList<int> StaleEvents(Func<string, bool> hasTag) =>
-        OpeningEvents.Where(entry => hasTag(entry.Value)).Select(entry => entry.Key).ToList();
+    public static IReadOnlyList<int> StaleEvents(Func<string, bool> hasTag)
+    {
+        List<int>? stale = null;
+
+        foreach (var entry in OpeningEvents)
+        {
+            if (hasTag(entry.Value)) (stale ??= new List<int>()).Add(entry.Key);
+        }
+
+        return stale ?? (IReadOnlyList<int>)Array.Empty<int>();
+    }
 }

@@ -18,6 +18,7 @@ internal static class PlaguePatches
     private const string PlagueTag = "CRISIS_PLAGUE_ACTIVE";
 
     private static readonly HashSet<string> LoggedOnce = new();
+    private static readonly FirstTime LoggedEvents = new();
     private static PlagueBlock _block = PlagueBlock.Game;
     private static bool _isHooked;
     private static Action<string> _log = _ => { };
@@ -66,7 +67,7 @@ internal static class PlaguePatches
             if (!_block.BlocksEvent(eventId, IsPlagueUnderway)) return true;
 
             __result = null;
-            LogOnce($"event {eventId}", $"stopped plague event {eventId} (logged once per event)");
+            if (LoggedEvents.Of(eventId)) _log($"stopped plague event {eventId} (logged once per event)");
 
             return false;
         }
