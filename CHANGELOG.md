@@ -23,8 +23,7 @@
 ## 0.4.2
 
 - With Start with all areas open, a Repair Stairs task or other area task that was already on the task list (from a saved run) is ended once its area is open.
-
-- After a game update, a hook that can no longer be placed is logged as an error, so the Mod Manager can mark the mod as maybe needing an update.
+- After a game update, Mod Manager can tell you if this mod may need an update.
 
 ## 0.4.1
 
@@ -32,26 +31,29 @@
 
 ## 0.4.0
 
-- The Mods screen links this changelog.
-- On the Mods screen, settings that only matter while another setting is on stay hidden until it is.
+- Mod Manager's Mods screen links to this changelog.
+- On the Mods screen, a setting that only matters while another one is on stays hidden until that one is on.
 - Settings changed on the Mod Manager's Mods screen take effect at once, except NoRestartLimit, BatteryMultiplier, StartWithAllAreasOpen and the Weather settings, which take effect at the next game start.
-- The Mods screen shows the mod's name, description, category and links.
-- Exiled's Toolkit 0.4.0 or newer is optional. With it, settings changed on the Mods screen take effect without a restart; without it, at the next game start.
+- Mod Manager's Mods screen shows the mod's name, description, category and links.
+- Exiled's Toolkit 0.4.0 or newer is optional. With it, settings you change on the Mods screen take effect right away. Without it, they take effect the next time you start the game.
 
 ## 0.3.0
 
-- Start with all areas open: the second floor and basement, or the Warehouse Manager's second floor and locked rooms, are open from the start and can be built on before the disaster. Works on a save already under way. The events that would open them are skipped.
-
-Off by default.
+- Start with all areas open: the second floor and basement, or the Warehouse Manager's second floor and locked rooms, are open from the start and can be built on before the disaster. Works on a save already under way. The events that would open them are skipped. Off by default.
 
 ## 0.2.0
 
 - Battery multiplier: batteries hold 0.1x to 10x the game's power.
 - Turn off the door-smasher ("Midnight Door Pounding") and the debt collector (the loan shark's visits and texts).
 - Random weather: roll the weather from chances you set, with a seed. Cold waves and fixed story days keep the game's weather.
-
-Every new setting defaults to the game's own rule.
+- Every new setting defaults to the game's own rule.
 
 ## 0.1.0
 
-First version. No restart limit, stop mold spreading, a solar multiplier and solar power in bad weather, food spoilage speed, and whole-floor heat sharing from Whole Floor Climate. Every setting defaults to the game's own rule.
+- First release.
+- No restart limit.
+- Mold can be stopped from spreading.
+- A solar multiplier, and solar power in bad weather.
+- Food spoilage speed.
+- Heat shared across a whole floor, from Whole Floor Climate.
+- Every setting defaults to the game's own rule.

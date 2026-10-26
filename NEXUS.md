@@ -39,7 +39,7 @@ Works in English and Chinese.
 
 [size=5]Known issues[/size]
 [list]
-[*][b]Start with all areas open[/b] only opens areas after the disaster. Before the disaster, the house you play in is technically a separate map from the one after it, and that map has no way onto the other floors or into the locked rooms. Making them work there would be a monumental effort, so the areas open at the start of the post-disaster game instead.[/*]
+[*][b]Start with all areas open[/b] only opens areas after the disaster. Before the disaster, the house is a separate map with no way onto the other floors or into the locked rooms, so the areas open when the disaster hits.[/*]
 [*][b]Start with all areas open[/b] skips the story events that would open those areas (finding the keys, clearing the stairs and the cellar), so their rewards and story are skipped too. An event already under way in a loaded save stays in the event list. Opening both floors may unlock the matching achievement.[/*]
 [*][b]Spoilage speed[/b]: a powered fridge that keeps food slower than the room keeps its own speed. Food already lying somewhere picks up the new speed the next time it is moved or stored.[/*]
 [*][b]Solar in bad weather[/b] has no effect at night, and none on a panel that no light reaches.[/*]
@@ -123,7 +123,7 @@ Game Rules 不会往存档里写入自己的数据，你可以随时移除它。
 
 [size=5]已知问题[/size]
 [list]
-[*][b]所有区域都打开[/b]只在灾难之后打开区域。灾难前你所在的房子在技术上是另一张独立的地图，那张地图没有通往其他楼层或锁住房间的路。要让它们在那里可用，工作量巨大，所以这些区域改为在灾难后的游戏开始时打开。[/*]
+[*][b]所有区域都打开[/b]只在灾难之后打开区域。灾难前的房子是另一张地图，没有通往其他楼层或锁住房间的路，所以这些区域在灾难发生时才打开。[/*]
 [*][b]所有区域都打开[/b]会跳过原本用来打开这些区域的剧情事件（找到钥匙、清理楼梯和地窖），所以这些事件的奖励和剧情也会被跳过。读档时已经在进行中的事件仍会留在事件列表里。两层楼都打开后可能会解锁对应的成就。[/*]
 [*][b]腐败速度[/b]：保鲜比房间更好的通电冰箱保持自己的速度。已经放好的食物在下次移动或存放时才会采用新的速度。[/*]
 [*][b]恶劣天气太阳能[/b]在夜间没有效果，对照不到光的太阳能板也没有效果。[/*]
