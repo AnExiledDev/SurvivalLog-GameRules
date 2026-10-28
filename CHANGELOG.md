@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.3
+
+- Less stutter the first time shared device heat warms a zone in a session: Game Rules now reads the zones once while the save loads.
+- Made for Survival Log 1.1.19611.
+
 ## 0.6.2
 
 - Less stutter with shared device heat, solar panel settings and the other rules turned on.

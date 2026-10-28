@@ -23,6 +23,7 @@ internal static class PoolPatches
 {
     private static PooledClimate _climate = new(new HeatPool(new PoolSettings(false, false, false)), new GameClimate());
     private static Action<string> _log = _ => { };
+    private static Action<string> _fileLog = _ => { };
     private static readonly HashSet<string> LoggedOnce = new();
     private static bool _isHooked;
 
@@ -34,12 +35,14 @@ internal static class PoolPatches
     /// <summary>
     /// Called on the main thread at start and after each change. The hooks go in the first time a zone joins Indoor and
     /// stay in; a zone that leaves keeps the game's answers from the next reading on. <paramref name="fileLog"/> writes
-    /// only to the mod's own file, for the warm-up's worker thread.
+    /// only to the mod's own file, from a worker: the warm-up's thread uses it, and so do the hooks' first-time lines,
+    /// so a hook never writes to the BepInEx console inside the game's own call.
     /// </summary>
     public static void Use(Harmony harmony, PooledClimate climate, Action<string> log, Action<string> fileLog)
     {
         _climate = climate;
         _log = log;
+        _fileLog = fileLog;
 
         if (!climate.Pool.IsActive)
         {
@@ -56,6 +59,7 @@ internal static class PoolPatches
             Hook(harmony, nameof(EnvAreaHelper.GetAreaTemperature), nameof(AddExtraWarmth), "sharing zones the game gives no device heat get the shared heat");
             Hook(harmony, nameof(EnvAreaHelper.IsAreaAcPowered), nameof(PoolAcPowered), "an AC running in one sharing zone counts for every sharing zone");
             WarmUpInBackground(fileLog);
+            RulesTicker.Checks.Add(new OnceReady(IsWorldReady, WarmGameReads).Tick);
         }
 
         log($"device heat is shared by {climate.Pool.Describe()}");
@@ -89,14 +93,46 @@ internal static class PoolPatches
             try
             {
                 PoolWarmUp.Run();
-                Prepare(typeof(PoolPatches), nameof(PoolDeviceHeat), nameof(AddExtraWarmth), nameof(PoolAcPowered), nameof(ShouldPool));
+                Prepare(typeof(PoolPatches), nameof(PoolDeviceHeat), nameof(AddExtraWarmth), nameof(PoolAcPowered), nameof(ShouldPool), nameof(LogOnce));
                 Prepare(typeof(GameClimate), nameof(GameClimate.DeviceHeatIn), nameof(GameClimate.TakesDeviceHeat), nameof(GameClimate.IsAcPoweredIn), nameof(GameClimate.CurrentGame));
+                Prepare(typeof(Zones), nameof(Zones.Name));
             }
             catch (Exception ex)
             {
                 fileLog("warm-up failed, the first temperature read may take a moment longer: " + ex.Message);
             }
         });
+
+    private static bool IsWorldReady() =>
+        GameSingleton.IsCreated<BattleLogicWorld>() && GameSingleton.IsCreated<ConfigManager>();
+
+    /// <summary>
+    /// The worker can compile the code but cannot touch the game, so the first pooled answer of a session would still
+    /// be the first read of the zone table and of each zone's heat and AC through interop. These run once on the main
+    /// thread as soon as the world exists, while the save loads, so that first read is not paid inside a temperature
+    /// the game asked for. They go through a GameClimate of their own: the hooks' per-frame copy must not keep an
+    /// answer read from a half-loaded world. Read-only, and a failure only costs the head start.
+    /// </summary>
+    private static void WarmGameReads()
+    {
+        try
+        {
+            var game = new GameClimate();
+
+            game.CurrentGame();
+
+            foreach (var zone in _climate.Pool.Members)
+            {
+                game.TakesDeviceHeat(zone);
+                game.DeviceHeatIn(zone);
+                game.IsAcPoweredIn(zone);
+            }
+        }
+        catch (Exception ex)
+        {
+            _fileLog("warming up the zone reads failed, the first shared temperature may take a moment longer: " + ex.Message);
+        }
+    }
 
     private static void Prepare(Type type, params string[] names)
     {
@@ -123,12 +159,12 @@ internal static class PoolPatches
             if (__result != gameHeat && !_hasLoggedHeat)
             {
                 _hasLoggedHeat = true;
-                LogOnce("heat", $"first shared device heat: {Zones.Name(areaId)} {gameHeat} in the game, {__result} shared");
+                LogOnce("heat", $"first shared device heat: {Zones.Name(areaId)} {gameHeat} in the game, {__result} shared", _fileLog);
             }
         }
         catch (Exception ex)
         {
-            LogOnce("heat failure", $"sharing device heat failed, zones keep the game's heat (logged once): {ex}");
+            LogOnce("heat failure", $"sharing device heat failed, zones keep the game's heat (logged once): {ex}", _log);
         }
     }
 
@@ -146,12 +182,12 @@ internal static class PoolPatches
             if (__result != gameTemperature && !_hasLoggedWarmth)
             {
                 _hasLoggedWarmth = true;
-                LogOnce("warmth", $"first shared warmth for a zone the game gives no device heat: {Zones.Name(areaId)} {gameTemperature} in the game, {__result} with the pool");
+                LogOnce("warmth", $"first shared warmth for a zone the game gives no device heat: {Zones.Name(areaId)} {gameTemperature} in the game, {__result} with the pool", _fileLog);
             }
         }
         catch (Exception ex)
         {
-            LogOnce("warmth failure", $"adding shared warmth failed, zones keep the game's temperature (logged once): {ex}");
+            LogOnce("warmth failure", $"adding shared warmth failed, zones keep the game's temperature (logged once): {ex}", _log);
         }
     }
 
@@ -167,12 +203,12 @@ internal static class PoolPatches
             if (__result && !_hasLoggedAc)
             {
                 _hasLoggedAc = true;
-                LogOnce("ac", $"first shared AC: {Zones.Name(areaId)} has no AC of its own, an AC in a zone sharing heat with it counts");
+                LogOnce("ac", $"first shared AC: {Zones.Name(areaId)} has no AC of its own, an AC in a zone sharing heat with it counts", _fileLog);
             }
         }
         catch (Exception ex)
         {
-            LogOnce("ac failure", $"sharing the AC check failed, zones keep the game's answer (logged once): {ex}");
+            LogOnce("ac failure", $"sharing the AC check failed, zones keep the game's answer (logged once): {ex}", _log);
         }
     }
 
@@ -191,19 +227,23 @@ internal static class PoolPatches
         }
         catch (Exception ex)
         {
-            LogOnce("world failure", $"checking the game world failed, zones keep the game's answers (logged once): {ex}");
+            LogOnce("world failure", $"checking the game world failed, zones keep the game's answers (logged once): {ex}", _log);
 
             return false;
         }
     }
 
-    private static void LogOnce(string key, string message)
+    /// <summary>
+    /// A first-time line goes to the mod's file only (<see cref="_fileLog"/>), so the game's call never waits on the
+    /// BepInEx console; a failure goes to both (<see cref="_log"/>), where it is seen.
+    /// </summary>
+    private static void LogOnce(string key, string message, Action<string> write)
     {
         lock (LoggedOnce)
         {
             if (!LoggedOnce.Add(key)) return;
         }
 
-        _log(message);
+        write(message);
     }
 }
