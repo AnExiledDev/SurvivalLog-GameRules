@@ -88,11 +88,11 @@ public sealed class HouseZombieSettingsTests
     }
 
     [Fact]
-    public void The_power_cut_and_storm_settings_reach_the_event_block()
+    public void The_storm_setting_reaches_the_event_block()
     {
-        var settings = HouseZombieSettings.Game with { PowerCutDelay = 3, NoStormLeaks = true };
+        var settings = HouseZombieSettings.Game with { NoStormLeaks = true };
 
-        Assert.Equal(new HouseEventBlock(PowerCutDelay: 3, NoPowerCut: false, NoStormLeaks: true), settings.Events);
+        Assert.Equal(new HouseEventBlock(NoStormLeaks: true), settings.Events);
     }
 
     private static float Value(List<TableChange> changes, string key, float gameValue) =>

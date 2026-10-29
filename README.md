@@ -1,17 +1,16 @@
 # Game Rules
 
-Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, power and the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
+Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
 
 Every setting starts at the game's own value, so with a fresh config the mod changes nothing. Turn on only what you want.
+
+The solar, battery, device power, power cut and Blackout panic settings are now in the Power Manager mod, which carries over your values the first time it starts.
 
 ## Features
 
 - **No restart limit**: restarts never run out. However many you use, the game's full number stays available, so the restart screen still shows a normal row of marks.
 - **Stop mold spreading**: mold no longer jumps to the food next to it. Mold that is already there still clears as usual.
-- **Solar multiplier**: solar panels make more (or less) power, from 0.1x to 10x.
-- **Solar in bad weather**: in storms and heavy rain the game's panels make nothing. This gives them a share of a cloudy day's power instead.
 - **Spoilage speed**: food spoils slower or faster, from 0.1x to 5x.
-- **Battery multiplier**: batteries hold more (or less) power, from 0.1x to 10x.
 - **No door-smasher**: the angry neighbour's "Midnight Door Pounding" never happens.
 - **No debt collector**: the loan shark's night visits, warning texts, revenge and stalking nights never happen.
 - **Start with all areas open**: the second floor and basement (Wage Slave, Student), or the second floor, cold storage, garage and both side rooms (Warehouse Manager), open as soon as the disaster hits. You can walk there and build there right away. Works on a save already past the disaster, and on one from before it once the disaster comes.
@@ -21,7 +20,7 @@ Every setting starts at the game's own value, so with a fresh config the mod cha
 - **Mold**: Disinfectant Spray radius and cost, how fast moldy food spoils, how often mold spreads, how many items it reaches, and how many items start moldy.
 - **Rats**: how often rats visit, and how long a rat stays before it escapes.
 - **Sickness**: turn off the Outbreak crisis, or only its worsening; set the Wind Chill and High Temperature chances in a cold wave.
-- **Power and the house**: how much power devices use, a later city power cut or none at all, no Blackout panic, and no heavy rain leaks.
+- **The house**: no heavy rain leaks.
 - **Cold**: how cold cold waves are, and extra levels of Personal Cold Resistance.
 - **Stray zombies**: turn them off, or set their start day, the time between visits, visits per day, how many at once, how often a crawler leads them, and what they drop.
 - **Hordes**: story hordes always at full strength, and more or less horde loot.
@@ -36,15 +35,12 @@ Game Rules adds no data of its own to your save, and you can remove it at any ti
 ## Known issues and limits
 
 - **Spoilage speed and fridges**: a powered fridge that keeps food slower than the room keeps its own speed. Food already lying somewhere picks up the new speed the next time it is moved or stored.
-- **Solar in bad weather** has no effect at night, and none on a panel that no light reaches.
 - **Random weather** changes the weather from the next hour on, and the forecast shows the new weather. The same seed always rolls the same weather, so a reload keeps it. Turning it off brings back the game's weather after a restart of the game.
 - **No debt collector** works best turned on before the loan shark's first visit. A visit already under way finishes as usual.
 - **Start with all areas open** skips the story events that would open those areas (finding the keys, clearing the stairs and the cellar), so their rewards and story are skipped too. An event already under way in a loaded save stays in the event list. Opening both floors may unlock the matching achievement. Building spots unlocked with talents are not changed.
 - **Start with all areas open** only opens areas after the disaster. Before the disaster, the house you play in is technically a separate map from the one after it, and that map has no way onto the other floors or into the locked rooms. Making them work there would be a monumental effort, so the areas open at the start of the post-disaster game instead. Before the disaster they stay locked, the same as in the game.
 - **Whole-floor heat** makes rooms warm up more easily, so warm-room progress is easier to reach.
 - **Rat visit chance** does not apply during a Rat Infestation.
-- **Device power use** does not change cooking and shredding jobs, the compressor, defenses firing or the signal station.
-- **No power cut** also means the events that follow the cut, and the diesel generator start, never come. A cut that already happened is not undone.
 - **Cold wave strength** also changes whether strangers you support count the day as cold.
 
 ## Moving from Whole Floor Climate
@@ -71,11 +67,11 @@ Delete `GameRules.dll` from the `BepInEx\plugins` folder. For a clean slate, als
 
 ## Configuration
 
-Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. Changed on the Mods screen, every setting takes effect at once except `NoRestartLimit`, `BatteryMultiplier`, `StartWithAllAreasOpen` and the `Weather` settings, which take effect at the next game start. Each setting in the cfg file is explained in English and Simplified Chinese. See [CONFIG.md](CONFIG.md) for every setting. Without Exiled's Toolkit installed, changes made on the Mods screen take effect at the next game start instead.
+Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. Changed on the Mods screen, every setting takes effect at once except `NoRestartLimit`, `StartWithAllAreasOpen` and the `Weather` settings, which take effect at the next game start. Each setting in the cfg file is explained in English and Simplified Chinese. See [CONFIG.md](CONFIG.md) for every setting. Without Exiled's Toolkit installed, changes made on the Mods screen take effect at the next game start instead.
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.6.3 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.7.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
 
 ## Feedback and bug reports
 

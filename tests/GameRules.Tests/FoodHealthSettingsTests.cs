@@ -140,7 +140,7 @@ public sealed class FoodHealthSettingsTests
     [Fact]
     public void The_switch_settings_change_no_table_value()
     {
-        var settings = FoodHealthSettings.Game with { NoFoodFatigue = true, NoPlague = true, NoPlagueWorsening = true, NoBlackoutPanic = true };
+        var settings = FoodHealthSettings.Game with { NoFoodFatigue = true, NoPlague = true, NoPlagueWorsening = true };
 
         Assert.Empty(settings.TableChanges());
         Assert.Empty(settings.EffectChanges());

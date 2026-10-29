@@ -1,21 +1,20 @@
 Name: Game Rules
-Summary: Change the game's own rules: no restart limit, slower spoilage, stronger solar and batteries, milder mold, rats, sickness and cold, no power cut, fewer stray zombies, a neighbour who never dies and more. About 70 settings for food, power, zombies, visitors, morale and weather. Every setting starts at the game value, so change only what you want.
+Summary: Change the game's own rules: no restart limit, slower spoilage, milder mold, rats, sickness and cold, no heavy rain leaks, fewer stray zombies, a neighbour who never dies, all areas open and more. About 60 settings for food, the house, zombies, visitors, morale and weather. Every setting starts at the game value, so change only what you want.
 
 Description (BBCode):
 [center][img]https://sldb.core-directive.com/media/save/2-changes-stay.png[/img][/center]
 
-Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, power and the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
+Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
 
 Every setting starts at the game's own value, so with a fresh config the mod changes nothing. Turn on only what you want.
+
+The solar, battery, device power, power cut and Blackout panic settings are now in the Power Manager mod, which carries over your values the first time it starts.
 
 [size=5]Main features[/size]
 [list]
 [*][b]No restart limit[/b]: restarts never run out. However many you use, the game's full number stays available, so the restart screen still shows a normal row of marks.[/*]
 [*][b]Stop mold spreading[/b]: mold no longer jumps to the food next to it. Mold that is already there still clears as usual.[/*]
-[*][b]Solar multiplier[/b]: solar panels make more (or less) power, from 0.1x to 10x.[/*]
-[*][b]Solar in bad weather[/b]: in storms and heavy rain the game's panels make nothing. This gives them a share of a cloudy day's power instead.[/*]
 [*][b]Spoilage speed[/b]: food spoils slower or faster, from 0.1x to 5x.[/*]
-[*][b]Battery multiplier[/b]: batteries hold more (or less) power, from 0.1x to 10x.[/*]
 [*][b]No door-smasher[/b]: the angry neighbour's "Midnight Door Pounding" never happens.[/*]
 [*][b]No debt collector[/b]: the loan shark's night visits, warning texts, revenge and stalking nights never happen.[/*]
 [*][b]Start with all areas open[/b]: the second floor and basement (Wage Slave, Student), or the second floor, cold storage, garage and both side rooms (Warehouse Manager), open as soon as the disaster hits. You can walk there and build there right away. Works on a save already past the disaster, and on one from before it once the disaster comes.[/*]
@@ -24,7 +23,7 @@ Every setting starts at the game's own value, so with a fresh config the mod cha
 [*][b]Mold[/b]: Disinfectant Spray radius and cost, how fast moldy food spoils, how often mold spreads, how many items it reaches, and how many items start moldy.[/*]
 [*][b]Rats[/b]: how often rats visit, and how long a rat stays before it escapes.[/*]
 [*][b]Sickness[/b]: turn off the Outbreak crisis, or only its worsening; set the Wind Chill and High Temperature chances in a cold wave.[/*]
-[*][b]Power and the house[/b]: how much power devices use, a later city power cut or none at all, no Blackout panic, and no heavy rain leaks.[/*]
+[*][b]The house[/b]: no heavy rain leaks.[/*]
 [*][b]Cold[/b]: how cold cold waves are, and extra levels of Personal Cold Resistance.[/*]
 [*][b]Stray zombies[/b]: turn them off, or set their start day, the time between visits, visits per day, how many at once, how often a crawler leads them, and what they drop.[/*]
 [*][b]Hordes[/b]: story hordes always at full strength, and more or less horde loot.[/*]
@@ -44,12 +43,9 @@ Works in English and Chinese.
 [*][b]Start with all areas open[/b] only opens areas after the disaster. Before the disaster, the house is a separate map with no way onto the other floors or into the locked rooms, so the areas open when the disaster hits.[/*]
 [*][b]Start with all areas open[/b] skips the story events that would open those areas (finding the keys, clearing the stairs and the cellar), so their rewards and story are skipped too. An event already under way in a loaded save stays in the event list. Opening both floors may unlock the matching achievement.[/*]
 [*][b]Spoilage speed[/b]: a powered fridge that keeps food slower than the room keeps its own speed. Food already lying somewhere picks up the new speed the next time it is moved or stored.[/*]
-[*][b]Solar in bad weather[/b] has no effect at night, and none on a panel that no light reaches.[/*]
 [*][b]Random weather[/b] changes the weather from the next hour on, and the forecast shows the new weather. The same seed always rolls the same weather, so a reload keeps it.[/*]
 [*][b]No debt collector[/b] works best turned on before the loan shark's first visit. A visit already under way finishes as usual.[/*]
 [*][b]Rat visit chance[/b] does not apply during a Rat Infestation.[/*]
-[*][b]Device power use[/b] does not change cooking and shredding jobs, the compressor, defenses firing or the signal station.[/*]
-[*][b]No power cut[/b] also means the events that follow the cut, and the diesel generator start, never come. A cut that already happened is not undone.[/*]
 [*][b]Cold wave strength[/b] also changes whether strangers you support count the day as cold.[/*]
 [/list]
 
@@ -76,7 +72,7 @@ Works in English and Chinese.
 Delete [font=Courier New]GameRules.dll[/font] from the [font=Courier New]BepInEx\plugins[/font] folder.
 
 [size=5]Configuration[/size]
-To change settings, edit [font=Courier New]BepInEx\config\com.dev.survivallog.gamerules.cfg[/font] while the game is closed, or do it in game on the Mod Manager's Mods screen, where changes take effect at once, all but [font=Courier New]NoRestartLimit[/font], [font=Courier New]BatteryMultiplier[/font], [font=Courier New]StartWithAllAreasOpen[/font] and the [font=Courier New]Weather[/font] settings, which take effect at the next game start (see [url=https://github.com/AnExiledDev/SurvivalLog-GameRules/blob/main/CONFIG.md]CONFIG.md[/url] for every setting; the cfg file explains each setting in English and Chinese). Without Exiled's Toolkit installed, changes made on the Mods screen take effect at the next game start instead.
+To change settings, edit [font=Courier New]BepInEx\config\com.dev.survivallog.gamerules.cfg[/font] while the game is closed, or do it in game on the Mod Manager's Mods screen, where changes take effect at once, all but [font=Courier New]NoRestartLimit[/font], [font=Courier New]StartWithAllAreasOpen[/font] and the [font=Courier New]Weather[/font] settings, which take effect at the next game start (see [url=https://github.com/AnExiledDev/SurvivalLog-GameRules/blob/main/CONFIG.md]CONFIG.md[/url] for every setting; the cfg file explains each setting in English and Chinese). Without Exiled's Toolkit installed, changes made on the Mods screen take effect at the next game start instead.
 
 [size=5]Feedback[/size]
 Found a bug or have an idea? Come say hi on the [url=https://discord.gg/trTsyxUFqg]Core Directive Discord[/url], or post in this page's Posts tab. For bugs, please include [font=Courier New]BepInEx\LogOutput.log[/font] and [font=Courier New]BepInEx\game-rules.log[/font].
@@ -88,18 +84,17 @@ Open source under MIT: [url=https://github.com/AnExiledDev/SurvivalLog-GameRules
 [line]
 [size=5]简体中文[/size]
 
-修改 Survival Log 自身的一些规则：重生次数、食物和霉菌、老鼠和疾病、电力和房屋、寒冷、零散丧尸和尸潮、夜间访客、邻居、你支援的陌生人、心态、锁住的区域、天气，以及暖气能覆盖多大范围。
+修改 Survival Log 自身的一些规则：重生次数、食物和霉菌、老鼠和疾病、房屋、寒冷、零散丧尸和尸潮、夜间访客、邻居、你支援的陌生人、心态、锁住的区域、天气，以及暖气能覆盖多大范围。
 
 每项设置的默认值都是游戏原本的数值，所以全新的配置不会改变任何东西。只开启你想要的即可。
+
+太阳能、蓄电池、电器耗电、停电和「停电恐慌」的设置已移到 Power Manager 模组，它第一次启动时会沿用你原来的数值。
 
 [size=5]主要功能[/size]
 [list]
 [*][b]重生次数无限[/b]：重生次数不会用完。无论用了多少次，始终保留游戏原本的全部次数，所以重生界面仍显示正常的一排标记。[/*]
 [*][b]霉菌不再蔓延[/b]：霉菌不再蔓延到旁边的食物。已有的霉菌仍会照常消退。[/*]
-[*][b]太阳能倍率[/b]：太阳能板发电更多（或更少），从 0.1 倍到 10 倍。[/*]
-[*][b]恶劣天气太阳能[/b]：在暴雨等恶劣天气中，游戏原本的太阳能板不发电。此项让它们发出阴天发电量的一部分。[/*]
 [*][b]腐败速度[/b]：食物腐败得更慢或更快，从 0.1 倍到 5 倍。[/*]
-[*][b]蓄电池倍率[/b]：蓄电池容量更大（或更小），从 0.1 倍到 10 倍。[/*]
 [*][b]没有砸门的邻居[/b]：愤怒的邻居不会在深夜来砸门（「深夜砸门」）。[/*]
 [*][b]没有催债人[/b]：放贷人的深夜上门、警告短信、报复和跟踪的夜晚都不会发生。[/*]
 [*][b]所有区域都打开[/b]：打工仔和大学生的二楼和地下室，或仓库管理员的二楼、冷库、车库和两侧的小屋，在灾难发生时立即打开。可以直接走过去并在那里建造。对已经过了灾难的存档同样生效；灾难前的存档在灾难到来时打开。[/*]
@@ -108,7 +103,7 @@ Open source under MIT: [url=https://github.com/AnExiledDev/SurvivalLog-GameRules
 [*][b]霉菌[/b]：「消毒喷雾」的清理范围和消耗、发霉食物的腐坏速度、「霉菌」的扩散间隔、每次扩散的物品数和初始发霉物品数。[/*]
 [*][b]老鼠[/b]：老鼠来访的几率，以及老鼠逃走前停留的时间。[/*]
 [*][b]疾病[/b]：关闭「疫病」危机，或只关闭「疫病加重」；调整寒潮中患上「风寒」和「发烧」的几率。[/*]
-[*][b]电力与房屋[/b]：电器耗电倍率、推迟停电或永不停电、关闭「停电恐慌」、不再出现「暴雨侵袭」漏雨。[/*]
+[*][b]房屋[/b]：不再出现「暴雨侵袭」漏雨。[/*]
 [*][b]寒冷[/b]：「寒潮」等寒冷天气的强度倍率，以及额外的「个人抗寒」等级。[/*]
 [*][b]零散丧尸[/b]：可以关闭，也可以设置开始天数、间隔、每天次数、同时数量、由「爬行者丧尸」带领的几率和击杀掉落。[/*]
 [*][b]尸潮[/b]：剧情「尸潮」总是全部强度，以及「尸潮」战利品倍率。[/*]
@@ -128,12 +123,9 @@ Game Rules 不会往存档里写入自己的数据，你可以随时移除它。
 [*][b]所有区域都打开[/b]只在灾难之后打开区域。灾难前的房子是另一张地图，没有通往其他楼层或锁住房间的路，所以这些区域在灾难发生时才打开。[/*]
 [*][b]所有区域都打开[/b]会跳过原本用来打开这些区域的剧情事件（找到钥匙、清理楼梯和地窖），所以这些事件的奖励和剧情也会被跳过。读档时已经在进行中的事件仍会留在事件列表里。两层楼都打开后可能会解锁对应的成就。[/*]
 [*][b]腐败速度[/b]：保鲜比房间更好的通电冰箱保持自己的速度。已经放好的食物在下次移动或存放时才会采用新的速度。[/*]
-[*][b]恶劣天气太阳能[/b]在夜间没有效果，对照不到光的太阳能板也没有效果。[/*]
 [*][b]随机天气[/b]从下一个小时起改变天气，天气预报也会显示新的天气。相同的种子总是生成相同的天气，所以读档后保持不变。[/*]
 [*][b]没有催债人[/b]最好在放贷人第一次上门前开启。已经在进行中的上门会照常结束。[/*]
 [*][b]老鼠来访几率[/b]在「鼠患」期间不生效。[/*]
-[*][b]电器耗电倍率[/b]不影响烹饪和粉碎工作、压缩机、防御设施开火和信号站。[/*]
-[*][b]永不停电[/b]停电之后的事件和柴油发电机的启动也不会出现。已经发生的停电不会恢复。[/*]
 [*][b]寒潮强度[/b]也会影响你支援的陌生人是否把当天算作寒冷。[/*]
 [/list]
 
@@ -159,7 +151,7 @@ Game Rules 不会往存档里写入自己的数据，你可以随时移除它。
 从 [font=Courier New]BepInEx\plugins[/font] 文件夹中删除 [font=Courier New]GameRules.dll[/font]。
 
 [size=5]配置[/size]
-如需修改设置，可以在游戏内 Mod Manager 的「模组」界面修改（改动立即生效，[font=Courier New]NoRestartLimit[/font]、[font=Courier New]BatteryMultiplier[/font]、[font=Courier New]StartWithAllAreasOpen[/font] 和 [font=Courier New]Weather[/font] 各项除外，它们在下次启动游戏时生效）；也可以在游戏关闭时编辑 [font=Courier New]BepInEx\config\com.dev.survivallog.gamerules.cfg[/font]。没装 Exiled's Toolkit 时，在「模组」界面的改动在下次启动游戏时生效。配置文件中每项设置都有中文说明，完整说明见 [url=https://github.com/AnExiledDev/SurvivalLog-GameRules/blob/main/CONFIG.md]CONFIG.md[/url]（英文）。
+如需修改设置，可以在游戏内 Mod Manager 的「模组」界面修改（改动立即生效，[font=Courier New]NoRestartLimit[/font]、[font=Courier New]StartWithAllAreasOpen[/font] 和 [font=Courier New]Weather[/font] 各项除外，它们在下次启动游戏时生效）；也可以在游戏关闭时编辑 [font=Courier New]BepInEx\config\com.dev.survivallog.gamerules.cfg[/font]。没装 Exiled's Toolkit 时，在「模组」界面的改动在下次启动游戏时生效。配置文件中每项设置都有中文说明，完整说明见 [url=https://github.com/AnExiledDev/SurvivalLog-GameRules/blob/main/CONFIG.md]CONFIG.md[/url]（英文）。
 
 [size=5]反馈[/size]
 发现 bug 或有好点子？欢迎来 [url=https://discord.gg/trTsyxUFqg]Core Directive Discord[/url] 打个招呼，或在本页的「Posts」标签里发帖。报告 bug 时，请附上 [font=Courier New]BepInEx\LogOutput.log[/font] 和 [font=Courier New]BepInEx\game-rules.log[/font]。

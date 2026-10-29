@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0
+
+- The solar, battery, device power, power cut and Blackout panic settings moved to the new Power Manager mod. Power Manager carries over your values the first time it starts.
+- Made for Survival Log 1.1.19611.
+
 ## 0.6.3
 
 - Less stutter the first time shared device heat warms a zone in a session: Game Rules now reads the zones once while the save loads.

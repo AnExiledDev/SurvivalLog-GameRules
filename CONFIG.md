@@ -1,6 +1,8 @@
 # Game Rules settings
 
-Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. Changed on the Mods screen, every setting takes effect at once except `NoRestartLimit`, `BatteryMultiplier`, `StartWithAllAreasOpen` and the `Weather` settings, which take effect at the next game start. Delete the file to get the defaults back. Every default is the game's own rule. Without Exiled's Toolkit installed, changes made on the Mods screen take effect at the next game start instead.
+Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. Changed on the Mods screen, every setting takes effect at once except `NoRestartLimit`, `StartWithAllAreasOpen` and the `Weather` settings, which take effect at the next game start. Delete the file to get the defaults back. Every default is the game's own rule. Without Exiled's Toolkit installed, changes made on the Mods screen take effect at the next game start instead.
+
+The solar, battery, device power, power cut and Blackout panic settings are now in the Power Manager mod, which carries over your values the first time it starts.
 
 ## Restarts
 
@@ -20,28 +22,11 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 | `MoldSpreadItems` | `2` | The most items mold spreads to each time (severe mold adds more). 1 to 6. |
 | `MoldSeedsDay1` | `3` | Items that turn moldy when mold first appears (severe mold adds more). 1 to 10. |
 
-## Solar
-
-| Setting | Default | What it does |
-| --- | --- | --- |
-| `SolarMultiplier` | `1` | Solar panels make this many times the game's power. 0.1 to 10. |
-| `BadWeatherOutput` | `0` | In storms and heavy rain the game's panels make nothing. This gives them a share of a cloudy day's power: 0.5 is half, 1 is a full cloudy day. 0 to 1. The multiplier applies on top. |
-
 ## Spoilage
 
 | Setting | Default | What it does |
 | --- | --- | --- |
 | `SpoilageSpeed` | `1` | How fast food spoils, times the game's speed: 0.5 is half as fast, 2 is twice as fast. 0.1 to 5. A powered fridge that keeps food slower than the room keeps its own speed. Food already lying somewhere picks up the new speed the next time it is moved or stored. |
-
-## Power
-
-| Setting | Default | What it does |
-| --- | --- | --- |
-| `BatteryMultiplier` | `1` | Batteries hold this many times the game's power. 0.1 to 10. |
-| `DevicePowerUse` | `1` | Power that switched-on devices use, times the game's. 0 to 3. Cooking and shredding jobs, the compressor, defenses firing and the signal station are unchanged. |
-| `PowerCutDelay` | `0` | Days later than in the game that the city power is cut. 0 to 100. |
-| `NoPowerCut` | `false` | The city power is never cut. The events that follow the cut, and the diesel generator start, never come. A cut that already happened is not undone. |
-| `NoBlackoutPanic` | `false` | Power cuts at night no longer bring Blackout panic; a panic already running clears within ten in-game minutes. |
 
 ## Visitors
 

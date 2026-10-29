@@ -5,7 +5,7 @@ using System.Globalization;
 namespace GameRules.Core;
 
 /// <summary>
-/// The settings for raw food, food fatigue, mold, rats, sickness and blackout panic. Multipliers of 1, switches that
+/// The settings for raw food, food fatigue, mold, rats, sickness. Multipliers of 1, switches that
 /// are off and the game's own counts are the game's rules and change nothing.
 /// </summary>
 public sealed record FoodHealthSettings(
@@ -24,8 +24,7 @@ public sealed record FoodHealthSettings(
     bool NoPlague,
     bool NoPlagueWorsening,
     float WindChillChance,
-    float FeverChance,
-    bool NoBlackoutPanic)
+    float FeverChance)
 {
     public const int GameSprayRadius = 1;
     public const int GameSprayCost = 1;
@@ -56,8 +55,7 @@ public sealed record FoodHealthSettings(
         NoPlague: false,
         NoPlagueWorsening: false,
         WindChillChance: 1f,
-        FeverChance: 1f,
-        NoBlackoutPanic: false);
+        FeverChance: 1f);
 
     public PlagueBlock PlagueBlock => new(NoPlague, NoPlagueWorsening);
 

@@ -15,7 +15,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.6.3";
+    private const string Version = "0.7.0";
 
     public override void Load()
     {
@@ -41,8 +41,7 @@ public sealed class Plugin : BasePlugin
             var settings = rules.Read();
 
             RulePatches.Use(harmony, settings, log.Write);
-            SolarDetour.Use(settings, log.Write);
-        }, rules.StopMoldSpread, rules.SolarMultiplier, rules.BadWeatherOutput, rules.SpoilageSpeed);
+        }, rules.StopMoldSpread, rules.SpoilageSpeed);
 
         OptionalLive.Watch(() => VisitorPatches.Use(harmony, new VisitorBlock(visitors.NoDoorSmasher.Value, visitors.NoDebtCollector.Value), log.Write),
             visitors.NoDoorSmasher, visitors.NoDebtCollector);
@@ -50,7 +49,7 @@ public sealed class Plugin : BasePlugin
         OptionalLive.Watch(() => UsePool(harmony, pool.Read(), log), pool.IndoorAndSunroom, pool.Terrace, pool.Basement);
 
         StartOpenAreas(harmony, openAreas, log.Write);
-        StartTables(startRules, weather, log.Write);
+        StartWeather(weather, log.Write);
         StartGroups(harmony, log.Write);
         StartTicker(log.Write);
     }
@@ -79,26 +78,11 @@ public sealed class Plugin : BasePlugin
             Config.Bind("Mold", "StopMoldSpread", game.StopMoldSpread,
                 "Mold no longer spreads to the food next to it. Mold that is already there still clears as usual.\n" +
                 "霉菌不再蔓延到旁边的食物。已有的霉菌仍会照常消退。"),
-            Config.Bind("Solar", "SolarMultiplier", game.SolarMultiplier,
-                new ConfigDescription(
-                    "Solar panels make this many times the game's power. 1 is the game's own.\n" +
-                    "太阳能板的发电量为游戏原本的这么多倍。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0.1f, 10f))),
-            Config.Bind("Solar", "BadWeatherOutput", game.BadWeatherSolar,
-                new ConfigDescription(
-                    "In storms and heavy rain the game's solar panels make nothing. This gives them a share of a cloudy day's power instead: 0.5 is half, 1 is a full cloudy day. 0 is the game's own.\n" +
-                    "在暴雨等恶劣天气中，游戏原本的太阳能板不发电。此项让它们发出阴天发电量的一部分：0.5 为一半，1 为与阴天相同。0 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0f, 1f))),
             Config.Bind("Spoilage", "SpoilageSpeed", game.SpoilageSpeed,
                 new ConfigDescription(
                     "How fast food spoils, times the game's speed: 0.5 is half as fast, 2 is twice as fast. 1 is the game's own. Fridges that keep food slower than the room keep their own speed. Food already lying somewhere picks up a new speed the next time it is moved or stored.\n" +
                     "食物腐败的速度，为游戏原本速度的倍数：0.5 为一半速度，2 为两倍速度。1 为游戏原本的数值。比房间保鲜更好的冰箱保持自己的速度。已经放好的食物在下次移动或存放时才会换成新的速度。",
-                    new AcceptableValueRange<float>(0.1f, 5f))),
-            Config.Bind("Power", "BatteryMultiplier", game.BatteryMultiplier,
-                new ConfigDescription(
-                    "Batteries hold this many times the game's power: 2 holds twice as much. 1 is the game's own. Takes effect at the next game start.\n" +
-                    "蓄电池的容量为游戏原本的这么多倍：2 为两倍。1 为游戏原本的数值。下次启动游戏时生效。",
-                    new AcceptableValueRange<float>(0.1f, 10f), "ModManager.Restart")));
+                    new AcceptableValueRange<float>(0.1f, 5f))));
     }
 
     private VisitorEntries BindVisitors()
@@ -182,11 +166,9 @@ public sealed class Plugin : BasePlugin
         log("restarts never run out");
     }
 
-    private static void StartTables(RuleSettings settings, WeatherSettings weather, System.Action<string> log)
+    private static void StartWeather(WeatherSettings weather, System.Action<string> log)
     {
         if (weather.IsActive) RulesTicker.Checks.Add(new WeatherTable(weather, log).Tick);
-
-        if (settings.ChangesBattery) RulesTicker.Checks.Add(new BatteryTable(settings.BatteryMultiplier, log).Tick);
     }
 
     /// <summary>One Unity object runs every check, so it is only added when a setting needs one.</summary>
@@ -221,12 +203,9 @@ public sealed class Plugin : BasePlugin
     private sealed record RuleEntries(
         ConfigEntry<bool> NoRestartLimit,
         ConfigEntry<bool> StopMoldSpread,
-        ConfigEntry<float> SolarMultiplier,
-        ConfigEntry<float> BadWeatherOutput,
-        ConfigEntry<float> SpoilageSpeed,
-        ConfigEntry<float> BatteryMultiplier)
+        ConfigEntry<float> SpoilageSpeed)
     {
-        public RuleSettings Read() => new(NoRestartLimit.Value, StopMoldSpread.Value, SolarMultiplier.Value, BadWeatherOutput.Value, SpoilageSpeed.Value, BatteryMultiplier.Value);
+        public RuleSettings Read() => new(NoRestartLimit.Value, StopMoldSpread.Value, SpoilageSpeed.Value);
     }
 
     private sealed record VisitorEntries(ConfigEntry<bool> NoDoorSmasher, ConfigEntry<bool> NoDebtCollector);

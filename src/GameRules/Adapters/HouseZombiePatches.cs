@@ -9,7 +9,7 @@ using HarmonyLib;
 namespace GameRules.Adapters;
 
 /// <summary>
-/// The hooks for device power use, the power cut and heavy-rain leaks, cold weather and cold resistance, the stray
+/// The hooks for heavy-rain leaks, cold weather and cold resistance, the stray
 /// zombie leader chance and stray zombie kill loot. Every dynamic event is built by
 /// DynamicEventManager.CreateDynamicEventArgs, whose callers all handle it returning nothing, so a held-back event is
 /// simply not built. Each target was checked in GameAssembly.dll: no relative jump or call in its first 14 bytes.
@@ -27,7 +27,6 @@ internal static class HouseZombiePatches
     private static HouseEventBlock _events = HouseEventBlock.Game;
     private static MethodInfo? _spawnKillLoot;
     private static bool _isSpawningExtraLoot;
-    private static bool _isPowerHooked;
     private static bool _isEventHooked;
     private static bool _isColdHooked;
     private static bool _isResistHooked;
@@ -44,13 +43,6 @@ internal static class HouseZombiePatches
         _log = log;
         _settings = settings;
         _events = settings.Events;
-
-        if (settings.DevicePowerUse != 1f && !_isPowerHooked)
-        {
-            _isPowerHooked = true;
-
-            Hook(harmony, typeof(PowerManager), "GetEffectivePowerCost", new[] { typeof(Config_Furniture), typeof(long) }, postfix: nameof(ScalePowerCost));
-        }
 
         if (_events.BlocksAny && !_isEventHooked)
         {
@@ -109,19 +101,6 @@ internal static class HouseZombiePatches
         }
     }
 
-    /// <summary>Runs inside the game's own call; an escaping exception would reach native code.</summary>
-    private static void ScalePowerCost(ref float __result)
-    {
-        try
-        {
-            __result *= _settings.DevicePowerUse;
-        }
-        catch (Exception ex)
-        {
-            LogOnce("power failure", $"scaling a device's power use failed, it uses the game's amount (logged once): {ex}");
-        }
-    }
-
     /// <summary>Runs inside the game's own call; a failure lets the event through.</summary>
     private static bool SkipHouseEvent(DynamicEventConfig config, ref DynamicEventArgs? __result)
     {
@@ -131,8 +110,7 @@ internal static class HouseZombiePatches
 
             var eventId = config._EventId_k__BackingField;
 
-            // Every event the game builds passes through here, so the day is only read for the power cut.
-            if (!_events.BlocksEvent(eventId, HouseEventBlock.ReadsDay(eventId) ? GameDay() : null)) return true;
+            if (!_events.BlocksEvent(eventId)) return true;
 
             __result = null;
             if (LoggedEvents.Of(eventId)) _log($"held back event {eventId} (logged once per event)");
@@ -146,9 +124,6 @@ internal static class HouseZombiePatches
             return true;
         }
     }
-
-    /// <summary>The game day counted from 0, as the event table counts it; null before a run has loaded.</summary>
-    private static int? GameDay() => GameSingleton.Existing<BattleLogicWorld>()?._GameTimeManager?.GetDay();
 
     /// <summary>Runs inside the game's own call; an escaping exception would reach native code.</summary>
     private static void ScaleCold(ref int __result)

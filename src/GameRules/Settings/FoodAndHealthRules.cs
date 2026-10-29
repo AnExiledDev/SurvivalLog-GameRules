@@ -26,7 +26,6 @@ internal static class FoodAndHealthRules
             sickness.Use(settings.EffectChanges());
             FoodFatiguePatches.Use(harmony, settings.NoFoodFatigue, log);
             PlaguePatches.Use(harmony, settings.PlagueBlock, log);
-            BlackoutPanicPatches.Use(harmony, settings.NoBlackoutPanic, log);
             Report(settings, log);
         }, entries.All);
     }
@@ -46,7 +45,6 @@ internal static class FoodAndHealthRules
         log(DescribePlague(settings.PlagueBlock));
         log(Times(settings.WindChillChance, "Wind Chill is caught at {0}x the game's chance", "Wind Chill is caught at the game's chance"));
         log(Times(settings.FeverChance, "a High Temperature is caught at {0}x the game's chance", "a High Temperature is caught at the game's chance"));
-        log(settings.NoBlackoutPanic ? "blackouts no longer bring Blackout panic" : "blackouts bring Blackout panic as in the game");
     }
 
     private static string Times(float factor, string changed, string game) =>
@@ -79,7 +77,6 @@ internal static class FoodAndHealthRules
         private readonly ConfigEntry<bool> _noPlagueWorsening;
         private readonly ConfigEntry<float> _windChillChance;
         private readonly ConfigEntry<float> _feverChance;
-        private readonly ConfigEntry<bool> _noBlackoutPanic;
 
         public Entries(ConfigFile config)
         {
@@ -159,15 +156,12 @@ internal static class FoodAndHealthRules
                     "How likely you are to get a High Temperature in a cold wave without heating, times the game's chance. 0 means never. 1 is the game's own. A High Temperature you already have runs its course.\n" +
                     "寒潮中没有取暖时「发烧」的几率，为游戏原本的倍数。0 为永不发烧。1 为游戏原本的数值。已经发烧的照常持续到结束。",
                     new AcceptableValueRange<float>(0f, 2f)));
-            _noBlackoutPanic = config.Bind("Power", "NoBlackoutPanic", game.NoBlackoutPanic,
-                "Power cuts at night no longer bring Blackout panic and its morale loss. A panic already running clears within ten in-game minutes. Off: as in the game.\n" +
-                "夜间停电不会再带来「停电恐慌」及其心态下降。已有的停电恐慌会在游戏内十分钟内消除。关闭后与游戏原本相同。");
 
             All = new ConfigEntryBase[]
             {
                 _rawFoodSickChance, _noFoodFatigue, _foodFatigueLength, _foodFatiguePenalty,
                 _moldSprayRadius, _moldSprayCost, _moldyFoodSpoilSpeed, _moldSpreadInterval, _moldSpreadItems, _moldSeedsDay1,
-                _ratVisitChance, _ratEscapeTime, _noPlague, _noPlagueWorsening, _windChillChance, _feverChance, _noBlackoutPanic,
+                _ratVisitChance, _ratEscapeTime, _noPlague, _noPlagueWorsening, _windChillChance, _feverChance,
             };
         }
 
@@ -189,7 +183,6 @@ internal static class FoodAndHealthRules
             _noPlague.Value,
             _noPlagueWorsening.Value,
             _windChillChance.Value,
-            _feverChance.Value,
-            _noBlackoutPanic.Value);
+            _feverChance.Value);
     }
 }

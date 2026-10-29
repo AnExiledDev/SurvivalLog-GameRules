@@ -27,8 +27,6 @@ internal static class HouseAndZombieRules
 
     private static void Report(HouseZombieSettings settings, Action<string> log)
     {
-        log($"devices use {settings.DevicePowerUse:0.##}x the game's power");
-        log(PowerCutLine(settings));
         log(settings.NoStormLeaks ? "heavy rain never leaks into the house" : "heavy rain can leak into the house as in the game");
         log($"cold weather is {settings.ColdWaveStrength:0.##}x as cold as in the game");
         log($"personal cold resistance gets {settings.ColdResistBonus} extra level(s)");
@@ -37,14 +35,6 @@ internal static class HouseAndZombieRules
         log($"a killed stray zombie drops {settings.StrayZombieLoot:0.##}x the game's loot");
         log(settings.NoAdaptiveWaves ? "zombie hordes always come at full strength" : "zombie hordes adapt to your defenses as in the game");
         log($"zombie hordes leave {settings.WaveLoot:0.##}x the game's loot for the zombies killed");
-    }
-
-    private static string PowerCutLine(HouseZombieSettings settings)
-    {
-        if (settings.NoPowerCut) return "the city power is never cut";
-        if (settings.PowerCutDelay > 0) return $"the city power cut comes {settings.PowerCutDelay} day(s) later than in the game";
-
-        return "the city power is cut as in the game";
     }
 
     private static string StrayZombieLine(HouseZombieSettings settings)
@@ -57,9 +47,6 @@ internal static class HouseAndZombieRules
 
     private sealed class Entries
     {
-        private readonly ConfigEntry<float> _devicePowerUse;
-        private readonly ConfigEntry<int> _powerCutDelay;
-        private readonly ConfigEntry<bool> _noPowerCut;
         private readonly ConfigEntry<bool> _noStormLeaks;
         private readonly ConfigEntry<float> _coldWaveStrength;
         private readonly ConfigEntry<int> _coldResistBonus;
@@ -77,19 +64,6 @@ internal static class HouseAndZombieRules
         {
             var game = HouseZombieSettings.Game;
 
-            _devicePowerUse = config.Bind("Power", "DevicePowerUse", game.DevicePowerUse,
-                new ConfigDescription(
-                    "How much power switched-on devices use, times the game's use: 0.5 is half. Cooking and shredding jobs, the compressor, defense devices firing and the signal station use the game's amount. 1 is the game's own.\n" +
-                    "开启的电器消耗的电量，为游戏原本的倍数：0.5 为一半。烹饪和粉碎工作、压缩机、防御设施开火和信号站的耗电与游戏原本相同。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0f, 3f)));
-            _powerCutDelay = config.Bind("Power", "PowerCutDelay", game.PowerCutDelay,
-                new ConfigDescription(
-                    "How many days later than in the game the city power is cut. 0 is the game's own. A cut that already happened stays.\n" +
-                    "市电被切断（剧情事件「停电开始」）比游戏原本推迟的天数。0 为游戏原本的数值。已经停电的不会恢复。",
-                    new AcceptableValueRange<int>(0, 100)));
-            _noPowerCut = config.Bind("Power", "NoPowerCut", game.NoPowerCut,
-                "The city power is never cut, so the house keeps grid power all game. The story events that follow the cut never come, and the diesel generator cannot be started. A cut that already happened stays. Off: as in the game.\n" +
-                "市电永远不会被切断（剧情事件「停电开始」不会出现），房子整局都有市电。停电之后的剧情事件不会出现，柴油发电机也无法启动。已经停电的不会恢复。关闭后与游戏原本相同。");
             _noStormLeaks = config.Bind("House", "NoStormLeaks", game.NoStormLeaks,
                 "Heavy rain never leaks in through the windows (the Heavy Rain event never comes), so there are no leaks to deal with. Off: as in the game.\n" +
                 "暴雨不会再从窗缝渗入（「暴雨侵袭」事件不会出现），不需要处理漏雨。关闭后与游戏原本相同。");
@@ -147,7 +121,7 @@ internal static class HouseAndZombieRules
 
             All = new ConfigEntryBase[]
             {
-                _devicePowerUse, _powerCutDelay, _noPowerCut, _noStormLeaks, _coldWaveStrength, _coldResistBonus,
+                _noStormLeaks, _coldWaveStrength, _coldResistBonus,
                 _noStrayZombies, _strayZombieStartDay, _strayZombieCooldownHours, _strayZombieMaxPerDay, _strayZombieMaxAlive,
                 _strayZombieLeaderChance, _strayZombieLoot, _noAdaptiveWaves, _waveLoot,
             };
@@ -156,9 +130,6 @@ internal static class HouseAndZombieRules
         public ConfigEntryBase[] All { get; }
 
         public HouseZombieSettings Read() => new(
-            _devicePowerUse.Value,
-            _powerCutDelay.Value,
-            _noPowerCut.Value,
             _noStormLeaks.Value,
             _coldWaveStrength.Value,
             _coldResistBonus.Value,
