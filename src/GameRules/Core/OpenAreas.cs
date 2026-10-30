@@ -14,7 +14,8 @@ public sealed record AreaChange(IReadOnlyList<string> Add, IReadOnlyList<string>
 /// Student's second floor and basement, the Warehouse Manager's second floor, cold storage, garage and two side rooms),
 /// and reads that tag for navigation, building and the floor menu, so adding the tags opens the areas. Before the
 /// disaster the house is a separate map with no way onto the other floors, so nothing is opened there. The story events
-/// that would open an area again (finding the key, clearing the stairs) are skipped once its tag is there.
+/// that would open an area again (finding the key, clearing the stairs) are skipped once its tag is there. The Warehouse
+/// Manager's side rooms, cold storage and garage also have a door the game removes when it opens them, so those doors go too.
 /// </summary>
 public static class OpenAreas
 {
@@ -35,6 +36,19 @@ public static class OpenAreas
     private static readonly string[] HouseBlockers = { "TAG_STAIRS_BROKEN", "TAG_CELLAR_BLOCKED" };
 
     private static readonly string[] WarehouseAreas = { SecondFloor, ColdStorage, RightHut, LeftHut, Garage };
+
+    /// <summary>
+    /// Each door the Warehouse Manager unlocks with a key, by furniture ID, and the area behind it. The game's open action
+    /// removes the door as it adds the tag; with only the tag the door still blocks the way and its unlock button is hidden.
+    /// The two cages are crossed over: cage 341's unlock adds WH_HutROpen and cage 387's adds WH_HutLOpen.
+    /// </summary>
+    private static readonly (int Door, string Area)[] WarehouseDoors =
+    {
+        (341, RightHut), (387, LeftHut), (347, ColdStorage), (351, Garage),
+    };
+
+    /// <summary>How many doors a fully opened Warehouse Manager run has removed.</summary>
+    public static int WarehouseDoorCount => WarehouseDoors.Length;
 
     private static readonly AreaChange Nothing = new(Array.Empty<string>(), Array.Empty<string>());
 
@@ -81,6 +95,24 @@ public static class OpenAreas
         if (add == null && remove == null) return Nothing;
 
         return new AreaChange(add ?? (IReadOnlyList<string>)Array.Empty<string>(), remove ?? (IReadOnlyList<string>)Array.Empty<string>());
+    }
+
+    /// <summary>
+    /// The door furniture to remove: each Warehouse Manager door whose area is open, after the disaster only. Doors of
+    /// areas still locked are left for the player's key.
+    /// </summary>
+    public static IReadOnlyList<int> DoorsToRemove(int role, bool isBeforeDisaster, Func<string, bool> hasTag)
+    {
+        if (isBeforeDisaster || role != WarehouseManager) return Array.Empty<int>();
+
+        List<int>? doors = null;
+
+        foreach (var (door, area) in WarehouseDoors)
+        {
+            if (hasTag(area)) (doors ??= new List<int>()).Add(door);
+        }
+
+        return doors ?? (IReadOnlyList<int>)Array.Empty<int>();
     }
 
     /// <summary>Whether the event is one that opens an area; only those need the save's tags.</summary>

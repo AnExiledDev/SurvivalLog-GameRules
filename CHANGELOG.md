@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.1
+
+- With Start with all areas open, the Warehouse Manager can now walk into the two side rooms, cold storage and the garage. Their doors stayed shut before, with no way to unlock them. A run that already has the areas open loses those doors the next time it loads.
+- Made for Survival Log 1.1.20151.
+
 ## 0.7.0
 
 - The solar, battery, device power, power cut and Blackout panic settings moved to the new Power Manager mod. Power Manager carries over your values the first time it starts.

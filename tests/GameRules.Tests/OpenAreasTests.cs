@@ -161,4 +161,35 @@ public sealed class OpenAreasTests
 
         Assert.True(OpenAreas.Plan(role, BeforeDisaster, tags.Contains).IsEmpty);
     }
+
+    private const int RightHutCage = 341;
+    private const int LeftHutCage = 387;
+    private const int ColdStorageShutter = 347;
+    private const int GarageDoor = 351;
+
+    [Fact]
+    public void An_opened_warehouse_run_removes_all_four_locked_doors()
+    {
+        var change = OpenAreas.Plan(WarehouseManager, AfterDisaster, _ => false);
+        var tags = new HashSet<string>(change.Add);
+
+        Assert.Equal(new[] { RightHutCage, LeftHutCage, ColdStorageShutter, GarageDoor }, OpenAreas.DoorsToRemove(WarehouseManager, AfterDisaster, tags.Contains));
+    }
+
+    /// <summary>The game's own unlock of cage 341 adds WH_HutROpen, and of cage 387 WH_HutLOpen; a swap would remove the wrong cage.</summary>
+    [Fact]
+    public void Each_door_goes_only_when_the_area_behind_it_is_open()
+    {
+        Assert.Equal(new[] { RightHutCage }, OpenAreas.DoorsToRemove(WarehouseManager, AfterDisaster, new HashSet<string> { OpenAreas.RightHut }.Contains));
+        Assert.Equal(new[] { LeftHutCage }, OpenAreas.DoorsToRemove(WarehouseManager, AfterDisaster, new HashSet<string> { OpenAreas.LeftHut }.Contains));
+        Assert.Equal(new[] { GarageDoor }, OpenAreas.DoorsToRemove(WarehouseManager, AfterDisaster, new HashSet<string> { OpenAreas.Garage }.Contains));
+    }
+
+    [Fact]
+    public void Doors_stay_before_the_disaster_and_for_other_roles()
+    {
+        Assert.Empty(OpenAreas.DoorsToRemove(WarehouseManager, BeforeDisaster, _ => true));
+        Assert.Empty(OpenAreas.DoorsToRemove(WageSlave, AfterDisaster, _ => true));
+        Assert.Empty(OpenAreas.DoorsToRemove(WarehouseManager, AfterDisaster, _ => false));
+    }
 }

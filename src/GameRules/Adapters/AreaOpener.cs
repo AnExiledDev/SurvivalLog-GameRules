@@ -21,6 +21,7 @@ internal sealed class AreaOpener
     private readonly HashSet<int> _reportedRefusals = new();
     private readonly TagMemo _tagMemo = new();
     private float _nextCheckAt;
+    private IntPtr _doorsGoneIn;
 
     public AreaOpener(Action<string> log)
     {
@@ -33,7 +34,7 @@ internal sealed class AreaOpener
 
         _nextCheckAt = now + CheckSeconds;
 
-        if (ReadyRun() is not var (tags, events, role, isBeforeDisaster)) return;
+        if (ReadyRun() is not var (world, tags, events, role, isBeforeDisaster)) return;
 
         _tagMemo.Use(tags.HasTag);
 
@@ -41,6 +42,7 @@ internal sealed class AreaOpener
         {
             OpenLockedAreas(tags, role, isBeforeDisaster);
             EndStaleEvents(events);
+            RemoveOpenedDoors(world, role, isBeforeDisaster);
         }
         finally
         {
@@ -83,7 +85,40 @@ internal sealed class AreaOpener
         }
     }
 
-    private static (TagManager Tags, DynamicEventManager Events, int Role, bool IsBeforeDisaster)? ReadyRun()
+    /// <summary>
+    /// Removes the door of each Warehouse Manager area that is open, the way the game's own unlock does, so a run opened
+    /// by this mod (or a save from a version that only added the tags) can walk in. Once every door's area is open and the
+    /// doors are gone, the run is not looked at again until another run loads.
+    /// </summary>
+    private void RemoveOpenedDoors(BattleLogicWorld world, int role, bool isBeforeDisaster)
+    {
+        if (world.Pointer == _doorsGoneIn) return;
+
+        var doors = OpenAreas.DoorsToRemove(role, isBeforeDisaster, _tagMemo.HasTag);
+
+        if (doors.Count == 0) return;
+
+        var agents = world._AgentManager;
+
+        if (agents == null) return;
+
+        for (var i = 0; i < doors.Count; i++)
+        {
+            var found = agents.GetFurnituresByConfigId(doors[i]);
+
+            if (found == null) continue;
+
+            for (var j = found.Count - 1; j >= 0; j--)
+            {
+                AE_DisableFurniture.DemolishFurniture(found[j]);
+                _log($"removed door {doors[i]}, its area is open");
+            }
+        }
+
+        if (doors.Count == OpenAreas.WarehouseDoorCount) _doorsGoneIn = world.Pointer;
+    }
+
+    private static (BattleLogicWorld World, TagManager Tags, DynamicEventManager Events, int Role, bool IsBeforeDisaster)? ReadyRun()
     {
         var main = GameSingleton.Existing<BattleMain>();
         var world = GameSingleton.Existing<BattleLogicWorld>();
@@ -97,7 +132,7 @@ internal sealed class AreaOpener
         var clock = world._GameTimeManager;
         var events = world._DynamicEventManager;
 
-        return tags == null || clock == null || events == null ? null : (tags, events, save.PlayerSelectId, clock.WorldStateType == WorldStateType.PreDisaster);
+        return tags == null || clock == null || events == null ? null : (world, tags, events, save.PlayerSelectId, clock.WorldStateType == WorldStateType.PreDisaster);
     }
 
     private static Il2CppSystem.Collections.Generic.List<string> ToGameList(System.Collections.Generic.IEnumerable<string> tags)

@@ -49,7 +49,7 @@ The first time it starts, Game Rules copies your heat sharing settings from Whol
 
 ## Requirements
 
-- Survival Log 1.1.19611. Built and tested on this version; a game update can break it until the mod is updated.
+- Survival Log 1.1.20151. Built and tested on this version; a game update can break it until the mod is updated.
 - The [BepInEx Pack for Survival Log](https://www.nexusmods.com/survivallog/mods/12), the BepInEx 6 (IL2CPP) build for the game.
 - Optional: [Exiled's Toolkit](https://github.com/AnExiledDev/SurvivalLog-ExiledToolkit) 0.4.0 or newer. With it, settings changed on the Mod Manager's Mods screen take effect without restarting the game. Without it, they take effect at the next game start.
 
@@ -71,7 +71,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.7.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.7.1 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
 
 ## Feedback and bug reports
 
