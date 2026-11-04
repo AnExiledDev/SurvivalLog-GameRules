@@ -15,7 +15,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.7.1";
+    private const string Version = "0.8.0";
 
     public override void Load()
     {
@@ -76,13 +76,13 @@ public sealed class Plugin : BasePlugin
                     "重生次数不会用完：无论用了多少次，始终保留游戏原本的全部次数。关闭后使用游戏原本的次数上限。下次启动游戏时生效。",
                     null, "ModManager.Restart")),
             Config.Bind("Mold", "StopMoldSpread", game.StopMoldSpread,
-                "Mold no longer spreads to the food next to it. Mold that is already there still clears as usual.\n" +
-                "霉菌不再蔓延到旁边的食物。已有的霉菌仍会照常消退。"),
+                new ConfigDescription("Mold no longer spreads to the food next to it. Mold that is already there still clears as usual.\n" +
+                "霉菌不再蔓延到旁边的食物。已有的霉菌仍会照常消退。", null, SettingTags.WorldRule)),
             Config.Bind("Spoilage", "SpoilageSpeed", game.SpoilageSpeed,
                 new ConfigDescription(
                     "How fast food spoils, times the game's speed: 0.5 is half as fast, 2 is twice as fast. 1 is the game's own. Fridges that keep food slower than the room keep their own speed. Food already lying somewhere picks up a new speed the next time it is moved or stored.\n" +
                     "食物腐败的速度，为游戏原本速度的倍数：0.5 为一半速度，2 为两倍速度。1 为游戏原本的数值。比房间保鲜更好的冰箱保持自己的速度。已经放好的食物在下次移动或存放时才会换成新的速度。",
-                    new AcceptableValueRange<float>(0.1f, 5f))));
+                    new AcceptableValueRange<float>(0.1f, 5f), SettingTags.WorldRule)));
     }
 
     private VisitorEntries BindVisitors()
@@ -91,11 +91,11 @@ public sealed class Plugin : BasePlugin
 
         return new VisitorEntries(
             Config.Bind("Visitors", "NoDoorSmasher", game.NoDoorSmasher,
-                "The angry neighbour never comes pounding on your door at night (Midnight Door Pounding).\n" +
-                "愤怒的邻居不会在深夜来砸门（「深夜砸门」）。"),
+                new ConfigDescription("The angry neighbour never comes pounding on your door at night (Midnight Door Pounding).\n" +
+                "愤怒的邻居不会在深夜来砸门（「深夜砸门」）。", null, SettingTags.WorldRule)),
             Config.Bind("Visitors", "NoDebtCollector", game.NoDebtCollector,
-                "The loan shark never comes to collect: no warning text, no Midnight Visitors, no revenge nights. A loan you take is yours to keep. Best turned on before the first visit.\n" +
-                "放贷人不会上门催收：没有警告短信，没有「深夜来客」，也没有报复的夜晚。借来的钱不用还。最好在第一次上门前开启。"));
+                new ConfigDescription("The loan shark never comes to collect: no warning text, no Midnight Visitors, no revenge nights. A loan you take is yours to keep. Best turned on before the first visit.\n" +
+                "放贷人不会上门催收：没有警告短信，没有「深夜来客」，也没有报复的夜晚。借来的钱不用还。最好在第一次上门前开启。", null, SettingTags.WorldRule)));
     }
 
     private bool BindAreas() =>
@@ -144,14 +144,14 @@ public sealed class Plugin : BasePlugin
         var hadPoolSection = ClimateMove.HasClimateSection(Config);
         var game = PoolSettings.Default;
         var indoorAndSunroom = Config.Bind("Climate", "IndoorAndSunroom", game.IndoorAndSunroom,
-            "Running AC units, heaters and stoves in the Indoor zone or the Sunroom warm both. Off: each warms only its own zone, as in the game.\n" +
-            "室内或阳光房中运行的空调、电暖器和暖炉会同时温暖这两处。关闭后各自只温暖所在的区域，与游戏原本相同。");
+            new ConfigDescription("Running AC units, heaters and stoves in the Indoor zone or the Sunroom warm both. Off: each warms only its own zone, as in the game.\n" +
+            "室内或阳光房中运行的空调、电暖器和暖炉会同时温暖这两处。关闭后各自只温暖所在的区域，与游戏原本相同。", null, SettingTags.WorldRule));
         var terrace = Config.Bind("Climate", "Terrace", game.Terrace,
-            "The Terrace shares heat with the Indoor zone. The game gives the Terrace no device heat at all; on, it gets the device heat of every zone sharing with Indoor, and devices on the Terrace warm those zones too.\n" +
-            "露台加入室内的共享范围。游戏本身不给露台任何设备热量；开启后露台获得整个共享范围的设备热量，露台上的设备也会温暖共享范围。");
+            new ConfigDescription("The Terrace shares heat with the Indoor zone. The game gives the Terrace no device heat at all; on, it gets the device heat of every zone sharing with Indoor, and devices on the Terrace warm those zones too.\n" +
+            "露台加入室内的共享范围。游戏本身不给露台任何设备热量；开启后露台获得整个共享范围的设备热量，露台上的设备也会温暖共享范围。", null, SettingTags.WorldRule));
         var basement = Config.Bind("Climate", "Basement", game.Basement,
-            "The Basement shares heat with the Indoor zone: its devices warm the zones sharing with Indoor, and their devices warm the Basement. Off: the Basement keeps its own heat, as in the game.\n" +
-            "地下室加入室内的共享范围：地下室的设备温暖共享范围，共享范围的设备也温暖地下室。关闭后地下室保持自己的热量，与游戏原本相同。");
+            new ConfigDescription("The Basement shares heat with the Indoor zone: its devices warm the zones sharing with Indoor, and their devices warm the Basement. Off: the Basement keeps its own heat, as in the game.\n" +
+            "地下室加入室内的共享范围：地下室的设备温暖共享范围，共享范围的设备也温暖地下室。关闭后地下室保持自己的热量，与游戏原本相同。", null, SettingTags.WorldRule));
 
         ClimateMove.ImportOldPool(Config, hadPoolSection, new[] { indoorAndSunroom, terrace, basement }, log);
 

@@ -65,59 +65,59 @@ internal static class HouseAndZombieRules
             var game = HouseZombieSettings.Game;
 
             _noStormLeaks = config.Bind("House", "NoStormLeaks", game.NoStormLeaks,
-                "Heavy rain never leaks in through the windows (the Heavy Rain event never comes), so there are no leaks to deal with. Off: as in the game.\n" +
-                "暴雨不会再从窗缝渗入（「暴雨侵袭」事件不会出现），不需要处理漏雨。关闭后与游戏原本相同。");
+                new ConfigDescription("Heavy rain never leaks in through the windows (the Heavy Rain event never comes), so there are no leaks to deal with. Off: as in the game.\n" +
+                "暴雨不会再从窗缝渗入（「暴雨侵袭」事件不会出现），不需要处理漏雨。关闭后与游戏原本相同。", null, SettingTags.WorldRule));
             _coldWaveStrength = config.Bind("Cold", "ColdWaveStrength", game.ColdWaveStrength,
                 new ConfigDescription(
                     "How cold cold waves, frosty clear days and cold rain are, times the game's cold, rounded to the game's whole steps: 0 makes them no colder than a mild day, 2 is twice as cold. It changes how cold you feel, how plants grow and whether supported strangers count the day as cold. The weather and the forecast stay as in the game. 1 is the game's own.\n" +
                     "「寒潮」、霜晴、寒晴、凛晴和寒雨的寒冷程度，为游戏原本的倍数，取整到游戏的等级：0 为与温和的日子一样，2 为两倍寒冷。影响你感受到的寒冷、植物生长，以及你支援的陌生人是否算作寒冷天。天气和天气预报与游戏原本相同。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0f, 3f)));
+                    new AcceptableValueRange<float>(0f, 3f), SettingTags.WorldRule));
             _coldResistBonus = config.Bind("Cold", "ColdResistBonus", game.ColdResistBonus,
                 new ConfigDescription(
                     "Extra levels of Personal Cold Resistance for your character, added to any from talents: each level makes the cold feel one step milder. 0 is the game's own.\n" +
                     "角色额外获得的「个人抗寒」等级，与天赋给予的相加：每一级让寒冷的感受减轻一档。0 为游戏原本的数值。",
-                    new AcceptableValueRange<int>(0, 3)));
+                    new AcceptableValueRange<int>(0, 3), SettingTags.WorldRule));
             _noStrayZombies = config.Bind("Zombies", "NoStrayZombies", game.NoStrayZombies,
-                "Stray zombies never wander up to the house between zombie hordes. Zombie hordes still come. Off: as in the game.\n" +
-                "零散丧尸不会在「尸潮」之间游荡到房子附近。尸潮照常来袭。关闭后与游戏原本相同。");
+                new ConfigDescription("Stray zombies never wander up to the house between zombie hordes. Zombie hordes still come. Off: as in the game.\n" +
+                "零散丧尸不会在「尸潮」之间游荡到房子附近。尸潮照常来袭。关闭后与游戏原本相同。", null, SettingTags.WorldRule));
             _strayZombieStartDay = config.Bind("Zombies", "StrayZombieStartDay", game.StrayZombieStartDay,
                 new ConfigDescription(
                     "The day stray zombies start wandering up to the house. 7 is the game's own.\n" +
                     "零散丧尸开始游荡到房子附近的天数。7 为游戏原本的数值。",
-                    new AcceptableValueRange<int>(1, 100)));
+                    new AcceptableValueRange<int>(1, 100), SettingTags.WorldRule));
             _strayZombieCooldownHours = config.Bind("Zombies", "StrayZombieCooldownHours", game.StrayZombieCooldownHours,
                 new ConfigDescription(
                     "In-game hours after a stray zombie visit before the next one can come. 4 is the game's own.\n" +
                     "一次零散丧尸来访后，到下一次可能来访之间的游戏内小时数。4 为游戏原本的数值。",
-                    new AcceptableValueRange<int>(0, 48)));
+                    new AcceptableValueRange<int>(0, 48), SettingTags.WorldRule));
             _strayZombieMaxPerDay = config.Bind("Zombies", "StrayZombieMaxPerDay", game.StrayZombieMaxPerDay,
                 new ConfigDescription(
                     "The most stray zombie visits in one day. 3 is the game's own.\n" +
                     "一天内零散丧尸来访的最多次数。3 为游戏原本的数值。",
-                    new AcceptableValueRange<int>(1, 10)));
+                    new AcceptableValueRange<int>(1, 10), SettingTags.WorldRule));
             _strayZombieMaxAlive = config.Bind("Zombies", "StrayZombieMaxAlive", game.StrayZombieMaxAlive,
                 new ConfigDescription(
                     "The most stray zombies around the house at once; no more come until some are killed. 3 is the game's own.\n" +
                     "房子附近同时存在的零散丧尸最多数量；在击杀一些之前不会再来。3 为游戏原本的数值。",
-                    new AcceptableValueRange<int>(1, 20)));
+                    new AcceptableValueRange<int>(1, 20), SettingTags.WorldRule));
             _strayZombieLeaderChance = config.Bind("Zombies", "StrayZombieLeaderChance", game.StrayZombieLeaderChance,
                 new ConfigDescription(
                     "How likely a stray zombie visit is to be led by a crawler, times the game's chance (30% from about day 15 on). 0 means never. 1 is the game's own.\n" +
                     "零散丧尸来访时由「爬行者丧尸」带领的几率，为游戏原本的倍数（大约第 15 天起为 30%）。0 为永不出现。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0f, 4f)));
+                    new AcceptableValueRange<float>(0f, 4f), SettingTags.WorldRule));
             _strayZombieLoot = config.Bind("Zombies", "StrayZombieLoot", game.StrayZombieLoot,
                 new ConfigDescription(
                     "How much a killed stray zombie drops, times the game's one item: 2 drops two, 1.5 drops one or two. 0 drops nothing. 1 is the game's own.\n" +
                     "击杀零散丧尸掉落的物品，为游戏原本一件的倍数：2 为两件，1.5 为一件或两件。0 为不掉落。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0f, 5f)));
+                    new AcceptableValueRange<float>(0f, 5f), SettingTags.WorldRule));
             _noAdaptiveWaves = config.Bind("Waves", "NoAdaptiveWaves", game.NoAdaptiveWaves,
-                "Story zombie hordes always come at full strength. The game otherwise sends a weaker horde when your defenses are not ready for it. Off: as in the game.\n" +
-                "剧情「尸潮」总是以全部强度来袭。游戏原本会在你的防御还没准备好时派来较弱的尸潮。关闭后与游戏原本相同。");
+                new ConfigDescription("Story zombie hordes always come at full strength. The game otherwise sends a weaker horde when your defenses are not ready for it. Off: as in the game.\n" +
+                "剧情「尸潮」总是以全部强度来袭。游戏原本会在你的防御还没准备好时派来较弱的尸潮。关闭后与游戏原本相同。", null, SettingTags.WorldRule));
             _waveLoot = config.Bind("Waves", "WaveLoot", game.WaveLoot,
                 new ConfigDescription(
                     "How much loot a zombie horde leaves for the zombies you kill, times the game's: 2 gives more kinds of item and more of each for the same kills, up to twice the game's limits. 1 is the game's own.\n" +
                     "「尸潮」按击杀数量留下的「战利品」，为游戏原本的倍数：2 为同样的击杀获得更多种类和数量的物品，上限为游戏原本的两倍。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0.5f, 5f)));
+                    new AcceptableValueRange<float>(0.5f, 5f), SettingTags.WorldRule));
 
             All = new ConfigEntryBase[]
             {

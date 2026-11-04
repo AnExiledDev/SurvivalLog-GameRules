@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0
+
+- Each world can keep its own rules. With Exiled's Toolkit 0.17.0 or newer, pick them for a new world in Customizable Difficulty, or change them for the world you are playing on the Mod Manager's Mods screen. Every setting that takes effect at once can be kept this way; NoRestartLimit, StartWithAllAreasOpen and the Weather settings stay the same for every world.
+- Made for Survival Log 1.1.20151.
+
 ## 0.7.1
 
 - **Warning:** install Power Manager to keep your power settings. The solar, battery, device power, power cut and Blackout panic settings are no longer in Game Rules. Power Manager carries over your values the first time it starts.

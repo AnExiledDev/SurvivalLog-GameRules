@@ -86,76 +86,76 @@ internal static class FoodAndHealthRules
                 new ConfigDescription(
                     "How likely eating food raw is to make you ill (Diarrhea and the like), times the game's chance. 0 means never. 1 is the game's own.\n" +
                     "生吃食物后生病（「腹泻」等）的几率，为游戏原本的倍数。0 为永不生病。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0f, 5f)));
+                    new AcceptableValueRange<float>(0f, 5f), SettingTags.WorldRule));
             _noFoodFatigue = config.Bind("Food", "NoFoodFatigue", game.NoFoodFatigue,
-                "Eating the same food again and again never causes Appetite Loss, and Appetite Loss you already have clears within moments. Off: as in the game.\n" +
-                "反复吃同一种食物不会再导致「厌食」，已有的厌食也会很快消除。关闭后与游戏原本相同。");
+                new ConfigDescription("Eating the same food again and again never causes Appetite Loss, and Appetite Loss you already have clears within moments. Off: as in the game.\n" +
+                "反复吃同一种食物不会再导致「厌食」，已有的厌食也会很快消除。关闭后与游戏原本相同。", null, SettingTags.WorldRule));
             _foodFatigueLength = config.Bind("Food", "FoodFatigueLength", game.FoodFatigueLength,
                 new ConfigDescription(
                     "How long Appetite Loss lasts and how much each repeat meal adds to it, times the game's time: 0.5 is half as long. 1 is the game's own.\n" +
                     "「厌食」持续的时间以及每次重复进食增加的时间，为游戏原本的倍数：0.5 为一半。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0.1f, 5f)));
+                    new AcceptableValueRange<float>(0.1f, 5f), SettingTags.WorldRule));
             _foodFatiguePenalty = config.Bind("Food", "FoodFatiguePenalty", game.FoodFatiguePenalty,
                 new ConfigDescription(
                     "How much Appetite Loss cuts what a food gives you, times the game's cut, which is half: 0 means no cut, 2 means the food gives nothing. 1 is the game's own.\n" +
                     "「厌食」时食物效果减少的程度，为游戏原本的倍数（游戏原本减半）：0 为不减少，2 为食物没有任何效果。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0f, 2f)));
+                    new AcceptableValueRange<float>(0f, 2f), SettingTags.WorldRule));
             _moldSprayRadius = config.Bind("Mold", "MoldSprayRadius", game.MoldSprayRadius,
                 new ConfigDescription(
                     "How many cells around the spot you spray the Disinfectant Spray also cleans. 0 cleans only that cell. 1 is the game's own.\n" +
                     "「消毒喷雾」除了喷洒的格子外，还能清理周围多少格。0 为只清理喷洒的格子。1 为游戏原本的数值。",
-                    new AcceptableValueRange<int>(0, 5)));
+                    new AcceptableValueRange<int>(0, 5), SettingTags.WorldRule));
             _moldSprayCost = config.Bind("Mold", "MoldSprayCost", game.MoldSprayCost,
                 new ConfigDescription(
                     "How many uses of the Disinfectant Spray it takes to clean one moldy item. 1 is the game's own and the least it allows.\n" +
                     "清理一件发霉物品需要消耗「消毒喷雾」的次数。1 为游戏原本的数值，也是最低值。",
-                    new AcceptableValueRange<int>(FoodHealthSettings.GameSprayCost, 5)));
+                    new AcceptableValueRange<int>(FoodHealthSettings.GameSprayCost, 5), SettingTags.WorldRule));
             _moldyFoodSpoilSpeed = config.Bind("Mold", "MoldyFoodSpoilSpeed", game.MoldyFoodSpoilSpeed,
                 new ConfigDescription(
                     "How fast moldy food spoils, times the game's speed. The game already spoils moldy food much faster than fresh food; 0.2 brings it close to the speed of fresh food. 1 is the game's own.\n" +
                     "发霉食物的腐坏速度，为游戏原本的倍数。游戏中发霉食物本来就比新鲜食物腐坏得快得多；0.2 约等于新鲜食物的速度。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0.2f, 2f)));
+                    new AcceptableValueRange<float>(0.2f, 2f), SettingTags.WorldRule));
             _moldSpreadInterval = config.Bind("Mold", "MoldSpreadInterval", game.MoldSpreadInterval,
                 new ConfigDescription(
                     "The time between mold spreads, times the game's time: 2 spreads half as often, 0.5 twice as often. 1 is the game's own.\n" +
                     "「霉菌」两次扩散之间的时间，为游戏原本的倍数：2 为扩散频率减半，0.5 为两倍频率。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0.5f, 4f)));
+                    new AcceptableValueRange<float>(0.5f, 4f), SettingTags.WorldRule));
             _moldSpreadItems = config.Bind("Mold", "MoldSpreadItems", game.MoldSpreadItems,
                 new ConfigDescription(
                     "The most items mold spreads to each time it spreads. The game adds more when mold is severe. 2 is the game's own.\n" +
                     "「霉菌」每次扩散最多感染的物品数量。霉菌严重时游戏会再增加。2 为游戏原本的数值。",
-                    new AcceptableValueRange<int>(1, 6)));
+                    new AcceptableValueRange<int>(1, 6), SettingTags.WorldRule));
             _moldSeedsDay1 = config.Bind("Mold", "MoldSeedsDay1", game.MoldSeedsDay1,
                 new ConfigDescription(
                     "How many items turn moldy when mold first appears. The game adds more when mold is severe. 3 is the game's own.\n" +
                     "「霉菌」刚出现时发霉的物品数量。霉菌严重时游戏会再增加。3 为游戏原本的数值。",
-                    new AcceptableValueRange<int>(1, 10)));
+                    new AcceptableValueRange<int>(1, 10), SettingTags.WorldRule));
             _ratVisitChance = config.Bind("Rats", "RatVisitChance", game.RatVisitChance,
                 new ConfigDescription(
                     "How likely a rat is to visit each day, times the game's chance, including the extra chance from stored food and its cap. 0 means rats never visit. 1 is the game's own. During a Rat Infestation the game still sends rats to every food store.\n" +
                     "每天老鼠来访的几率，为游戏原本的倍数，储存食物带来的额外几率及其上限也一同调整。0 为老鼠永不来访。1 为游戏原本的数值。「鼠患」期间游戏仍会让老鼠光顾每一处存放食物的地方。",
-                    new AcceptableValueRange<float>(0f, 3f)));
+                    new AcceptableValueRange<float>(0f, 3f), SettingTags.WorldRule));
             _ratEscapeTime = config.Bind("Rats", "RatEscapeTime", game.RatEscapeTime,
                 new ConfigDescription(
                     "How long a visiting rat stays before it escapes, times the game's time: 2 gives you twice as long to catch it. 1 is the game's own.\n" +
                     "来访的老鼠逃走前停留的时间，为游戏原本的倍数：2 为有两倍的时间抓住它。1 为游戏原本的数值。",
-                    new AcceptableValueRange<float>(0.5f, 5f)));
+                    new AcceptableValueRange<float>(0.5f, 5f), SettingTags.WorldRule));
             _noPlague = config.Bind("Sickness", "NoPlague", game.NoPlague,
-                "The Outbreak crisis never comes: no Feeling Unwell, no outbreak and no worsening. If it has already started in your save, it gets no worse and still ends as in the game. Off: as in the game.\n" +
-                "「疫病」危机不会到来：不会出现「身体不舒服」、疫病发作和「疫病加重」。如果存档中疫病已经开始，它不会再加重，并照常在「疫病消退」时结束。关闭后与游戏原本相同。");
+                new ConfigDescription("The Outbreak crisis never comes: no Feeling Unwell, no outbreak and no worsening. If it has already started in your save, it gets no worse and still ends as in the game. Off: as in the game.\n" +
+                "「疫病」危机不会到来：不会出现「身体不舒服」、疫病发作和「疫病加重」。如果存档中疫病已经开始，它不会再加重，并照常在「疫病消退」时结束。关闭后与游戏原本相同。", null, SettingTags.WorldRule));
             _noPlagueWorsening = config.Bind("Sickness", "NoPlagueWorsening", game.NoPlagueWorsening,
-                "The Outbreak crisis still comes but never reaches Disease Worsens, even if rats are left alone. Off: as in the game.\n" +
-                "「疫病」危机仍会到来，但即使放任老鼠不管，也不会出现「疫病加重」。关闭后与游戏原本相同。");
+                new ConfigDescription("The Outbreak crisis still comes but never reaches Disease Worsens, even if rats are left alone. Off: as in the game.\n" +
+                "「疫病」危机仍会到来，但即使放任老鼠不管，也不会出现「疫病加重」。关闭后与游戏原本相同。", null, SettingTags.WorldRule));
             _windChillChance = config.Bind("Sickness", "WindChillChance", game.WindChillChance,
                 new ConfigDescription(
                     "How likely you are to catch Wind Chill in a cold wave without heating, times the game's chance. 0 means never. 1 is the game's own. Wind Chill you already have runs its course.\n" +
                     "寒潮中没有取暖时患上「风寒」的几率，为游戏原本的倍数。0 为永不患上。1 为游戏原本的数值。已经患上的风寒照常持续到结束。",
-                    new AcceptableValueRange<float>(0f, 2f)));
+                    new AcceptableValueRange<float>(0f, 2f), SettingTags.WorldRule));
             _feverChance = config.Bind("Sickness", "FeverChance", game.FeverChance,
                 new ConfigDescription(
                     "How likely you are to get a High Temperature in a cold wave without heating, times the game's chance. 0 means never. 1 is the game's own. A High Temperature you already have runs its course.\n" +
                     "寒潮中没有取暖时「发烧」的几率，为游戏原本的倍数。0 为永不发烧。1 为游戏原本的数值。已经发烧的照常持续到结束。",
-                    new AcceptableValueRange<float>(0f, 2f)));
+                    new AcceptableValueRange<float>(0f, 2f), SettingTags.WorldRule));
 
             All = new ConfigEntryBase[]
             {
