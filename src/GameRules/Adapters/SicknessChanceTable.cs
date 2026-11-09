@@ -74,6 +74,6 @@ internal sealed class SicknessChanceTable
         if (_reported.TryGetValue(effectId, out var last) && last == chance) return;
 
         _reported[effectId] = chance;
-        _log($"the chance of catching {Names[effectId]} in a cold wave is now {chance:0.###} (the game's own is {_keeper.GameValue(key):0.###})");
+        _log($"the chance of catching {Names[effectId]} in a cold wave is now {chance:0.###} (the game's is {_keeper.GameValue(key):0.###})");
     }
 }

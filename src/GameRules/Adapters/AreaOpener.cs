@@ -68,7 +68,7 @@ internal sealed class AreaOpener
 
     /// <summary>
     /// Ends an opening task that was already on the task list when its area opened, such as Repair Stairs from a saved
-    /// run. The game's own cancel removes it from the list; it refuses while events are locked and is tried again then.
+    /// run. The game's cancel removes it from the list; it refuses while events are locked and is tried again then.
     /// </summary>
     private void EndStaleEvents(DynamicEventManager events)
     {
@@ -86,7 +86,7 @@ internal sealed class AreaOpener
     }
 
     /// <summary>
-    /// Removes the door of each Warehouse Manager area that is open, the way the game's own unlock does, so a run opened
+    /// Removes the door of each Warehouse Manager area that is open, the way the game's unlock does, so a run opened
     /// by this mod (or a save from a version that only added the tags) can walk in. Once every door's area is open and the
     /// doors are gone, the run is not looked at again until another run loads.
     /// </summary>

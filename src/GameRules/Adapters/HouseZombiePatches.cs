@@ -36,7 +36,7 @@ internal static class HouseZombiePatches
 
     /// <summary>
     /// Called on the main thread at start and after each change. Each hook goes in the first time its setting leaves the
-    /// game's rule and stays in; back at the game's rule, it lets the game's own answer through.
+    /// game's rule and stays in; back at the game's rule, it lets the game's answer through.
     /// </summary>
     public static void Use(Harmony harmony, HouseZombieSettings settings, Action<string> log)
     {
@@ -101,7 +101,7 @@ internal static class HouseZombiePatches
         }
     }
 
-    /// <summary>Runs inside the game's own call; a failure lets the event through.</summary>
+    /// <summary>Runs inside the game's call; a failure lets the event through.</summary>
     private static bool SkipHouseEvent(DynamicEventConfig config, ref DynamicEventArgs? __result)
     {
         try
@@ -125,7 +125,7 @@ internal static class HouseZombiePatches
         }
     }
 
-    /// <summary>Runs inside the game's own call; an escaping exception would reach native code.</summary>
+    /// <summary>Runs inside the game's call; an escaping exception would reach native code.</summary>
     private static void ScaleCold(ref int __result)
     {
         try
@@ -149,7 +149,7 @@ internal static class HouseZombiePatches
         }
         catch (Exception ex)
         {
-            LogOnce("resist failure", $"adding cold resistance failed, it is the game's own (logged once): {ex}");
+            LogOnce("resist failure", $"adding cold resistance failed, it is the game's (logged once): {ex}");
         }
     }
 
@@ -164,12 +164,12 @@ internal static class HouseZombiePatches
         }
         catch (Exception ex)
         {
-            LogOnce("leader failure", $"scaling the stray zombie leader chance failed, it is the game's own (logged once): {ex}");
+            LogOnce("leader failure", $"scaling the stray zombie leader chance failed, it is the game's (logged once): {ex}");
         }
     }
 
     /// <summary>
-    /// Rolls a killed stray zombie's loot as many times as the setting asks: the game's own call is the last roll, and
+    /// Rolls a killed stray zombie's loot as many times as the setting asks: the game's call is the last roll, and
     /// the extra rolls call it again, passing straight through this hook. A failure keeps the game's one roll.
     /// </summary>
     private static bool RollStrayLoot(StrayZombieManager __instance)

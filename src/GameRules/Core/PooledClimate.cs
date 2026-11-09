@@ -3,7 +3,7 @@ using System;
 namespace GameRules.Core;
 
 /// <summary>
-/// The pooled answer for each game call the mod hooks, given the game's own answer for that call. The game warms a
+/// The pooled answer for each game call the mod hooks, given the game's answer for that call. The game warms a
 /// zone in GetAreaTemperature, which adds SumDeviceHeat only for zones whose config takes device heat; so a zone that
 /// takes device heat gets its pool share through <see cref="DeviceHeat"/>, and a pool member that takes none (the
 /// Terrace) gets it through <see cref="Temperature"/>. Never both, so no device is counted twice.

@@ -19,7 +19,7 @@ public sealed record WeatherSettings(bool RandomWeather, int Seed, IReadOnlyList
     public const int ContinuousRain = 11;
     public const int Smog = 12;
 
-    /// <summary>The share of each weather in the game's own table once its cold waves are set aside, rounded to whole percents.</summary>
+    /// <summary>The share of each weather in the game's table once its cold waves are set aside, rounded to whole percents.</summary>
     public static IReadOnlyList<WeatherChance> GameMix { get; } = new[]
     {
         new WeatherChance(Clear, 34f), new WeatherChance(Cloudy, 28f), new WeatherChance(Rain, 20f),

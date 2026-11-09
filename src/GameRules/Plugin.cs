@@ -80,7 +80,7 @@ public sealed class Plugin : BasePlugin
                 "霉菌不再蔓延到旁边的食物。已有的霉菌仍会照常消退。", null, SettingTags.WorldRule)),
             Config.Bind("Spoilage", "SpoilageSpeed", game.SpoilageSpeed,
                 new ConfigDescription(
-                    "How fast food spoils, times the game's speed: 0.5 is half as fast, 2 is twice as fast. 1 is the game's own. Fridges that keep food slower than the room keep their own speed. Food already lying somewhere picks up a new speed the next time it is moved or stored.\n" +
+                    "How fast food spoils, times the game's speed: 0.5 is half as fast, 2 is twice as fast. 1 is the game's. Fridges that keep food slower than the room keep their own speed. Food already lying somewhere picks up a new speed the next time it is moved or stored.\n" +
                     "食物腐败的速度，为游戏原本速度的倍数：0.5 为一半速度，2 为两倍速度。1 为游戏原本的数值。比房间保鲜更好的冰箱保持自己的速度。已经放好的食物在下次移动或存放时才会换成新的速度。",
                     new AcceptableValueRange<float>(0.1f, 5f), SettingTags.WorldRule)));
     }
@@ -127,7 +127,7 @@ public sealed class Plugin : BasePlugin
         });
     }
 
-    /// <summary>One weather's share. The defaults are the game's own mix once cold waves are set aside.</summary>
+    /// <summary>One weather's share. The defaults are the game's mix once cold waves are set aside.</summary>
     private WeatherChance Chance(int weather, string key, string english, string chinese, WeatherSettings game)
     {
         var gameChance = game.Chances.First(chance => chance.Weather == weather).Chance;

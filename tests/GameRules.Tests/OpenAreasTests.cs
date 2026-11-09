@@ -176,7 +176,7 @@ public sealed class OpenAreasTests
         Assert.Equal(new[] { RightHutCage, LeftHutCage, ColdStorageShutter, GarageDoor }, OpenAreas.DoorsToRemove(WarehouseManager, AfterDisaster, tags.Contains));
     }
 
-    /// <summary>The game's own unlock of cage 341 adds WH_HutROpen, and of cage 387 WH_HutLOpen; a swap would remove the wrong cage.</summary>
+    /// <summary>The game's unlock of cage 341 adds WH_HutROpen, and of cage 387 WH_HutLOpen; a swap would remove the wrong cage.</summary>
     [Fact]
     public void Each_door_goes_only_when_the_area_behind_it_is_open()
     {

@@ -1,6 +1,6 @@
 namespace GameRules.Core;
 
-/// <summary>The game's own, unpooled answers for one zone. The pool reads the game only through this port.</summary>
+/// <summary>The game's, unpooled answers for one zone. The pool reads the game only through this port.</summary>
 public interface IGameClimate
 {
     /// <summary>The heat of the running devices standing in the zone (the game's SumDeviceHeat).</summary>
@@ -20,7 +20,7 @@ public interface IGameClimate
 }
 
 /// <summary>
-/// The loaded run and config tables, told apart by the game's own objects: loading a save makes a new world, and
+/// The loaded run and config tables, told apart by the game's objects: loading a save makes a new world, and
 /// loading the configs again makes a new config manager. Zero for one the game has not made.
 /// </summary>
 public readonly record struct LoadedGame(long World, long Config);

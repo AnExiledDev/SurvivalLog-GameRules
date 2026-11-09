@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace GameRules.Core;
 
 /// <summary>
-/// The settings for the house, cold weather, stray zombies and zombie horde waves. Multipliers of 1, switches that are off and the game's own day, hour and count values change nothing.
+/// The settings for the house, cold weather, stray zombies and zombie horde waves. Multipliers of 1, switches that are off and the game's day, hour and count values change nothing.
 /// </summary>
 public sealed record HouseZombieSettings(
     bool NoStormLeaks,

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace GameRules.Core;
 
 /// <summary>
-/// Remembers the game's own value of every GlobalSetting the mod has touched, so a setting turned back to the game's
+/// Remembers the game's value of every GlobalSetting the mod has touched, so a setting turned back to the game's
 /// rule puts the game's value back. A table entry the mod has not seen before (the first load, or a reload that built
 /// fresh entries) still holds the game's value, so that is when the game's value is read.
 /// </summary>
@@ -36,7 +36,7 @@ public sealed class TableKeeper
         return change?.Apply(seen.GameValue) ?? seen.GameValue;
     }
 
-    /// <summary>The game's own value for a key the mod has seen, for logs.</summary>
+    /// <summary>The game's value for a key the mod has seen, for logs.</summary>
     public float? GameValue(string key) => _seen.TryGetValue(key, out var seen) ? seen.GameValue : null;
 
     private sealed record Seen(long EntryId, float GameValue);

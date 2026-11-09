@@ -2,7 +2,7 @@
 
 Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
 
-Every setting starts at the game's own value, so with a fresh config the mod changes nothing. Turn on only what you want.
+Every setting starts at the game's value, so with a fresh config the mod changes nothing. Turn on only what you want.
 
 The solar, battery, device power, power cut and Blackout panic settings are now in the Power Manager mod, which carries over your values the first time it starts.
 
@@ -72,7 +72,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.8.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's own numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.8.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts and trims itself past 1 MB. A line starting `could not hook` or `keep the game's` means that rule is off and the game's numbers are used.
 
 ## Feedback and bug reports
 

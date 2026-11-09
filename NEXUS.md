@@ -1,12 +1,12 @@
 Name: Game Rules
-Summary: Change the game's own rules: no restart limit, slower spoilage, milder mold, rats, sickness and cold, no heavy rain leaks, fewer stray zombies, a neighbour who never dies, all areas open and more. About 60 settings for food, the house, zombies, visitors, morale and weather. Every setting starts at the game value, so change only what you want.
+Summary: Change the game's rules: no restart limit, slower spoilage, milder mold, rats, sickness and cold, no heavy rain leaks, fewer stray zombies, a neighbour who never dies, all areas open and more. About 60 settings for food, the house, zombies, visitors, morale and weather. Every setting starts at the game value, so change only what you want.
 
 Description (BBCode):
 [center][img]https://sldb.core-directive.com/media/save/2-changes-stay.png[/img][/center]
 
 Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
 
-Every setting starts at the game's own value, so with a fresh config the mod changes nothing. Turn on only what you want.
+Every setting starts at the game's value, so with a fresh config the mod changes nothing. Turn on only what you want.
 
 The solar, battery, device power, power cut and Blackout panic settings are now in the Power Manager mod, which carries over your values the first time it starts.
 

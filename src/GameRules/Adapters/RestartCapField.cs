@@ -78,6 +78,6 @@ internal sealed class RestartCapField
             return;
         }
 
-        _log($"restart cap is now {write.Max}, so {write.GameMax} restarts stay available (the game's own cap is {write.GameMax})");
+        _log($"restart cap is now {write.Max}, so {write.GameMax} restarts stay available (the game's cap is {write.GameMax})");
     }
 }

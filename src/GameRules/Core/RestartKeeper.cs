@@ -6,7 +6,7 @@ public readonly record struct RestartWrite(int Max, int GameMax, bool IsPutBack)
 /// <summary>
 /// Keeps the restart cap out of reach. The game allows a restart while its cap is above the restarts already used,
 /// and shows one mark per restart in the cap, so a huge cap would fill the screen. Instead the cap follows the
-/// restarts used: there are always as many left as the game gives a fresh run. The first cap seen is the game's own;
+/// restarts used: there are always as many left as the game gives a fresh run. The first cap seen is the game's;
 /// a value written later by something else is put back, never taken as the game's cap.
 /// </summary>
 public sealed class RestartKeeper

@@ -24,7 +24,7 @@ internal static class PeoplePatches
 
     /// <summary>
     /// Called on the main thread at start and after each change. Each hook goes in the first time its setting leaves the
-    /// game's rule and stays in; back at the game's rule, it lets the game's own answer through.
+    /// game's rule and stays in; back at the game's rule, it lets the game's answer through.
     /// </summary>
     public static void Use(Harmony harmony, PeopleSettings settings, Action<string> log)
     {
@@ -97,7 +97,7 @@ internal static class PeoplePatches
         return allows;
     }
 
-    /// <summary>Runs inside the game's own call; an escaping exception would reach native code.</summary>
+    /// <summary>Runs inside the game's call; an escaping exception would reach native code.</summary>
     private static bool ScaleMishapChance(ref float mishapMul)
     {
         try

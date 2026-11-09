@@ -17,7 +17,7 @@ namespace GameRules.Adapters;
 /// So pooling inside SumDeviceHeat keeps all of that in the game's order; the Terrace never reaches SumDeviceHeat, so
 /// its pool heat is added after GetAreaTemperature. IsAreaAcPowered (behind the player-room AC condition and the
 /// thermal display) is pooled too, so they agree with the temperature. Every answer comes from
-/// <see cref="PooledClimate"/>; the hooks only hand it the game's own answer. Static because Harmony patches are.
+/// <see cref="PooledClimate"/>; the hooks only hand it the game's answer. Static because Harmony patches are.
 /// </summary>
 internal static class PoolPatches
 {
@@ -36,7 +36,7 @@ internal static class PoolPatches
     /// Called on the main thread at start and after each change. The hooks go in the first time a zone joins Indoor and
     /// stay in; a zone that leaves keeps the game's answers from the next reading on. <paramref name="fileLog"/> writes
     /// only to the mod's own file, from a worker: the warm-up's thread uses it, and so do the hooks' first-time lines,
-    /// so a hook never writes to the BepInEx console inside the game's own call.
+    /// so a hook never writes to the BepInEx console inside the game's call.
     /// </summary>
     public static void Use(Harmony harmony, PooledClimate climate, Action<string> log, Action<string> fileLog)
     {
@@ -145,7 +145,7 @@ internal static class PoolPatches
         }
     }
 
-    /// <summary>Runs inside the game's own call; an escaping exception would reach native code.</summary>
+    /// <summary>Runs inside the game's call; an escaping exception would reach native code.</summary>
     private static void PoolDeviceHeat(int areaId, ref int __result)
     {
         if (!ShouldPool(areaId)) return;
@@ -168,7 +168,7 @@ internal static class PoolPatches
         }
     }
 
-    /// <summary>Runs inside the game's own call; an escaping exception would reach native code.</summary>
+    /// <summary>Runs inside the game's call; an escaping exception would reach native code.</summary>
     private static void AddExtraWarmth(int areaId, ref int __result)
     {
         if (!ShouldPool(areaId)) return;
@@ -191,7 +191,7 @@ internal static class PoolPatches
         }
     }
 
-    /// <summary>Runs inside the game's own call; an escaping exception would reach native code.</summary>
+    /// <summary>Runs inside the game's call; an escaping exception would reach native code.</summary>
     private static void PoolAcPowered(int areaId, ref bool __result)
     {
         if (__result || !ShouldPool(areaId)) return;

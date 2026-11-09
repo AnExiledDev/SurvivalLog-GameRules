@@ -22,7 +22,7 @@ internal static class RulePatches
 
     /// <summary>
     /// Called on the main thread at start and after each change. Each hook goes in the first time its setting leaves the
-    /// game's rule and stays in; back at the game's rule, it lets the game's own answer through.
+    /// game's rule and stays in; back at the game's rule, it lets the game's answer through.
     /// </summary>
     public static void Use(Harmony harmony, RuleSettings settings, Action<string> log)
     {
@@ -67,7 +67,7 @@ internal static class RulePatches
     /// <summary>The spread pass alone; the same loop still runs the shrink pass, so existing mold fades as usual.</summary>
     private static bool SkipMoldSpread() => !_isMoldStopped;
 
-    /// <summary>Runs inside the game's own call; an escaping exception would reach native code.</summary>
+    /// <summary>Runs inside the game's call; an escaping exception would reach native code.</summary>
     private static void ScaleFoodDecay(int areaId, ref float __result)
     {
         try

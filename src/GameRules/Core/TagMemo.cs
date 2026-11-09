@@ -6,7 +6,7 @@ namespace GameRules.Core;
 /// <summary>
 /// Asks the game about each tag once per check. Several opening events share an area, so the same tag would be asked
 /// again and again, and every question hands the game a new copy of the tag's text. <see cref="Use"/> starts a check
-/// with the game's own reader and forgets every answer; <see cref="Forget"/> drops them after the tags change.
+/// with the game's reader and forgets every answer; <see cref="Forget"/> drops them after the tags change.
 /// </summary>
 public sealed class TagMemo
 {

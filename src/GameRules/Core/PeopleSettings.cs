@@ -15,7 +15,7 @@ public enum Mishap
 
 /// <summary>
 /// The settings for the neighbour and companion, supported strangers, commissions, thoughts, morale, crafting and
-/// reach. Multipliers of 1 and switches that are off are the game's own rules and change nothing.
+/// reach. Multipliers of 1 and switches that are off are the game's rules and change nothing.
 /// </summary>
 public sealed record PeopleSettings(
     bool NeverDie,

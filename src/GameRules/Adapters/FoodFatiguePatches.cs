@@ -9,7 +9,7 @@ namespace GameRules.Adapters;
 /// <summary>
 /// Turns food fatigue (Appetite Loss) off. PoorAppetiteComponent.AddHistory is the only place a meal is counted toward
 /// it, so skipping it means no food ever wears out. Fatigue the character already has, from before the switch or from
-/// the save, is cleared after CleanExpiredRecords, the game's own regular pass over it; CheckAndUpdateBuff then takes
+/// the save, is cleared after CleanExpiredRecords, the game's regular pass over it; CheckAndUpdateBuff then takes
 /// the Appetite Loss buff and its display away as the game does when fatigue runs out. Both targets were checked in
 /// GameAssembly.dll: no relative jump or call in their first 14 bytes. Static because Harmony patches are.
 /// </summary>
@@ -55,7 +55,7 @@ internal static class FoodFatiguePatches
 
     private static bool SkipMealCount() => !_isFatigueOff;
 
-    /// <summary>Runs inside the game's own call; an escaping exception would reach native code.</summary>
+    /// <summary>Runs inside the game's call; an escaping exception would reach native code.</summary>
     private static void ClearFatigue(PoorAppetiteComponent __instance)
     {
         try

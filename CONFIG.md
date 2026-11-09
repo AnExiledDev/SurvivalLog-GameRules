@@ -1,6 +1,6 @@
 # Game Rules settings
 
-Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. Changed on the Mods screen, every setting takes effect at once except `NoRestartLimit`, `StartWithAllAreasOpen` and the `Weather` settings, which take effect at the next game start. Delete the file to get the defaults back. Every default is the game's own rule. Without Exiled's Toolkit installed, changes made on the Mods screen take effect at the next game start instead.
+Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. Changed on the Mods screen, every setting takes effect at once except `NoRestartLimit`, `StartWithAllAreasOpen` and the `Weather` settings, which take effect at the next game start. Delete the file to get the defaults back. Every default is the game's rule. Without Exiled's Toolkit installed, changes made on the Mods screen take effect at the next game start instead.
 
 The solar, battery, device power, power cut and Blackout panic settings are now in the Power Manager mod, which carries over your values the first time it starts.
 
@@ -54,7 +54,7 @@ The solar, battery, device power, power cut and Blackout panic settings are now 
 | `ContinuousRainChance` | `9` | Share of Continuous Rain. |
 | `SmogChance` | `5` | Share of Heavy Smog. |
 
-The chances are shares, 0 to 100 each, so they need not add up to 100; 0 means never. The defaults are the game's own mix once cold waves are set aside. Each stretch of one weather within a day gets one roll, so the weather does not flicker hour to hour.
+The chances are shares, 0 to 100 each, so they need not add up to 100; 0 means never. The defaults are the game's mix once cold waves are set aside. Each stretch of one weather within a day gets one roll, so the weather does not flicker hour to hour.
 
 ## Climate
 

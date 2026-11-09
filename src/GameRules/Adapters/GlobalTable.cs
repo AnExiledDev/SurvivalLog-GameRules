@@ -91,7 +91,7 @@ internal sealed class GlobalTable
 
         var shown = slot.IsInt ? Math.Round(target).ToString() : target.ToString("0.####");
 
-        _log($"{key} is now {shown} (the game's own is {_keeper.GameValue(key):0.####})");
+        _log($"{key} is now {shown} (the game's is {_keeper.GameValue(key):0.####})");
     }
 
     /// <summary>The static field and table key behind a setting, looked up once. A key the game lacks is logged once and skipped.</summary>

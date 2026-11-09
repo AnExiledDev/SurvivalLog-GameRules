@@ -38,7 +38,7 @@ internal sealed class RulesLog
         }
         catch (Exception)
         {
-            // A throwing log listener costs the BepInEx copy; the hooks log from inside the game's own calls.
+            // A throwing log listener costs the BepInEx copy; the hooks log from inside the game's calls.
         }
 
         WriteFileOnly(message);

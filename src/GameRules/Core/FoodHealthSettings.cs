@@ -6,7 +6,7 @@ namespace GameRules.Core;
 
 /// <summary>
 /// The settings for raw food, food fatigue, mold, rats, sickness. Multipliers of 1, switches that
-/// are off and the game's own counts are the game's rules and change nothing.
+/// are off and the game's counts are the game's rules and change nothing.
 /// </summary>
 public sealed record FoodHealthSettings(
     float RawFoodSickChance,

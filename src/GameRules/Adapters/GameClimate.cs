@@ -7,7 +7,7 @@ using Il2CppInterop.Runtime;
 namespace GameRules.Adapters;
 
 /// <summary>
-/// Reads the game's own, unpooled answers. The calls below go through the very methods the mod hooks, so each sets
+/// Reads the game's, unpooled answers. The calls below go through the very methods the mod hooks, so each sets
 /// <see cref="IsReadingGame"/> and the hooks leave those reads alone instead of pooling them again.
 /// </summary>
 internal sealed class GameClimate : IGameClimate

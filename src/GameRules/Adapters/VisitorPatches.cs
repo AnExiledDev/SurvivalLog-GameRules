@@ -75,7 +75,7 @@ internal static class VisitorPatches
         }
     }
 
-    /// <summary>Runs inside the game's own call; an escaping exception would reach native code, so a failure lets the event through.</summary>
+    /// <summary>Runs inside the game's call; an escaping exception would reach native code, so a failure lets the event through.</summary>
     private static bool SkipBlockedEvent(DynamicEventConfig config, ref DynamicEventArgs? __result)
     {
         try

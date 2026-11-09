@@ -3,7 +3,7 @@ namespace GameRules.Core;
 /// <summary>A change to one value in the game's GlobalSetting table, named by its key (the part after "GlobalSetting_").</summary>
 public abstract record TableChange(string Key)
 {
-    /// <summary>The value the game should use, given the game's own.</summary>
+    /// <summary>The value the game should use, given the game's.</summary>
     public abstract float Apply(float gameValue);
 }
 
