@@ -77,15 +77,24 @@ internal static class HouseZombiePatches
         if (settings.RerollsStrayLoot && !_isLootHooked)
         {
             _isLootHooked = true;
-            _spawnKillLoot = Hook(hooks, typeof(StrayZombieManager), "SpawnKillLoot", Type.EmptyTypes, prefix: nameof(RollStrayLoot));
+            HookStrayLoot(hooks);
         }
     }
 
-    /// <summary>The hooked method, so the stray loot hook can call it again; null when the hook could not go in.</summary>
-    private static MethodInfo? Hook(PatchKit hooks, Type type, string target, Type[] parameters, string? prefix = null, string? postfix = null) =>
-        hooks.Patch(typeof(HouseZombiePatches), type, target, parameters, prefix, postfix, consequence: "it keeps the game's rules")
-            ? AccessTools.Method(type, target, parameters)
-            : null;
+    private static void Hook(PatchKit hooks, Type type, string target, Type[] parameters, string? prefix = null, string? postfix = null) =>
+        hooks.Patch(typeof(HouseZombiePatches), type, target, parameters, prefix, postfix, consequence: "it keeps the game's rules");
+
+    /// <summary>Keeps the hooked method, so the stray loot hook can call it again; null when the hook could not go in.</summary>
+    private static void HookStrayLoot(PatchKit hooks)
+    {
+        var target = AccessTools.Method(typeof(StrayZombieManager), "SpawnKillLoot", Type.EmptyTypes);
+
+        if (hooks.Patch(target, "StrayZombieManager.SpawnKillLoot", typeof(HouseZombiePatches), prefix: nameof(RollStrayLoot),
+                consequence: "it keeps the game's rules"))
+        {
+            _spawnKillLoot = target;
+        }
+    }
 
     /// <summary>Runs inside the game's call; a failure lets the event through.</summary>
     private static bool SkipHouseEvent(DynamicEventConfig config, ref DynamicEventArgs? __result)

@@ -13,11 +13,11 @@ using HarmonyLib;
 namespace GameRules;
 
 [BepInPlugin(Guid, "Game Rules", Version)]
-[BepInDependency(ExiledToolkit.Plugin.Guid, ">=0.19.0")]
+[BepInDependency(ExiledToolkit.Plugin.Guid, ">=0.20.0")]
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.8.1";
+    private const string Version = "0.8.2";
 
     /// <summary>Lines add up over many sessions, so past 1 MB the file is moved to game-rules.log.1 and started again.</summary>
     private const long MaxLogBytes = 1024 * 1024;

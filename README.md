@@ -51,7 +51,7 @@ The first time it starts, Game Rules copies your heat sharing settings from Whol
 
 - Survival Log 1.1.20719. Built for this version; a game update can break it until the mod is updated.
 - The [BepInEx Pack for Survival Log](https://www.nexusmods.com/survivallog/mods/12), the BepInEx 6 (IL2CPP) build for the game.
-- [Exiled's Toolkit](https://github.com/AnExiledDev/SurvivalLog-ExiledToolkit) 0.19.0 or newer. Game Rules does not load without it. It applies settings changed on the Mod Manager's Mods screen without a restart, and it lets each world keep its own rules.
+- [Exiled's Toolkit](https://github.com/AnExiledDev/SurvivalLog-ExiledToolkit) 0.20.0 or newer. Game Rules does not load without it. It applies settings changed on the Mod Manager's Mods screen without a restart, and it lets each world keep its own rules.
 - Optional: [Mod Manager](https://www.nexusmods.com/survivallog/mods/73). With it, you can change every setting in game on its Mods screen and see what each one does, without opening the config file.
 
 ## Install
@@ -72,7 +72,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.8.1 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts. Past 1 MB it is moved to `game-rules.log.1` and started again. A line starting `could not hook` or `keep the game's` means that rule is off and the game's numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.8.2 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts. Past 1 MB it is moved to `game-rules.log.1` and started again. A line starting `could not hook` or `keep the game's` means that rule is off and the game's numbers are used.
 
 ## Feedback and bug reports
 
