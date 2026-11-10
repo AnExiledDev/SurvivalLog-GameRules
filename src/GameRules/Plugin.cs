@@ -1,8 +1,10 @@
-using System.IO;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
+using ExiledToolkit;
+using ExiledToolkit.Game;
+using ExiledToolkit.Kit;
 using GameRules.Adapters;
 using GameRules.Core;
 using GameRules.Settings;
@@ -11,57 +13,55 @@ using HarmonyLib;
 namespace GameRules;
 
 [BepInPlugin(Guid, "Game Rules", Version)]
-[BepInDependency(OptionalLive.ToolkitGuid, BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency(ExiledToolkit.Plugin.Guid, ">=0.19.0")]
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.8.0";
+    private const string Version = "0.8.1";
+
+    /// <summary>Lines add up over many sessions, so past 1 MB the file is moved to game-rules.log.1 and started again.</summary>
+    private const long MaxLogBytes = 1024 * 1024;
 
     public override void Load()
     {
-        if (!OptionalLive.IsToolkitInstalled) Log.LogInfo(OptionalLive.MissingNote);
-
-        var log = new RulesLog(Log, Path.Combine(Paths.BepInExRootPath, "game-rules.log"));
-
-        log.TrimIfLarge();
-
+        var log = new ModLog(Log, "game-rules.log") { MaxFileBytes = MaxLogBytes };
         var rules = BindRules();
         var visitors = BindVisitors();
         var weather = BindWeather();
         var pool = BindPool(log.Write);
         var openAreas = BindAreas();
-        var harmony = new Harmony(Guid);
+        var hooks = new PatchKit(new Harmony(Guid), log.Write);
         var startRules = rules.Read();
 
         log.Write($"===== Game Rules {Version} started");
         StartRestartCap(startRules, log.Write);
 
-        OptionalLive.Watch(() =>
+        LiveSettings.Watch(() =>
         {
             var settings = rules.Read();
 
-            RulePatches.Use(harmony, settings, log.Write);
+            RulePatches.Use(hooks, settings, log.Write);
         }, rules.StopMoldSpread, rules.SpoilageSpeed);
 
-        OptionalLive.Watch(() => VisitorPatches.Use(harmony, new VisitorBlock(visitors.NoDoorSmasher.Value, visitors.NoDebtCollector.Value), log.Write),
+        LiveSettings.Watch(() => VisitorPatches.Use(hooks, new VisitorBlock(visitors.NoDoorSmasher.Value, visitors.NoDebtCollector.Value), log.Write),
             visitors.NoDoorSmasher, visitors.NoDebtCollector);
 
-        OptionalLive.Watch(() => UsePool(harmony, pool.Read(), log), pool.IndoorAndSunroom, pool.Terrace, pool.Basement);
+        LiveSettings.Watch(() => UsePool(hooks, pool.Read(), log), pool.IndoorAndSunroom, pool.Terrace, pool.Basement);
 
-        StartOpenAreas(harmony, openAreas, log.Write);
+        StartOpenAreas(hooks, openAreas, log.Write);
         StartWeather(weather, log.Write);
-        StartGroups(harmony, log.Write);
+        StartGroups(hooks, log.Write);
         StartTicker(log.Write);
     }
 
     /// <summary>Each group binds its own settings; their GlobalSetting changes all go through one table writer.</summary>
-    private void StartGroups(Harmony harmony, System.Action<string> log)
+    private void StartGroups(PatchKit hooks, System.Action<string> log)
     {
         var table = new TableChanges();
 
-        FoodAndHealthRules.Start(Config, harmony, table, log);
-        HouseAndZombieRules.Start(Config, harmony, table, log);
-        PeopleAndMoraleRules.Start(Config, harmony, table, log);
+        FoodAndHealthRules.Start(Config, hooks, table, log);
+        HouseAndZombieRules.Start(Config, hooks, table, log);
+        PeopleAndMoraleRules.Start(Config, hooks, table, log);
         RulesTicker.Checks.Add(new GlobalTable(table, log).Tick);
     }
 
@@ -180,16 +180,16 @@ public sealed class Plugin : BasePlugin
         AddComponent<RulesTicker>();
     }
 
-    private static void StartOpenAreas(Harmony harmony, bool openAreas, System.Action<string> log)
+    private static void StartOpenAreas(PatchKit hooks, bool openAreas, System.Action<string> log)
     {
         if (!openAreas) return;
 
-        AreaPatches.Apply(harmony, log);
+        AreaPatches.Apply(hooks, log);
         RulesTicker.Checks.Add(new AreaOpener(log).Tick);
         log("every locked area opens once the disaster has hit");
     }
 
-    private static void UsePool(Harmony harmony, PoolSettings pool, RulesLog log)
+    private static void UsePool(PatchKit hooks, PoolSettings pool, ModLog log)
     {
         if (pool != PoolSettings.Default && ClimateMove.IsOldModInstalled())
         {
@@ -197,7 +197,7 @@ public sealed class Plugin : BasePlugin
             pool = PoolSettings.Default;
         }
 
-        PoolPatches.Use(harmony, new PooledClimate(new HeatPool(pool), new FrameClimate(new GameClimate(), UnityFrame.Count)), log.Write, log.WriteFileOnly);
+        PoolPatches.Use(hooks, new PooledClimate(new HeatPool(pool), new FrameClimate(new GameClimate(), UnityFrame.Count)), log.Write, log.WriteFileOnly);
     }
 
     private sealed record RuleEntries(

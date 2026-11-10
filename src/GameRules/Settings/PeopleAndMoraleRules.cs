@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
+using ExiledToolkit;
+using ExiledToolkit.Game;
 using GameRules.Adapters;
 using GameRules.Core;
-using HarmonyLib;
 
 namespace GameRules.Settings;
 
@@ -13,16 +14,16 @@ internal static class PeopleAndMoraleRules
     private const string Group = "people-morale";
 
     /// <summary>Binds this group's settings and applies them now, and again after each change.</summary>
-    public static void Start(ConfigFile config, Harmony harmony, TableChanges table, Action<string> log)
+    public static void Start(ConfigFile config, PatchKit hooks, TableChanges table, Action<string> log)
     {
         var entries = new Entries(config);
 
-        OptionalLive.Watch(() =>
+        LiveSettings.Watch(() =>
         {
             var settings = entries.Read();
 
             table.Set(Group, settings.TableChanges());
-            PeoplePatches.Use(harmony, settings, log);
+            PeoplePatches.Use(hooks, settings, log);
             Report(settings, log);
         }, entries.All);
     }

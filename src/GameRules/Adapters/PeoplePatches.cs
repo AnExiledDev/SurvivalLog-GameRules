@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using ExiledToolkit.Game;
 using GameCore.HotUpdate.Battle.Logic;
 using GameRules.Core;
-using HarmonyLib;
 
 namespace GameRules.Adapters;
 
@@ -21,14 +21,16 @@ internal static class PeoplePatches
     private static bool _hasLoggedNeighbour;
     private static bool _hasLoggedCompanion;
     private static Action<string> _log = _ => { };
+    private static PatchKit? _hooks;
 
     /// <summary>
     /// Called on the main thread at start and after each change. Each hook goes in the first time its setting leaves the
     /// game's rule and stays in; back at the game's rule, it lets the game's answer through.
     /// </summary>
-    public static void Use(Harmony harmony, PeopleSettings settings, Action<string> log)
+    public static void Use(PatchKit hooks, PeopleSettings settings, Action<string> log)
     {
         _log = log;
+        _hooks = hooks;
         _mishapChance = settings.MishapChance;
         NeighbourGuard.Use(settings.NeverDie);
         CompanionGuard.Use(settings.NeverDie);
@@ -37,39 +39,26 @@ internal static class PeoplePatches
         {
             _isDeathHooked = true;
 
-            HookDeaths(harmony, typeof(NeighborRescueManager), nameof(NeighbourCheck), nameof(NeighbourChecked), nameof(NeighbourDies));
-            HookDeaths(harmony, typeof(GirlCompanionManager), nameof(CompanionCheck), nameof(CompanionChecked), nameof(CompanionDies));
+            HookDeaths(hooks, typeof(NeighborRescueManager), nameof(NeighbourCheck), nameof(NeighbourChecked), nameof(NeighbourDies));
+            HookDeaths(hooks, typeof(GirlCompanionManager), nameof(CompanionCheck), nameof(CompanionChecked), nameof(CompanionDies));
         }
 
         if (settings.MishapChance != 1f && !_isMishapHooked)
         {
             _isMishapHooked = true;
 
-            Hook(harmony, typeof(StrangerSupportManager), "StepMishap", prefix: nameof(ScaleMishapChance));
+            Hook(hooks, typeof(StrangerSupportManager), "StepMishap", prefix: nameof(ScaleMishapChance));
         }
     }
 
-    private static void HookDeaths(Harmony harmony, Type manager, string checkStarts, string checkEnds, string death)
+    private static void HookDeaths(PatchKit hooks, Type manager, string checkStarts, string checkEnds, string death)
     {
-        Hook(harmony, manager, "CheckSurvivalTick", prefix: checkStarts, postfix: checkEnds);
-        Hook(harmony, manager, "TriggerDeath", prefix: death);
+        Hook(hooks, manager, "CheckSurvivalTick", prefix: checkStarts, postfix: checkEnds);
+        Hook(hooks, manager, "TriggerDeath", prefix: death);
     }
 
-    private static void Hook(Harmony harmony, Type type, string target, string? prefix = null, string? postfix = null)
-    {
-        try
-        {
-            var method = AccessTools.Method(type, target) ?? throw new MissingMethodException($"{type.Name}.{target}");
-
-            harmony.Patch(method,
-                prefix: prefix == null ? null : new HarmonyMethod(typeof(PeoplePatches), prefix),
-                postfix: postfix == null ? null : new HarmonyMethod(typeof(PeoplePatches), postfix));
-        }
-        catch (Exception ex)
-        {
-            _log($"{HookFailure.Prefix} {type.Name}.{target}, it keeps the game's rules: {ex.Message}");
-        }
-    }
+    private static void Hook(PatchKit hooks, Type type, string target, string? prefix = null, string? postfix = null) =>
+        hooks.Patch(typeof(PeoplePatches), type, target, prefix: prefix, postfix: postfix, consequence: "it keeps the game's rules");
 
     private static void NeighbourCheck() => NeighbourGuard.CheckStarts();
 
@@ -108,7 +97,7 @@ internal static class PeoplePatches
         }
         catch (Exception ex)
         {
-            LogOnce("mishap failure", $"scaling a stranger's mishap chance failed, it keeps the game's chance (logged once): {ex}");
+            _hooks?.Fail("scaling a stranger's mishap chance, it keeps the game's chance", ex);
         }
 
         return true;

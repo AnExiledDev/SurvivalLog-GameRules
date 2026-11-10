@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
+using ExiledToolkit.Game;
 using GameCore.HotUpdate.Battle.Logic;
-using GameRules.Core;
-using HarmonyLib;
 
 namespace GameRules.Adapters;
 
@@ -19,39 +18,29 @@ internal static class FoodFatiguePatches
     private static bool _isFatigueOff;
     private static bool _isHooked;
     private static Action<string> _log = _ => { };
+    private static PatchKit? _hooks;
 
     /// <summary>
     /// Called on the main thread at start and after each change. The hooks go in the first time fatigue is turned off and
     /// stay in; turned back on, meals count toward it again as in the game.
     /// </summary>
-    public static void Use(Harmony harmony, bool noFoodFatigue, Action<string> log)
+    public static void Use(PatchKit hooks, bool noFoodFatigue, Action<string> log)
     {
         _log = log;
+        _hooks = hooks;
         _isFatigueOff = noFoodFatigue;
 
         if (!noFoodFatigue || _isHooked) return;
 
         _isHooked = true;
 
-        Hook(harmony, "AddHistory", new[] { typeof(int) }, prefix: nameof(SkipMealCount));
-        Hook(harmony, "CleanExpiredRecords", Type.EmptyTypes, postfix: nameof(ClearFatigue));
+        Hook(hooks, "AddHistory", new[] { typeof(int) }, prefix: nameof(SkipMealCount));
+        Hook(hooks, "CleanExpiredRecords", Type.EmptyTypes, postfix: nameof(ClearFatigue));
     }
 
-    private static void Hook(Harmony harmony, string target, Type[] parameters, string? prefix = null, string? postfix = null)
-    {
-        try
-        {
-            var method = AccessTools.Method(typeof(PoorAppetiteComponent), target, parameters) ?? throw new MissingMethodException($"{nameof(PoorAppetiteComponent)}.{target}");
-
-            harmony.Patch(method,
-                prefix: prefix == null ? null : new HarmonyMethod(typeof(FoodFatiguePatches), prefix),
-                postfix: postfix == null ? null : new HarmonyMethod(typeof(FoodFatiguePatches), postfix));
-        }
-        catch (Exception ex)
-        {
-            _log($"{HookFailure.Prefix} {nameof(PoorAppetiteComponent)}.{target}, food fatigue works as in the game: {ex.Message}");
-        }
-    }
+    private static void Hook(PatchKit hooks, string target, Type[] parameters, string? prefix = null, string? postfix = null) =>
+        hooks.Patch(typeof(FoodFatiguePatches), typeof(PoorAppetiteComponent), target, parameters, prefix, postfix,
+            consequence: "food fatigue works as in the game");
 
     private static bool SkipMealCount() => !_isFatigueOff;
 
@@ -73,7 +62,7 @@ internal static class FoodFatiguePatches
         }
         catch (Exception ex)
         {
-            LogOnce("clear failure", $"clearing Appetite Loss failed, it wears off as in the game (logged once): {ex}");
+            _hooks?.Fail("clearing Appetite Loss, it wears off as in the game", ex);
         }
     }
 

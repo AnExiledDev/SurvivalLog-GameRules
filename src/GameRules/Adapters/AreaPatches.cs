@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
+using ExiledToolkit.Game;
 using GameCore.HotUpdate;
 using GameCore.HotUpdate.Battle.Logic;
 using GameRules.Core;
-using HarmonyLib;
 
 namespace GameRules.Adapters;
 
@@ -16,32 +15,17 @@ namespace GameRules.Adapters;
 internal static class AreaPatches
 {
     private static Action<string> _log = _ => { };
-    private static readonly HashSet<string> LoggedOnce = new();
+    private static PatchKit? _hooks;
     private static readonly FirstTime LoggedEvents = new();
 
-    public static void Apply(Harmony harmony, Action<string> log)
+    public static void Apply(PatchKit hooks, Action<string> log)
     {
         _log = log;
+        _hooks = hooks;
 
-        Hook(harmony, typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
-            new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) },
-            new HarmonyMethod(typeof(AreaPatches), nameof(SkipOpeningEvent)), null,
-            "the events that open an area are skipped once it is open");
-    }
-
-    private static void Hook(Harmony harmony, Type type, string target, Type[] parameters, HarmonyMethod? prefix, HarmonyMethod? postfix, string what)
-    {
-        try
-        {
-            var method = AccessTools.Method(type, target, parameters) ?? throw new MissingMethodException($"{type.Name}.{target}");
-
-            harmony.Patch(method, prefix: prefix, postfix: postfix);
-            _log(what);
-        }
-        catch (Exception ex)
-        {
-            _log($"could not hook {type.Name}.{target}, that part of opening areas is off: {ex.Message}");
-        }
+        hooks.Patch(typeof(AreaPatches), typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
+            new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) }, prefix: nameof(SkipOpeningEvent),
+            done: "the events that open an area are skipped once it is open", consequence: "that part of opening areas is off");
     }
 
     /// <summary>Runs inside the game's call; an escaping exception would reach native code, so a failure lets the event through.</summary>
@@ -65,21 +49,11 @@ internal static class AreaPatches
         }
         catch (Exception ex)
         {
-            LogOnce("event failure", $"checking an area event failed, events go ahead as in the game (logged once): {ex}");
+            _hooks?.Fail("checking an area event, events go ahead as in the game", ex);
 
             return true;
         }
     }
 
     private static TagManager? RunTags() => GameSingleton.Existing<BattleLogicWorld>()?._TagManager;
-
-    private static void LogOnce(string key, string message)
-    {
-        lock (LoggedOnce)
-        {
-            if (!LoggedOnce.Add(key)) return;
-        }
-
-        _log(message);
-    }
 }

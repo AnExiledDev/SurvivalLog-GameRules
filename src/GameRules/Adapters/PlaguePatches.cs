@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
+using ExiledToolkit.Game;
 using GameCore.HotUpdate.Battle.Logic;
 using GameRules.Core;
-using HarmonyLib;
 
 namespace GameRules.Adapters;
 
@@ -17,42 +16,29 @@ internal static class PlaguePatches
 {
     private const string PlagueTag = "CRISIS_PLAGUE_ACTIVE";
 
-    private static readonly HashSet<string> LoggedOnce = new();
     private static readonly FirstTime LoggedEvents = new();
     private static PlagueBlock _block = PlagueBlock.Game;
     private static bool _isHooked;
     private static Action<string> _log = _ => { };
+    private static PatchKit? _hooks;
 
     /// <summary>
     /// Called on the main thread at start and after each change. The hook goes in the first time a block needs it and
     /// stays in; with both switches off, the plague comes as in the game again.
     /// </summary>
-    public static void Use(Harmony harmony, PlagueBlock block, Action<string> log)
+    public static void Use(PatchKit hooks, PlagueBlock block, Action<string> log)
     {
         _block = block;
         _log = log;
+        _hooks = hooks;
 
         if (!block.BlocksAny || _isHooked) return;
 
         _isHooked = true;
 
-        Hook(harmony);
-    }
-
-    private static void Hook(Harmony harmony)
-    {
-        try
-        {
-            var method = AccessTools.Method(typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
-                    new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) })
-                ?? throw new MissingMethodException($"{nameof(DynamicEventManager)}.{nameof(DynamicEventManager.CreateDynamicEventArgs)}");
-
-            harmony.Patch(method, prefix: new HarmonyMethod(typeof(PlaguePatches), nameof(SkipPlagueEvent)));
-        }
-        catch (Exception ex)
-        {
-            _log($"{HookFailure.Prefix} {nameof(DynamicEventManager)}.{nameof(DynamicEventManager.CreateDynamicEventArgs)}, the plague comes as in the game: {ex.Message}");
-        }
+        hooks.Patch(typeof(PlaguePatches), typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
+            new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) }, prefix: nameof(SkipPlagueEvent),
+            consequence: "the plague comes as in the game");
     }
 
     /// <summary>Runs inside the game's call; an escaping exception would reach native code, so a failure lets the event through.</summary>
@@ -73,7 +59,7 @@ internal static class PlaguePatches
         }
         catch (Exception ex)
         {
-            LogOnce("event failure", $"checking a plague event failed, it goes ahead as in the game (logged once): {ex}");
+            _hooks?.Fail("checking a plague event, it goes ahead as in the game", ex);
 
             return true;
         }
@@ -85,15 +71,5 @@ internal static class PlaguePatches
         var tags = GameSingleton.Existing<BattleLogicWorld>()?._TagManager;
 
         return tags == null || tags.HasTag(PlagueTag);
-    }
-
-    private static void LogOnce(string key, string message)
-    {
-        lock (LoggedOnce)
-        {
-            if (!LoggedOnce.Add(key)) return;
-        }
-
-        _log(message);
     }
 }

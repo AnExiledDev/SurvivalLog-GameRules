@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using ExiledToolkit.Game;
 using GameCore.HotUpdate.Battle.Logic;
 using GameRules.Core;
-using HarmonyLib;
 
 namespace GameRules.Adapters;
 
@@ -12,21 +12,25 @@ namespace GameRules.Adapters;
 /// </summary>
 internal static class RulePatches
 {
+    private const string KeepsGameRules = "it keeps the game's rules";
+
     private static float _spoilageSpeed = 1f;
     private static bool _isMoldStopped;
     private static bool _isMoldHooked;
     private static bool _isSpoilageHooked;
     private static bool _hasLoggedScale;
     private static Action<string> _log = _ => { };
+    private static PatchKit? _hooks;
     private static readonly HashSet<string> LoggedOnce = new();
 
     /// <summary>
     /// Called on the main thread at start and after each change. Each hook goes in the first time its setting leaves the
     /// game's rule and stays in; back at the game's rule, it lets the game's answer through.
     /// </summary>
-    public static void Use(Harmony harmony, RuleSettings settings, Action<string> log)
+    public static void Use(PatchKit hooks, RuleSettings settings, Action<string> log)
     {
         _log = log;
+        _hooks = hooks;
         _isMoldStopped = settings.StopMoldSpread;
         _spoilageSpeed = settings.SpoilageSpeed;
 
@@ -34,34 +38,20 @@ internal static class RulePatches
         {
             _isMoldHooked = true;
 
-            Hook(harmony, typeof(FoodPollutionManager), "SpreadOneRound", Type.EmptyTypes, prefix: nameof(SkipMoldSpread));
+            hooks.Patch(typeof(RulePatches), typeof(FoodPollutionManager), "SpreadOneRound", Type.EmptyTypes, prefix: nameof(SkipMoldSpread),
+                consequence: KeepsGameRules);
         }
 
         if (settings.ChangesSpoilage && !_isSpoilageHooked)
         {
             _isSpoilageHooked = true;
 
-            Hook(harmony, typeof(EnvAreaHelper), nameof(EnvAreaHelper.GetFoodDecayScale), new[] { typeof(int) }, postfix: nameof(ScaleFoodDecay));
+            hooks.Patch(typeof(RulePatches), typeof(EnvAreaHelper), nameof(EnvAreaHelper.GetFoodDecayScale), new[] { typeof(int) }, postfix: nameof(ScaleFoodDecay),
+                consequence: KeepsGameRules);
         }
 
         log(settings.StopMoldSpread ? "mold no longer spreads to food nearby; mold already there still clears as in the game" : "mold spreads as in the game");
         log(settings.ChangesSpoilage ? $"food in every room spoils at {settings.SpoilageSpeed:0.##}x the game's speed" : "food spoils at the game's speed");
-    }
-
-    private static void Hook(Harmony harmony, Type type, string target, Type[] parameters, string? prefix = null, string? postfix = null)
-    {
-        try
-        {
-            var method = AccessTools.Method(type, target, parameters) ?? throw new MissingMethodException($"{type.Name}.{target}");
-
-            harmony.Patch(method,
-                prefix: prefix == null ? null : new HarmonyMethod(typeof(RulePatches), prefix),
-                postfix: postfix == null ? null : new HarmonyMethod(typeof(RulePatches), postfix));
-        }
-        catch (Exception ex)
-        {
-            _log($"could not hook {type.Name}.{target}, it keeps the game's rules: {ex.Message}");
-        }
     }
 
     /// <summary>The spread pass alone; the same loop still runs the shrink pass, so existing mold fades as usual.</summary>
@@ -85,7 +75,7 @@ internal static class RulePatches
         }
         catch (Exception ex)
         {
-            LogOnce("spoilage failure", $"scaling food decay failed, food keeps the game's speed (logged once): {ex}");
+            _hooks?.Fail("scaling food decay, food keeps the game's speed", ex);
         }
     }
 

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using ExiledToolkit.Game;
 using GameCore.HotUpdate;
 using GameCore.HotUpdate.Battle.Logic;
-using HarmonyLib;
 using GameRules.Core;
 
 namespace GameRules.Adapters;
@@ -22,8 +22,8 @@ namespace GameRules.Adapters;
 internal static class PoolPatches
 {
     private static PooledClimate _climate = new(new HeatPool(new PoolSettings(false, false, false)), new GameClimate());
-    private static Action<string> _log = _ => { };
     private static Action<string> _fileLog = _ => { };
+    private static PatchKit? _hooks;
     private static readonly HashSet<string> LoggedOnce = new();
     private static bool _isHooked;
 
@@ -38,11 +38,11 @@ internal static class PoolPatches
     /// only to the mod's own file, from a worker: the warm-up's thread uses it, and so do the hooks' first-time lines,
     /// so a hook never writes to the BepInEx console inside the game's call.
     /// </summary>
-    public static void Use(Harmony harmony, PooledClimate climate, Action<string> log, Action<string> fileLog)
+    public static void Use(PatchKit hooks, PooledClimate climate, Action<string> log, Action<string> fileLog)
     {
         _climate = climate;
-        _log = log;
         _fileLog = fileLog;
+        _hooks = hooks;
 
         if (!climate.Pool.IsActive)
         {
@@ -55,9 +55,9 @@ internal static class PoolPatches
         {
             _isHooked = true;
 
-            Hook(harmony, nameof(EnvAreaHelper.SumDeviceHeat), nameof(PoolDeviceHeat), "zones sharing heat add up their device heat");
-            Hook(harmony, nameof(EnvAreaHelper.GetAreaTemperature), nameof(AddExtraWarmth), "sharing zones the game gives no device heat get the shared heat");
-            Hook(harmony, nameof(EnvAreaHelper.IsAreaAcPowered), nameof(PoolAcPowered), "an AC running in one sharing zone counts for every sharing zone");
+            Hook(hooks, nameof(EnvAreaHelper.SumDeviceHeat), nameof(PoolDeviceHeat), "zones sharing heat add up their device heat");
+            Hook(hooks, nameof(EnvAreaHelper.GetAreaTemperature), nameof(AddExtraWarmth), "sharing zones the game gives no device heat get the shared heat");
+            Hook(hooks, nameof(EnvAreaHelper.IsAreaAcPowered), nameof(PoolAcPowered), "an AC running in one sharing zone counts for every sharing zone");
             WarmUpInBackground(fileLog);
             RulesTicker.Checks.Add(new OnceReady(IsWorldReady, WarmGameReads).Tick);
         }
@@ -65,21 +65,9 @@ internal static class PoolPatches
         log($"device heat is shared by {climate.Pool.Describe()}");
     }
 
-    private static void Hook(Harmony harmony, string target, string postfix, string what)
-    {
-        try
-        {
-            var method = AccessTools.Method(typeof(EnvAreaHelper), target, new[] { typeof(int) })
-                         ?? throw new MissingMethodException($"EnvAreaHelper.{target}(int)");
-
-            harmony.Patch(method, postfix: new HarmonyMethod(typeof(PoolPatches), postfix));
-            _log(what);
-        }
-        catch (Exception ex)
-        {
-            _log($"could not hook EnvAreaHelper.{target}, it keeps the game's answers: {ex.Message}");
-        }
-    }
+    private static void Hook(PatchKit hooks, string target, string postfix, string what) =>
+        hooks.Patch(typeof(PoolPatches), typeof(EnvAreaHelper), target, new[] { typeof(int) }, postfix: postfix, done: what,
+            consequence: "it keeps the game's answers");
 
     /// <summary>
     /// The first temperature read of a session would otherwise compile the pool's code on the game's frame. The pool's
@@ -164,7 +152,7 @@ internal static class PoolPatches
         }
         catch (Exception ex)
         {
-            LogOnce("heat failure", $"sharing device heat failed, zones keep the game's heat (logged once): {ex}", _log);
+            _hooks?.Fail("sharing device heat, zones keep the game's heat", ex);
         }
     }
 
@@ -187,7 +175,7 @@ internal static class PoolPatches
         }
         catch (Exception ex)
         {
-            LogOnce("warmth failure", $"adding shared warmth failed, zones keep the game's temperature (logged once): {ex}", _log);
+            _hooks?.Fail("adding shared warmth, zones keep the game's temperature", ex);
         }
     }
 
@@ -208,7 +196,7 @@ internal static class PoolPatches
         }
         catch (Exception ex)
         {
-            LogOnce("ac failure", $"sharing the AC check failed, zones keep the game's answer (logged once): {ex}", _log);
+            _hooks?.Fail("sharing the AC check, zones keep the game's answer", ex);
         }
     }
 
@@ -227,7 +215,7 @@ internal static class PoolPatches
         }
         catch (Exception ex)
         {
-            LogOnce("world failure", $"checking the game world failed, zones keep the game's answers (logged once): {ex}", _log);
+            _hooks?.Fail("checking the game world, zones keep the game's answers", ex);
 
             return false;
         }
@@ -235,7 +223,7 @@ internal static class PoolPatches
 
     /// <summary>
     /// A first-time line goes to the mod's file only (<see cref="_fileLog"/>), so the game's call never waits on the
-    /// BepInEx console; a failure goes to both (<see cref="_log"/>), where it is seen.
+    /// BepInEx console; a failure goes to both through <see cref="PatchKit.Fail"/>, where it is seen.
     /// </summary>
     private static void LogOnce(string key, string message, Action<string> write)
     {

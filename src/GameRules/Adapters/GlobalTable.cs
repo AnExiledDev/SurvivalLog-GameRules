@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ExiledToolkit.Game;
 using GameCore.HotUpdate;
 using GameRules.Core;
 using HarmonyLib;

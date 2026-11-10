@@ -1,8 +1,9 @@
 using System;
 using BepInEx.Configuration;
+using ExiledToolkit;
+using ExiledToolkit.Game;
 using GameRules.Adapters;
 using GameRules.Core;
-using HarmonyLib;
 
 namespace GameRules.Settings;
 
@@ -11,16 +12,16 @@ internal static class HouseAndZombieRules
     private const string Group = "house-zombies";
 
     /// <summary>Binds this group's settings and applies them now, and again after each change.</summary>
-    public static void Start(ConfigFile config, Harmony harmony, TableChanges table, Action<string> log)
+    public static void Start(ConfigFile config, PatchKit hooks, TableChanges table, Action<string> log)
     {
         var entries = new Entries(config);
 
-        OptionalLive.Watch(() =>
+        LiveSettings.Watch(() =>
         {
             var settings = entries.Read();
 
             table.Set(Group, settings.TableChanges());
-            HouseZombiePatches.Use(harmony, settings, log);
+            HouseZombiePatches.Use(hooks, settings, log);
             Report(settings, log);
         }, entries.All);
     }

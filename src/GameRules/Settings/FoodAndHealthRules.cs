@@ -1,8 +1,9 @@
 using System;
 using BepInEx.Configuration;
+using ExiledToolkit;
+using ExiledToolkit.Game;
 using GameRules.Adapters;
 using GameRules.Core;
-using HarmonyLib;
 
 namespace GameRules.Settings;
 
@@ -11,21 +12,21 @@ internal static class FoodAndHealthRules
     private const string Group = "food-health";
 
     /// <summary>Binds this group's settings and applies them now, and again after each change.</summary>
-    public static void Start(ConfigFile config, Harmony harmony, TableChanges table, Action<string> log)
+    public static void Start(ConfigFile config, PatchKit hooks, TableChanges table, Action<string> log)
     {
         var entries = new Entries(config);
         var sickness = new SicknessChanceTable(log);
 
         RulesTicker.Checks.Add(sickness.Tick);
 
-        OptionalLive.Watch(() =>
+        LiveSettings.Watch(() =>
         {
             var settings = entries.Read();
 
             table.Set(Group, settings.TableChanges());
             sickness.Use(settings.EffectChanges());
-            FoodFatiguePatches.Use(harmony, settings.NoFoodFatigue, log);
-            PlaguePatches.Use(harmony, settings.PlagueBlock, log);
+            FoodFatiguePatches.Use(hooks, settings.NoFoodFatigue, log);
+            PlaguePatches.Use(hooks, settings.PlagueBlock, log);
             Report(settings, log);
         }, entries.All);
     }

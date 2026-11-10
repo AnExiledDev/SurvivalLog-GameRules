@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
+using ExiledToolkit.Game;
 using GameCore.HotUpdate.Battle.Logic;
 using GameRules.Core;
-using HarmonyLib;
 
 namespace GameRules.Adapters;
 
@@ -16,8 +15,10 @@ namespace GameRules.Adapters;
 internal static class VisitorPatches
 {
     private static VisitorBlock _block = VisitorBlock.Game;
+    private const string VisitorsStillCome = "those visitors still come";
+
     private static Action<string> _log = _ => { };
-    private static readonly HashSet<string> LoggedOnce = new();
+    private static PatchKit? _hooks;
     private static readonly FirstTime LoggedEvents = new();
     private static readonly FirstTime LoggedTexts = new();
     private static bool _isEventHooked;
@@ -27,24 +28,26 @@ internal static class VisitorPatches
     /// Called on the main thread at start and after each change. Each hook goes in the first time a block needs it and
     /// stays in; with a block turned off, those visitors and texts come as in the game again.
     /// </summary>
-    public static void Use(Harmony harmony, VisitorBlock block, Action<string> log)
+    public static void Use(PatchKit hooks, VisitorBlock block, Action<string> log)
     {
         _block = block;
         _log = log;
+        _hooks = hooks;
 
         if (block.BlocksAny && !_isEventHooked)
         {
             _isEventHooked = true;
 
-            Hook(harmony, typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
-                new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) }, nameof(SkipBlockedEvent));
+            hooks.Patch(typeof(VisitorPatches), typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
+                new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) }, prefix: nameof(SkipBlockedEvent), consequence: VisitorsStillCome);
         }
 
         if (block.NoDebtCollector && !_isTextHooked)
         {
             _isTextHooked = true;
 
-            Hook(harmony, typeof(PhoneSMSManager), nameof(PhoneSMSManager.DeliverSMS), new[] { typeof(int), typeof(int) }, nameof(SkipBlockedText));
+            hooks.Patch(typeof(VisitorPatches), typeof(PhoneSMSManager), nameof(PhoneSMSManager.DeliverSMS), new[] { typeof(int), typeof(int) },
+                prefix: nameof(SkipBlockedText), consequence: VisitorsStillCome);
         }
 
         log(Describe(block));
@@ -59,20 +62,6 @@ internal static class VisitorPatches
         if (block.NoDebtCollector) return "the debt collector no longer visits and its warning text is no longer sent; the door-smasher comes as in the game";
 
         return "the door-smasher and the debt collector come as in the game";
-    }
-
-    private static void Hook(Harmony harmony, Type type, string target, Type[] parameters, string prefix)
-    {
-        try
-        {
-            var method = AccessTools.Method(type, target, parameters) ?? throw new MissingMethodException($"{type.Name}.{target}");
-
-            harmony.Patch(method, prefix: new HarmonyMethod(typeof(VisitorPatches), prefix));
-        }
-        catch (Exception ex)
-        {
-            _log($"could not hook {type.Name}.{target}, those visitors still come: {ex.Message}");
-        }
     }
 
     /// <summary>Runs inside the game's call; an escaping exception would reach native code, so a failure lets the event through.</summary>
@@ -93,7 +82,7 @@ internal static class VisitorPatches
         }
         catch (Exception ex)
         {
-            LogOnce("event failure", $"checking an event failed, events go ahead as in the game (logged once): {ex}");
+            _hooks?.Fail("checking an event, events go ahead as in the game", ex);
 
             return true;
         }
@@ -111,19 +100,9 @@ internal static class VisitorPatches
         }
         catch (Exception ex)
         {
-            LogOnce("text failure", $"checking a phone text failed, texts arrive as in the game (logged once): {ex}");
+            _hooks?.Fail("checking a phone text, texts arrive as in the game", ex);
 
             return true;
         }
-    }
-
-    private static void LogOnce(string key, string message)
-    {
-        lock (LoggedOnce)
-        {
-            if (!LoggedOnce.Add(key)) return;
-        }
-
-        _log(message);
     }
 }

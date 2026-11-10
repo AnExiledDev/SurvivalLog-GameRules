@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
+using ExiledToolkit.Game;
 using GameCore.HotUpdate;
 using GameCore.HotUpdate.Battle.Logic;
 using GameRules.Core;
@@ -20,7 +20,6 @@ internal static class HouseZombiePatches
     private const string LeaderChanceKey = "StrayZombieLeaderChanceCurve";
     private const string ColdResistEffect = "Buff/AE_PersonalColdResist";
 
-    private static readonly HashSet<string> LoggedOnce = new();
     private static readonly FirstTime LoggedEvents = new();
     private static readonly Random LootRoll = new();
     private static HouseZombieSettings _settings = HouseZombieSettings.Game;
@@ -33,14 +32,16 @@ internal static class HouseZombiePatches
     private static bool _isLeaderHooked;
     private static bool _isLootHooked;
     private static Action<string> _log = _ => { };
+    private static PatchKit? _hooks;
 
     /// <summary>
     /// Called on the main thread at start and after each change. Each hook goes in the first time its setting leaves the
     /// game's rule and stays in; back at the game's rule, it lets the game's answer through.
     /// </summary>
-    public static void Use(Harmony harmony, HouseZombieSettings settings, Action<string> log)
+    public static void Use(PatchKit hooks, HouseZombieSettings settings, Action<string> log)
     {
         _log = log;
+        _hooks = hooks;
         _settings = settings;
         _events = settings.Events;
 
@@ -48,7 +49,7 @@ internal static class HouseZombiePatches
         {
             _isEventHooked = true;
 
-            Hook(harmony, typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
+            Hook(hooks, typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
                 new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) }, prefix: nameof(SkipHouseEvent));
         }
 
@@ -56,50 +57,35 @@ internal static class HouseZombiePatches
         {
             _isColdHooked = true;
 
-            Hook(harmony, typeof(WeatherManager), "GetColdValue", Type.EmptyTypes, postfix: nameof(ScaleCold));
+            Hook(hooks, typeof(WeatherManager), "GetColdValue", Type.EmptyTypes, postfix: nameof(ScaleCold));
         }
 
         if (settings.ColdResistBonus > 0 && !_isResistHooked)
         {
             _isResistHooked = true;
 
-            Hook(harmony, typeof(BuffComponent), "GetTalentEffectRatio", new[] { typeof(string) }, postfix: nameof(AddColdResist));
+            Hook(hooks, typeof(BuffComponent), "GetTalentEffectRatio", new[] { typeof(string) }, postfix: nameof(AddColdResist));
         }
 
         if (settings.StrayZombieLeaderChance != 1f && !_isLeaderHooked)
         {
             _isLeaderHooked = true;
 
-            Hook(harmony, typeof(StrayZombieSettings), "GetString", new[] { typeof(string) }, postfix: nameof(ScaleLeaderChance));
+            Hook(hooks, typeof(StrayZombieSettings), "GetString", new[] { typeof(string) }, postfix: nameof(ScaleLeaderChance));
         }
 
         if (settings.RerollsStrayLoot && !_isLootHooked)
         {
             _isLootHooked = true;
-            _spawnKillLoot = Hook(harmony, typeof(StrayZombieManager), "SpawnKillLoot", Type.EmptyTypes, prefix: nameof(RollStrayLoot));
+            _spawnKillLoot = Hook(hooks, typeof(StrayZombieManager), "SpawnKillLoot", Type.EmptyTypes, prefix: nameof(RollStrayLoot));
         }
     }
 
     /// <summary>The hooked method, so the stray loot hook can call it again; null when the hook could not go in.</summary>
-    private static MethodInfo? Hook(Harmony harmony, Type type, string target, Type[] parameters, string? prefix = null, string? postfix = null)
-    {
-        try
-        {
-            var method = AccessTools.Method(type, target, parameters) ?? throw new MissingMethodException($"{type.Name}.{target}");
-
-            harmony.Patch(method,
-                prefix: prefix == null ? null : new HarmonyMethod(typeof(HouseZombiePatches), prefix),
-                postfix: postfix == null ? null : new HarmonyMethod(typeof(HouseZombiePatches), postfix));
-
-            return method;
-        }
-        catch (Exception ex)
-        {
-            _log($"{HookFailure.Prefix} {type.Name}.{target}, it keeps the game's rules: {ex.Message}");
-
-            return null;
-        }
-    }
+    private static MethodInfo? Hook(PatchKit hooks, Type type, string target, Type[] parameters, string? prefix = null, string? postfix = null) =>
+        hooks.Patch(typeof(HouseZombiePatches), type, target, parameters, prefix, postfix, consequence: "it keeps the game's rules")
+            ? AccessTools.Method(type, target, parameters)
+            : null;
 
     /// <summary>Runs inside the game's call; a failure lets the event through.</summary>
     private static bool SkipHouseEvent(DynamicEventConfig config, ref DynamicEventArgs? __result)
@@ -119,7 +105,7 @@ internal static class HouseZombiePatches
         }
         catch (Exception ex)
         {
-            LogOnce("event failure", $"checking a house event failed, events go ahead as in the game (logged once): {ex}");
+            _hooks?.Fail("checking a house event, events go ahead as in the game", ex);
 
             return true;
         }
@@ -134,7 +120,7 @@ internal static class HouseZombiePatches
         }
         catch (Exception ex)
         {
-            LogOnce("cold failure", $"scaling the weather's cold failed, it is as cold as in the game (logged once): {ex}");
+            _hooks?.Fail("scaling the weather's cold, it is as cold as in the game", ex);
         }
     }
 
@@ -149,7 +135,7 @@ internal static class HouseZombiePatches
         }
         catch (Exception ex)
         {
-            LogOnce("resist failure", $"adding cold resistance failed, it is the game's (logged once): {ex}");
+            _hooks?.Fail("adding cold resistance, it is the game's", ex);
         }
     }
 
@@ -164,7 +150,7 @@ internal static class HouseZombiePatches
         }
         catch (Exception ex)
         {
-            LogOnce("leader failure", $"scaling the stray zombie leader chance failed, it is the game's (logged once): {ex}");
+            _hooks?.Fail("scaling the stray zombie leader chance, it is the game's", ex);
         }
     }
 
@@ -186,7 +172,7 @@ internal static class HouseZombiePatches
         }
         catch (Exception ex)
         {
-            LogOnce("loot failure", $"rolling extra stray zombie loot failed, it drops the game's loot (logged once): {ex}");
+            _hooks?.Fail("rolling extra stray zombie loot, it drops the game's loot", ex);
         }
 
         return true;
@@ -206,15 +192,5 @@ internal static class HouseZombiePatches
         {
             _isSpawningExtraLoot = false;
         }
-    }
-
-    private static void LogOnce(string key, string message)
-    {
-        lock (LoggedOnce)
-        {
-            if (!LoggedOnce.Add(key)) return;
-        }
-
-        _log(message);
     }
 }
