@@ -1,6 +1,6 @@
 # Game Rules
 
-Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
+Change some of Survival Log's rules: restarts, food and mold, rats and sickness, the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, skill XP, stamina, stimulants, locked areas, the weather and how far heaters reach.
 
 Every setting starts at the game's value, so with a fresh config the mod changes nothing. Turn on only what you want.
 
@@ -28,6 +28,9 @@ The solar, battery, device power, power cut and Blackout panic settings are now 
 - **Strangers you support**: how much trust they lose, how often mishaps hit them, and which mishaps can happen.
 - **Commissions**: how often new commissions and Aid Platform requests arrive.
 - **Thoughts, morale, crafting and reach**: how often your character thinks out loud, morale from music and perfect harvests, the vase morale limit, full crafting proficiency from lower-level recipes, and how far away you can pick up items.
+- **Skills and stamina**: how much proficiency skills gain, and how much stamina actions cost.
+- **Stimulants**: how much stamina coffee, Sports Drink, Adrenaline and Stimulants give, and how many times a day you can use each one.
+- **Satiety and morale**: raise or lower your maximum satiety and morale.
 - **Log file**: the mod writes what it changed, and any failure, to `BepInEx\game-rules.log`.
 
 Game Rules adds no data of its own to your save, and you can remove it at any time. Areas opened by **Start with all areas open** stay open in that save after the mod is removed, the same as areas opened in the game.
@@ -42,6 +45,11 @@ Game Rules adds no data of its own to your save, and you can remove it at any ti
 - **Whole-floor heat** makes rooms warm up more easily, so warm-room progress is easier to reach.
 - **Rat visit chance** does not apply during a Rat Infestation.
 - **Cold wave strength** also changes whether strangers you support count the day as cold.
+- **Action stamina cost**: the game still uses the full cost to check whether you have enough stamina for an action, and shows the full cost. Buffs that cut stamina use, and the crash after Adrenaline, work like they normally do.
+- **Stimulant strength**: item tooltips still show the game's numbers.
+- **Stimulant daily limit**: each kind of stimulant has its own count, and uses from before you turned the limit on that day do not count.
+- **Maximum satiety and morale**: when you lower a maximum, a satiety or morale above it comes down the next time that stat changes.
+- **With Vital Signs**: its `StaminaDrain` and `StaminaGain` multiply with `ActionStaminaCost` and `StimulantStrength`.
 
 ## Moving from Whole Floor Climate
 
@@ -72,7 +80,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.8.2 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts. Past 1 MB it is moved to `game-rules.log.1` and started again. A line starting `could not hook` or `keep the game's` means that rule is off and the game's numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.9.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts. Past 1 MB it is moved to `game-rules.log.1` and started again. A line starting `could not hook` or `keep the game's` means that rule is off and the game's numbers are used.
 
 ## Feedback and bug reports
 

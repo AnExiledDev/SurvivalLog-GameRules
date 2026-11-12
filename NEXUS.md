@@ -1,10 +1,10 @@
 Name: Game Rules
-Summary: Change the game's rules: no restart limit, slower spoilage, milder mold, rats, sickness and cold, no heavy rain leaks, fewer stray zombies, a neighbour who never dies, all areas open and more. About 60 settings for food, the house, zombies, visitors, morale and weather. Every setting starts at the game value, so change only what you want.
+Summary: Change the game's rules: no restart limit, slower spoilage, milder mold, rats, sickness and cold, faster skills, cheaper actions, fewer stray zombies, a neighbour who never dies, all areas open and more. About 65 settings for food, skills, stamina, zombies, visitors, morale and weather. Every setting starts at the game value, so change only what you want.
 
 Description (BBCode):
 [center][img]https://sldb.core-directive.com/media/save/2-changes-stay.png[/img][/center]
 
-Change some of Survival Log's own rules: restarts, food and mold, rats and sickness, the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, locked areas, the weather and how far heaters reach.
+Change some of Survival Log's rules: restarts, food and mold, rats and sickness, the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, skill XP, stamina, stimulants, locked areas, the weather and how far heaters reach.
 
 Every setting starts at the game's value, so with a fresh config the mod changes nothing. Turn on only what you want.
 
@@ -31,6 +31,9 @@ The solar, battery, device power, power cut and Blackout panic settings are now 
 [*][b]Strangers you support[/b]: how much trust they lose, how often mishaps hit them, and which mishaps can happen.[/*]
 [*][b]Commissions[/b]: how often new commissions and Aid Platform requests arrive.[/*]
 [*][b]Thoughts, morale, crafting and reach[/b]: how often your character thinks out loud, morale from music and perfect harvests, the vase morale limit, full crafting proficiency from lower-level recipes, and how far away you can pick up items.[/*]
+[*][b]Skills and stamina[/b]: how much proficiency skills gain, and how much stamina actions cost.[/*]
+[*][b]Stimulants[/b]: how much stamina coffee, Sports Drink, Adrenaline and Stimulants give, and how many times a day you can use each one.[/*]
+[*][b]Satiety and morale[/b]: raise or lower your maximum satiety and morale.[/*]
 [*][b]Whole-floor heat[/b]: running heaters, AC units and stoves can warm the Indoor zone and the Sunroom together, and the Terrace and the Basement can join. This is the Whole Floor Climate mod, moved in here. Its settings are copied over the first time Game Rules starts; then delete [font=Courier New]WholeFloorClimate.dll[/font].[/*]
 [/list]
 
@@ -47,6 +50,11 @@ Works in English and Chinese.
 [*][b]No debt collector[/b] works best turned on before the loan shark's first visit. A visit already under way finishes as usual.[/*]
 [*][b]Rat visit chance[/b] does not apply during a Rat Infestation.[/*]
 [*][b]Cold wave strength[/b] also changes whether strangers you support count the day as cold.[/*]
+[*][b]Action stamina cost[/b]: the game still uses the full cost to check whether you have enough stamina for an action, and shows the full cost. Buffs that cut stamina use, and the crash after Adrenaline, work like they normally do.[/*]
+[*][b]Stimulant strength[/b]: item tooltips still show the game's numbers.[/*]
+[*][b]Stimulant daily limit[/b]: each kind of stimulant has its own count, and uses from before you turned the limit on that day do not count.[/*]
+[*][b]Maximum satiety and morale[/b]: when you lower a maximum, a satiety or morale above it comes down the next time that stat changes.[/*]
+[*][b]With Vital Signs[/b]: its StaminaDrain and StaminaGain multiply with ActionStaminaCost and StimulantStrength.[/*]
 [/list]
 
 [center][img]https://sldb.core-directive.com/img/mods-banner.jpg[/img]
@@ -85,7 +93,7 @@ Open source under MIT: [url=https://github.com/AnExiledDev/SurvivalLog-GameRules
 [line]
 [size=5]简体中文[/size]
 
-修改 Survival Log 自身的一些规则：重生次数、食物和霉菌、老鼠和疾病、房屋、寒冷、零散丧尸和尸潮、夜间访客、邻居、你支援的陌生人、心态、锁住的区域、天气，以及暖气能覆盖多大范围。
+修改 Survival Log 的一些规则：重生次数、食物和霉菌、老鼠和疾病、房屋、寒冷、零散丧尸和尸潮、夜间访客、邻居、你支援的陌生人、心态、熟练度、精力、兴奋剂、锁住的区域、天气，以及暖气能覆盖多大范围。
 
 每项设置的默认值都是游戏原本的数值，所以全新的配置不会改变任何东西。只开启你想要的即可。
 
@@ -112,6 +120,9 @@ Open source under MIT: [url=https://github.com/AnExiledDev/SurvivalLog-GameRules
 [*][b]你支援的陌生人[/b]：每天失去的「信赖」、「遭灾」的几率，以及哪些灾祸可以发生。[/*]
 [*][b]委托[/b]：新委托和「救助平台」新求助出现的频率。[/*]
 [*][b]想法、心态、生产和拾取[/b]：角色自言自语的频率、听歌和完美收获带来的「心态」、花瓶的心态上限、低等级配方给予全部「熟练度」，以及拾取掉落物的距离。[/*]
+[*][b]熟练度和精力[/b]：技能获得的「熟练度」，以及行动消耗的「精力」。[/*]
+[*][b]兴奋剂[/b]：「咖啡」、「能量饮料」、「肾上腺激素」和「兴奋剂」恢复的「精力」，以及每种每天可以使用的次数。[/*]
+[*][b]饱腹和心态[/b]：提高或降低「饱腹（上限）」和「心态（上限）」。[/*]
 [*][b]整层供暖[/b]：运行中的电暖器、空调和暖炉可以同时温暖室内和阳光房，露台和地下室也可以加入。这就是 Whole Floor Climate 模组，现在合并到这里。Game Rules 第一次启动时会复制它的设置，之后请删除 [font=Courier New]WholeFloorClimate.dll[/font]。[/*]
 [/list]
 
@@ -128,6 +139,11 @@ Game Rules 不会往存档里写入自己的数据，你可以随时移除它。
 [*][b]没有催债人[/b]最好在放贷人第一次上门前开启。已经在进行中的上门会照常结束。[/*]
 [*][b]老鼠来访几率[/b]在「鼠患」期间不生效。[/*]
 [*][b]寒潮强度[/b]也会影响你支援的陌生人是否把当天算作寒冷。[/*]
+[*][b]行动精力消耗[/b]：游戏仍按原本的消耗判断精力是否足够，显示的也是原本的消耗。减少精力消耗的状态和「肾上腺激素」药效过后的副作用与游戏原本相同。[/*]
+[*][b]兴奋剂效果[/b]：物品说明仍显示游戏原本的数值。[/*]
+[*][b]兴奋剂每日次数[/b]：每种兴奋剂分开计数，当天开启限制之前的使用不计入。[/*]
+[*][b]饱腹和心态上限[/b]：降低上限后，超出新上限的饱腹或心态会在该数值下次变化时降到上限。[/*]
+[*][b]与 Vital Signs 一起使用[/b]：它的 StaminaDrain 和 StaminaGain 会与 ActionStaminaCost 和 StimulantStrength 相乘。[/*]
 [/list]
 
 [url=https://www.nexusmods.com/survivallog/mods/73]获取 Mod Manager[/url]，在游戏里设置所有模组。[url=https://sldb.core-directive.com/zh/]打开 Survival Log 维基[/url]，物品、配方、地图一查就有。

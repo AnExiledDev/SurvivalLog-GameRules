@@ -31,7 +31,7 @@
   <!-- What the Mod Manager's Mods screen shows about this mod. -->
   <ItemGroup>
     <AssemblyMetadata Include="ModManager.Name" Value="Game Rules&#10;游戏规则" />
-    <AssemblyMetadata Include="ModManager.Description" Value="Change some of the game's rules: restarts, mold, solar power, batteries, food spoilage, night visitors, locked areas, the weather and heat sharing.&#10;修改游戏自身的一些规则：重生次数、霉菌、太阳能、蓄电池、食物腐败、夜间访客、锁住的区域、天气和热量共享。" />
+    <AssemblyMetadata Include="ModManager.Description" Value="Change some of the game's rules: restarts, mold, food spoilage, skill XP, stamina, stimulants, maximum satiety and morale, night visitors, locked areas, the weather and heat sharing.&#10;修改游戏的一些规则：重生次数、霉菌、食物腐败、熟练度、精力、兴奋剂、饱腹和心态上限、夜间访客、锁住的区域、天气和热量共享。" />
     <AssemblyMetadata Include="ModManager.Author" Value="AnExiledDev" />
     <AssemblyMetadata Include="ModManager.Category" Value="Gameplay" />
     <AssemblyMetadata Include="ModManager.GameVersion" Value="1.1.20719" />

@@ -17,7 +17,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.8.2";
+    private const string Version = "0.9.0";
 
     /// <summary>Lines add up over many sessions, so past 1 MB the file is moved to game-rules.log.1 and started again.</summary>
     private const long MaxLogBytes = 1024 * 1024;
@@ -62,6 +62,7 @@ public sealed class Plugin : BasePlugin
         FoodAndHealthRules.Start(Config, hooks, table, log);
         HouseAndZombieRules.Start(Config, hooks, table, log);
         PeopleAndMoraleRules.Start(Config, hooks, table, log);
+        BodyRules.Start(Config, hooks, log);
         RulesTicker.Checks.Add(new GlobalTable(table, log).Tick);
     }
 

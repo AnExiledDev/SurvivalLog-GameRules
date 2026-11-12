@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.0
+
+- New setting `SkillXp`: skills gain more or less proficiency, from none to 10x. Works together with `FullCraftingXp`.
+- New setting `ActionStaminaCost`: crafting, building, searching and other actions cost more or less stamina, from none to 3x.
+- New setting `StimulantStrength`: coffee, Sports Drink, Adrenaline and Stimulants give more or less stamina, from none to 5x.
+- New setting `StimulantDailyLimit`: how many times a day you can use each kind of stimulant. Off by default, so there is no limit until you set one.
+- New settings `ExtraMaxSatiety` and `ExtraMaxMorale`: raise or lower your maximum satiety and morale.
+- Every new setting starts at the game's value, so nothing changes until you set it.
+- Made for Survival Log 1.1.20719.
+
 ## 0.8.2
 
 - Now needs Exiled's Toolkit 0.20.0 or newer.

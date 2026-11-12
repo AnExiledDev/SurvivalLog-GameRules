@@ -177,6 +177,34 @@ The first time Game Rules starts, it copies these three from Whole Floor Climate
 | --- | --- | --- |
 | `FullCraftingXp` | `false` | Recipes below your crafting level still give full proficiency. Off: the game gives less for recipes one to four levels below yours. |
 
+## Skills
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `SkillXp` | `1` | How much proficiency every skill gains, times the game's amount: 2 levels skills twice as fast, 0.5 half as fast. 0 gives none. Works together with `FullCraftingXp`. 0 to 10. |
+
+## Stamina
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `ActionStaminaCost` | `1` | How much stamina your actions cost (crafting, building, searching, working at furniture and the like), times the game's cost: 0.5 is half. 0 means actions cost no stamina. Stamina you lose over time or to a buff is not changed. The game still uses the full cost to check whether you have enough stamina, and shows the full cost. 0 to 3. |
+
+## Stimulants
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `StimulantStrength` | `1` | How much stamina coffee, Sports Drink, Adrenaline and Stimulants give, times the game's amount, including what they keep giving over the next hours: 2 is twice as much. 0 gives none. Item tooltips still show the game's numbers. 0 to 5. |
+| `StimulantDailyLimit` | `0` | How many times a day you can use each kind of coffee, Sports Drink, Adrenaline and Stimulants. Each kind counts on its own, so Coffee (Good) and Coffee (Perfect) each have their own count. The count starts again each day. Uses from before you turned it on that day do not count. 0 means no limit. 0 to 10. |
+
+## Stats
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `ExtraMaxSatiety` | `0` | Points added to your maximum satiety: 50 lets you eat 50 more before you are full. A negative number lowers it. -50 to 400. |
+| `ExtraMaxMorale` | `0` | Points added to your maximum morale. A negative number lowers it. -50 to 400. |
+
+When you lower a maximum, a satiety or morale above the new maximum comes down to it the next time that stat changes.
+
 ## Reach
 
 | Setting | Default | What it does |
