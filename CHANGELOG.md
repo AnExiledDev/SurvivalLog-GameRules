@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.2
+
+- Clearer wording in the log.
+- Made for Survival Log 1.1.20719.
+
 ## 0.9.1
 
 - Clearer wording in the settings and on the mod page.

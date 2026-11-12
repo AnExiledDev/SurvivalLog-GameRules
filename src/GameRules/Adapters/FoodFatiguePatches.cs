@@ -22,7 +22,7 @@ internal static class FoodFatiguePatches
 
     /// <summary>
     /// Called on the main thread at start and after each change. The hooks go in the first time fatigue is turned off and
-    /// stay in; turned back on, meals count toward it again as in the game.
+    /// stay in; turned back on, meals count toward it again as usual.
     /// </summary>
     public static void Use(PatchKit hooks, bool noFoodFatigue, Action<string> log)
     {
@@ -40,7 +40,7 @@ internal static class FoodFatiguePatches
 
     private static void Hook(PatchKit hooks, string target, Type[] parameters, string? prefix = null, string? postfix = null) =>
         hooks.Patch(typeof(FoodFatiguePatches), typeof(PoorAppetiteComponent), target, parameters, prefix, postfix,
-            consequence: "food fatigue works as in the game");
+            consequence: "food fatigue works as usual");
 
     private static bool SkipMealCount() => !_isFatigueOff;
 
@@ -62,7 +62,7 @@ internal static class FoodFatiguePatches
         }
         catch (Exception ex)
         {
-            _hooks?.Fail("clearing Appetite Loss, it wears off as in the game", ex);
+            _hooks?.Fail("clearing Appetite Loss, it wears off as usual", ex);
         }
     }
 

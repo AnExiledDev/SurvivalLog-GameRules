@@ -24,7 +24,7 @@ internal static class PlaguePatches
 
     /// <summary>
     /// Called on the main thread at start and after each change. The hook goes in the first time a block needs it and
-    /// stays in; with both switches off, the plague comes as in the game again.
+    /// stays in; with both switches off, the plague comes back like it normally does.
     /// </summary>
     public static void Use(PatchKit hooks, PlagueBlock block, Action<string> log)
     {
@@ -38,7 +38,7 @@ internal static class PlaguePatches
 
         hooks.Patch(typeof(PlaguePatches), typeof(DynamicEventManager), nameof(DynamicEventManager.CreateDynamicEventArgs),
             new[] { typeof(DynamicEventConfig), typeof(bool), typeof(bool), typeof(bool) }, prefix: nameof(SkipPlagueEvent),
-            consequence: "the plague comes as in the game");
+            consequence: "the plague comes like it normally does");
     }
 
     /// <summary>Runs inside the game's call; an escaping exception would reach native code, so a failure lets the event through.</summary>
@@ -59,7 +59,7 @@ internal static class PlaguePatches
         }
         catch (Exception ex)
         {
-            _hooks?.Fail("checking a plague event, it goes ahead as in the game", ex);
+            _hooks?.Fail("checking a plague event, it goes ahead as usual", ex);
 
             return true;
         }

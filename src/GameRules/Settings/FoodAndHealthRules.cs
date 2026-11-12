@@ -34,9 +34,9 @@ internal static class FoodAndHealthRules
     private static void Report(FoodHealthSettings settings, Action<string> log)
     {
         log(Times(settings.RawFoodSickChance, "eating raw food makes you sick at {0}x the game's chance", "eating raw food makes you sick at the game's chance"));
-        log(settings.NoFoodFatigue ? "food fatigue (Appetite Loss) is off" : "food fatigue (Appetite Loss) works as in the game");
+        log(settings.NoFoodFatigue ? "food fatigue (Appetite Loss) is off" : "food fatigue (Appetite Loss) works as usual");
         log(Times(settings.FoodFatigueLength, "food fatigue lasts {0}x the game's time", "food fatigue lasts the game's time"));
-        log(Times(settings.FoodFatiguePenalty, "food fatigue cuts what a food gives by {0}x the game's cut", "food fatigue cuts what a food gives as in the game"));
+        log(Times(settings.FoodFatiguePenalty, "food fatigue cuts what a food gives by {0}x the game's cut", "food fatigue cuts what a food gives like it normally does"));
         log($"the Disinfectant Spray reaches {settings.MoldSprayRadius} cells around the spot you spray and uses {settings.MoldSprayCost} charge(s) per moldy item");
         log(Times(settings.MoldyFoodSpoilSpeed, "moldy food spoils at {0}x the game's speed", "moldy food spoils at the game's speed"));
         log(Times(settings.MoldSpreadInterval, "mold waits {0}x the game's time between spreads", "mold spreads at the game's pace"));
@@ -53,11 +53,11 @@ internal static class FoodAndHealthRules
 
     private static string DescribePlague(PlagueBlock block)
     {
-        if (block.NoPlague) return "the Outbreak crisis no longer comes; one already underway gets no worse and still ends as in the game";
+        if (block.NoPlague) return "the Outbreak crisis no longer comes; one already underway gets no worse and still ends like it normally would";
 
-        if (block.NoWorsening) return "the Outbreak crisis comes as in the game but never worsens";
+        if (block.NoWorsening) return "the Outbreak crisis still comes but never worsens";
 
-        return "the Outbreak crisis comes and worsens as in the game";
+        return "the Outbreak crisis comes and worsens like it normally does";
     }
 
     private sealed class Entries

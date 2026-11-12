@@ -30,7 +30,7 @@ internal static class PeopleAndMoraleRules
 
     private static void Report(PeopleSettings settings, Action<string> log)
     {
-        log(settings.NeverDie ? "the neighbour and companion never die" : "the neighbour and companion can die as in the game");
+        log(settings.NeverDie ? "the neighbour and companion never die" : "the neighbour and companion can die as usual");
 
         if (settings.MishapChance != 1f) log($"supported strangers' mishaps happen at {settings.MishapChance:0.##}x the game's chance");
         if (settings.MishapsOff.Count > 0) log("supported strangers never suffer: " + string.Join(", ", settings.MishapsOff));

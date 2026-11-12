@@ -114,7 +114,7 @@ internal static class HouseZombiePatches
         }
         catch (Exception ex)
         {
-            _hooks?.Fail("checking a house event, events go ahead as in the game", ex);
+            _hooks?.Fail("checking a house event, events go ahead as usual", ex);
 
             return true;
         }
@@ -129,7 +129,7 @@ internal static class HouseZombiePatches
         }
         catch (Exception ex)
         {
-            _hooks?.Fail("scaling the weather's cold, it is as cold as in the game", ex);
+            _hooks?.Fail("scaling the weather's cold, it is as cold as usual", ex);
         }
     }
 

@@ -56,7 +56,7 @@ internal sealed class WeatherTable
 
         if (anchorDays == null)
         {
-            _log("could not read the game's fixed-weather days, so the weather stays as in the game");
+            _log("could not read the game's fixed-weather days, so the weather is left as it is");
 
             return;
         }

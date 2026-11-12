@@ -26,7 +26,7 @@ internal static class VisitorPatches
 
     /// <summary>
     /// Called on the main thread at start and after each change. Each hook goes in the first time a block needs it and
-    /// stays in; with a block turned off, those visitors and texts come as in the game again.
+    /// stays in; with a block turned off, those visitors and texts come back as usual.
     /// </summary>
     public static void Use(PatchKit hooks, VisitorBlock block, Action<string> log)
     {
@@ -57,11 +57,11 @@ internal static class VisitorPatches
     {
         if (block.NoDoorSmasher && block.NoDebtCollector) return "the door-smasher and the debt collector no longer visit, and the debt collector's warning text is no longer sent";
 
-        if (block.NoDoorSmasher) return "the door-smasher no longer visits; the debt collector comes as in the game";
+        if (block.NoDoorSmasher) return "the door-smasher no longer visits; the debt collector still comes";
 
-        if (block.NoDebtCollector) return "the debt collector no longer visits and its warning text is no longer sent; the door-smasher comes as in the game";
+        if (block.NoDebtCollector) return "the debt collector no longer visits and its warning text is no longer sent; the door-smasher still comes";
 
-        return "the door-smasher and the debt collector come as in the game";
+        return "the door-smasher and the debt collector come like they normally do";
     }
 
     /// <summary>Runs inside the game's call; an escaping exception would reach native code, so a failure lets the event through.</summary>
@@ -82,7 +82,7 @@ internal static class VisitorPatches
         }
         catch (Exception ex)
         {
-            _hooks?.Fail("checking an event, events go ahead as in the game", ex);
+            _hooks?.Fail("checking an event, events go ahead as usual", ex);
 
             return true;
         }
@@ -100,7 +100,7 @@ internal static class VisitorPatches
         }
         catch (Exception ex)
         {
-            _hooks?.Fail("checking a phone text, texts arrive as in the game", ex);
+            _hooks?.Fail("checking a phone text, texts arrive as usual", ex);
 
             return true;
         }

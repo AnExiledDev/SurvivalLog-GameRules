@@ -49,7 +49,7 @@ internal static class AreaPatches
         }
         catch (Exception ex)
         {
-            _hooks?.Fail("checking an area event, events go ahead as in the game", ex);
+            _hooks?.Fail("checking an area event, events go ahead as usual", ex);
 
             return true;
         }

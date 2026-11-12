@@ -28,13 +28,13 @@ internal static class HouseAndZombieRules
 
     private static void Report(HouseZombieSettings settings, Action<string> log)
     {
-        log(settings.NoStormLeaks ? "heavy rain never leaks into the house" : "heavy rain can leak into the house as in the game");
-        log($"cold weather is {settings.ColdWaveStrength:0.##}x as cold as in the game");
+        log(settings.NoStormLeaks ? "heavy rain never leaks into the house" : "heavy rain can leak into the house like it normally does");
+        log($"cold weather is {settings.ColdWaveStrength:0.##}x as cold as usual");
         log($"personal cold resistance gets {settings.ColdResistBonus} extra level(s)");
         log(StrayZombieLine(settings));
         log($"stray zombie leaders come at {settings.StrayZombieLeaderChance:0.##}x the game's chance");
         log($"a killed stray zombie drops {settings.StrayZombieLoot:0.##}x the game's loot");
-        log(settings.NoAdaptiveWaves ? "zombie hordes always come at full strength" : "zombie hordes adapt to your defenses as in the game");
+        log(settings.NoAdaptiveWaves ? "zombie hordes always come at full strength" : "zombie hordes adapt to your defenses like they normally do");
         log($"zombie hordes leave {settings.WaveLoot:0.##}x the game's loot for the zombies killed");
     }
 

@@ -50,7 +50,7 @@ internal static class RulePatches
                 consequence: KeepsGameRules);
         }
 
-        log(settings.StopMoldSpread ? "mold no longer spreads to food nearby; mold already there still clears as in the game" : "mold spreads as in the game");
+        log(settings.StopMoldSpread ? "mold no longer spreads to food nearby; mold already there still clears as usual" : "mold spreads like it normally does");
         log(settings.ChangesSpoilage ? $"food in every room spoils at {settings.SpoilageSpeed:0.##}x the game's speed" : "food spoils at the game's speed");
     }
 

@@ -80,7 +80,7 @@ Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, which is ma
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.9.1 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts. Past 1 MB it is moved to `game-rules.log.1` and started again. A line starting `could not hook` means that rule is off and the game works as normal. A line starting `failed` means one check went wrong, and the normal numbers were used that time.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.9.2 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts. Past 1 MB it is moved to `game-rules.log.1` and started again. A line starting `could not hook` means that rule is off and the game works as normal. A line starting `failed` means one check went wrong, and the normal numbers were used that time.
 
 ## Feedback and bug reports
 
