@@ -17,7 +17,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.9.0";
+    private const string Version = "0.9.1";
 
     /// <summary>Lines add up over many sessions, so past 1 MB the file is moved to game-rules.log.1 and started again.</summary>
     private const long MaxLogBytes = 1024 * 1024;
@@ -73,7 +73,7 @@ public sealed class Plugin : BasePlugin
         return new RuleEntries(
             Config.Bind("Restarts", "NoRestartLimit", game.NoRestartLimit,
                 new ConfigDescription(
-                    "Restarts never run out: however many you use, the game's full number stays available. Off: the game's limit. Takes effect at the next game start.\n" +
+                    "Restarts never run out. However many you use, you always have the full number left. Off keeps the normal limit. Takes effect at the next game start.\n" +
                     "重生次数不会用完：无论用了多少次，始终保留游戏原本的全部次数。关闭后使用游戏原本的次数上限。下次启动游戏时生效。",
                     null, "ModManager.Restart")),
             Config.Bind("Mold", "StopMoldSpread", game.StopMoldSpread,
@@ -81,7 +81,7 @@ public sealed class Plugin : BasePlugin
                 "霉菌不再蔓延到旁边的食物。已有的霉菌仍会照常消退。", null, SettingTags.WorldRule)),
             Config.Bind("Spoilage", "SpoilageSpeed", game.SpoilageSpeed,
                 new ConfigDescription(
-                    "How fast food spoils, times the game's speed: 0.5 is half as fast, 2 is twice as fast. 1 is the game's. Fridges that keep food slower than the room keep their own speed. Food already lying somewhere picks up a new speed the next time it is moved or stored.\n" +
+                    "How fast food spoils, times the normal speed: 0.5 is half as fast, 2 is twice as fast. 1 is the default. Fridges that keep food slower than the room keep their own speed. Food already lying somewhere picks up a new speed the next time it is moved or stored.\n" +
                     "食物腐败的速度，为游戏原本速度的倍数：0.5 为一半速度，2 为两倍速度。1 为游戏原本的数值。比房间保鲜更好的冰箱保持自己的速度。已经放好的食物在下次移动或存放时才会换成新的速度。",
                     new AcceptableValueRange<float>(0.1f, 5f), SettingTags.WorldRule)));
     }
@@ -95,26 +95,26 @@ public sealed class Plugin : BasePlugin
                 new ConfigDescription("The angry neighbour never comes pounding on your door at night (Midnight Door Pounding).\n" +
                 "愤怒的邻居不会在深夜来砸门（「深夜砸门」）。", null, SettingTags.WorldRule)),
             Config.Bind("Visitors", "NoDebtCollector", game.NoDebtCollector,
-                new ConfigDescription("The loan shark never comes to collect: no warning text, no Midnight Visitors, no revenge nights. A loan you take is yours to keep. Best turned on before the first visit.\n" +
+                new ConfigDescription("The loan shark never comes to collect: no warning text, no Midnight Visitors, no revenge nights, so a loan never has to be paid back. Best turned on before the first visit.\n" +
                 "放贷人不会上门催收：没有警告短信，没有「深夜来客」，也没有报复的夜晚。借来的钱不用还。最好在第一次上门前开启。", null, SettingTags.WorldRule)));
     }
 
     private bool BindAreas() =>
         Config.Bind("Areas", "StartWithAllAreasOpen", false, new ConfigDescription(
-            "Every area you would open with a key or a repair is open as soon as the disaster hits: the second floor and basement for the Wage Slave and the Student; the second floor, cold storage, garage and both side rooms for the Warehouse Manager. You can walk there and build there right away, and the story events that would open them are skipped, along with their rewards. Before the disaster they stay locked. Also opens them in a save already past the disaster. Takes effect at the next game start.\n" +
-            "所有原本需要钥匙或修理才能打开的区域在灾难发生时立即打开：打工仔和大学生的二楼和地下室；仓库管理员的二楼、冷库、车库和两侧的小屋。可以直接走过去并在那里建造，原本用来打开这些区域的剧情事件及其奖励会被跳过。灾难前这些区域仍然锁着。对已经过了灾难的存档同样生效。下次启动游戏时生效。",
+            "Every area you would open with a key or a repair is open as soon as the disaster hits: the second floor and basement for the Wage Slave and the Student, and the second floor, cold storage, garage and both side rooms for the Warehouse Manager. You can walk there and build there right away, and the story events that would open them are skipped, along with their rewards. Before the disaster they stay locked. It also works on a save that is already past the disaster. Takes effect at the next game start.\n" +
+            "所有原本需要钥匙或修理才能打开的区域在灾难发生时立即打开：打工仔和大学生的二楼和地下室，以及仓库管理员的二楼、冷库、车库和两侧的小屋。可以直接走过去并在那里建造，原本用来打开这些区域的剧情事件及其奖励会被跳过。灾难前这些区域仍然锁着。对已经过了灾难的存档同样生效。下次启动游戏时生效。",
             null, "ModManager.Restart")).Value;
 
     private WeatherSettings BindWeather()
     {
         var game = WeatherSettings.Game;
         var randomWeather = Config.Bind("Weather", "RandomWeather", game.RandomWeather, new ConfigDescription(
-            "Rolls new weather for the 100-day story from the chances below, in place of the game's fixed weather. Cold waves and the story's fixed-weather days stay as in the game, and the difficulty still makes weather milder or harsher. Endless mode is not changed. Takes effect at the next game start, from the first hour played; the forecast follows it.\n" +
+            "Rolls new weather for the 100-day story from the chances below, instead of the usual fixed weather. Cold waves and story days with set weather don't change, and the difficulty still makes weather milder or harsher. Endless mode is not changed. Takes effect at the next game start, from the first hour you play, and the forecast shows the new weather.\n" +
             "按下方的概率为 100 天剧情重新生成天气，取代游戏固定的天气。寒潮和剧情固定天气的日子与游戏原本相同，难度仍会让天气变好或变差。无尽模式不受影响。下次启动游戏时生效，从进入游戏后的第一个小时起，天气预报也会随之改变。",
             null, "ModManager.Restart")).Value;
         var seed = Config.Bind("Weather", "WeatherSeed", game.Seed, new ConfigDescription(
-            "Any whole number. The same number always rolls the same weather, so a reload keeps it; change it for different weather. Takes effect at the next game start.\n" +
-            "任意整数。相同的数字总是生成相同的天气，所以读档后保持不变；换一个数字即可得到不同的天气。下次启动游戏时生效。",
+            "Any whole number. The same number always rolls the same weather, so a reload keeps it. Change it to get different weather. Takes effect at the next game start.\n" +
+            "任意整数。相同的数字总是生成相同的天气，所以读档后保持不变。换一个数字即可得到不同的天气。下次启动游戏时生效。",
             null, "ModManager.Restart", "ModManager.ShowWhen=RandomWeather")).Value;
 
         return new WeatherSettings(randomWeather, seed, new[]
@@ -135,8 +135,8 @@ public sealed class Plugin : BasePlugin
 
         return new WeatherChance(weather, Config.Bind("Weather", key, gameChance,
             new ConfigDescription(
-                $"The chance of {english} with RandomWeather on. The chances are shares, so they need not add up to 100; 0 means never. Takes effect at the next game start.\n" +
-                $"开启 RandomWeather 后「{chinese}」的概率。各项概率按比例分配，加起来不必等于 100；0 表示从不出现。下次启动游戏时生效。",
+                $"The chance of {english} with RandomWeather on. The chances are shares, so they don't have to add up to 100. 0 means never. Takes effect at the next game start.\n" +
+                $"开启 RandomWeather 后「{chinese}」的概率。各项概率按比例分配，加起来不必等于 100。0 表示从不出现。下次启动游戏时生效。",
                 new AcceptableValueRange<float>(0f, 100f), "ModManager.Restart", "ModManager.ShowWhen=RandomWeather")).Value);
     }
 
@@ -145,13 +145,13 @@ public sealed class Plugin : BasePlugin
         var hadPoolSection = ClimateMove.HasClimateSection(Config);
         var game = PoolSettings.Default;
         var indoorAndSunroom = Config.Bind("Climate", "IndoorAndSunroom", game.IndoorAndSunroom,
-            new ConfigDescription("Running AC units, heaters and stoves in the Indoor zone or the Sunroom warm both. Off: each warms only its own zone, as in the game.\n" +
+            new ConfigDescription("Running AC units, heaters and stoves in the Indoor zone or the Sunroom warm both. Off leaves each one warming only its own zone.\n" +
             "室内或阳光房中运行的空调、电暖器和暖炉会同时温暖这两处。关闭后各自只温暖所在的区域，与游戏原本相同。", null, SettingTags.WorldRule));
         var terrace = Config.Bind("Climate", "Terrace", game.Terrace,
-            new ConfigDescription("The Terrace shares heat with the Indoor zone. The game gives the Terrace no device heat at all; on, it gets the device heat of every zone sharing with Indoor, and devices on the Terrace warm those zones too.\n" +
-            "露台加入室内的共享范围。游戏本身不给露台任何设备热量；开启后露台获得整个共享范围的设备热量，露台上的设备也会温暖共享范围。", null, SettingTags.WorldRule));
+            new ConfigDescription("The Terrace shares heat with the Indoor zone. Normally the Terrace gets no heat from devices at all. With this on, it gets the device heat of every zone sharing with Indoor, and devices on the Terrace warm those zones too.\n" +
+            "露台加入室内的共享范围。游戏本身不给露台任何设备热量。开启后露台获得整个共享范围的设备热量，露台上的设备也会温暖共享范围。", null, SettingTags.WorldRule));
         var basement = Config.Bind("Climate", "Basement", game.Basement,
-            new ConfigDescription("The Basement shares heat with the Indoor zone: its devices warm the zones sharing with Indoor, and their devices warm the Basement. Off: the Basement keeps its own heat, as in the game.\n" +
+            new ConfigDescription("The Basement shares heat with the Indoor zone: its devices warm the zones sharing with Indoor, and their devices warm the Basement. Off leaves the Basement with its own heat.\n" +
             "地下室加入室内的共享范围：地下室的设备温暖共享范围，共享范围的设备也温暖地下室。关闭后地下室保持自己的热量，与游戏原本相同。", null, SettingTags.WorldRule));
 
         ClimateMove.ImportOldPool(Config, hadPoolSection, new[] { indoorAndSunroom, terrace, basement }, log);

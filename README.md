@@ -2,7 +2,7 @@
 
 Change some of Survival Log's rules: restarts, food and mold, rats and sickness, the house, the cold, stray zombies and hordes, night visitors, the neighbour, strangers you support, morale, skill XP, stamina, stimulants, locked areas, the weather and how far heaters reach.
 
-Every setting starts at the game's value, so with a fresh config the mod changes nothing. Turn on only what you want.
+Every setting starts at the game's value, so with a fresh config the mod changes nothing. Change only what you want.
 
 The solar, battery, device power, power cut and Blackout panic settings are now in the Power Manager mod, which carries over your values the first time it starts.
 
@@ -13,18 +13,18 @@ The solar, battery, device power, power cut and Blackout panic settings are now 
 - **Spoilage speed**: food spoils slower or faster, from 0.1x to 5x.
 - **No door-smasher**: the angry neighbour's "Midnight Door Pounding" never happens.
 - **No debt collector**: the loan shark's night visits, warning texts, revenge and stalking nights never happen.
-- **Start with all areas open**: the second floor and basement (Wage Slave, Student), or the second floor, cold storage, garage and both side rooms (Warehouse Manager), open as soon as the disaster hits. You can walk there and build there right away. Works on a save already past the disaster, and on one from before it once the disaster comes.
-- **Random weather**: the weather is rolled from chances you set, for example less rain late in the game. Cold waves and the game's fixed story days keep the game's weather.
-- **Whole-floor heat**: running heaters, AC units and stoves can warm the Indoor zone and the Sunroom together, and the Terrace and the Basement can join. This is the Whole Floor Climate mod, moved in here.
-- **Food**: raw food sickness chance, and Appetite Loss from eating the same food: turn it off, or make it shorter, longer, milder or harsher.
+- **Start with all areas open**: the second floor and basement (Wage Slave, Student), or the second floor, cold storage, garage and both side rooms (Warehouse Manager), open as soon as the disaster hits. You can walk there and build there right away. It works on a save that is already past the disaster too, and on an earlier save once the disaster hits.
+- **Random weather**: the weather is rolled from chances you set, for example less rain late in the game. Cold waves and story days with set weather don't change.
+- **Whole-floor heat**: running heaters, AC units and stoves can warm the Indoor zone and the Sunroom together, and the Terrace and the Basement can join. This used to be the Whole Floor Climate mod.
+- **Food**: how likely raw food is to make you sick. You can also turn off the Appetite Loss you get from eating the same food, or make it shorter, longer, milder or harsher.
 - **Mold**: Disinfectant Spray radius and cost, how fast moldy food spoils, how often mold spreads, how many items it reaches, and how many items start moldy.
 - **Rats**: how often rats visit, and how long a rat stays before it escapes.
-- **Sickness**: turn off the Outbreak crisis, or only its worsening; set the Wind Chill and High Temperature chances in a cold wave.
+- **Sickness**: turn off the Outbreak crisis, or only its worsening, and set the Wind Chill and High Temperature chances in a cold wave.
 - **The house**: no heavy rain leaks.
 - **Cold**: how cold cold waves are, and extra levels of Personal Cold Resistance.
 - **Stray zombies**: turn them off, or set their start day, the time between visits, visits per day, how many at once, how often a crawler leads them, and what they drop.
-- **Hordes**: story hordes always at full strength, and more or less horde loot.
-- **Neighbour and companion**: they never die, or the rescue deadline comes later. They can also drop condition more slowly, pull through near death more often, and lose less affinity for food they dislike; the basket can come back sooner with more gifts, and crises can come less often.
+- **Hordes**: story hordes can always come at full strength, and you can set how much loot hordes leave.
+- **Neighbour and companion**: they never die, or the rescue deadline comes later. They can also drop condition more slowly, pull through near death more often, and lose less affinity for food they dislike. The basket can come back sooner with more gifts, and the neighbour's crises can come less often.
 - **Strangers you support**: how much trust they lose, how often mishaps hit them, and which mishaps can happen.
 - **Commissions**: how often new commissions and Aid Platform requests arrive.
 - **Thoughts, morale, crafting and reach**: how often your character thinks out loud, morale from music and perfect harvests, the vase morale limit, full crafting proficiency from lower-level recipes, and how far away you can pick up items.
@@ -33,23 +33,23 @@ The solar, battery, device power, power cut and Blackout panic settings are now 
 - **Satiety and morale**: raise or lower your maximum satiety and morale.
 - **Log file**: the mod writes what it changed, and any failure, to `BepInEx\game-rules.log`.
 
-Game Rules adds no data of its own to your save, and you can remove it at any time. Areas opened by **Start with all areas open** stay open in that save after the mod is removed, the same as areas opened in the game.
+Game Rules adds no data of its own to your save, and you can remove it at any time. Areas opened by **Start with all areas open** stay open in that save after the mod is removed, just like areas you open yourself.
 
 ## Known issues and limits
 
-- **Spoilage speed and fridges**: a powered fridge that keeps food slower than the room keeps its own speed. Food already lying somewhere picks up the new speed the next time it is moved or stored.
-- **Random weather** changes the weather from the next hour on, and the forecast shows the new weather. The same seed always rolls the same weather, so a reload keeps it. Turning it off brings back the game's weather after a restart of the game.
+- **Spoilage speed and fridges**: a powered fridge that keeps food fresh longer than the room does keeps its own speed. Food that is already sitting somewhere switches to the new speed the next time you move or store it.
+- **Random weather** changes the weather from the next hour on, and the forecast shows the new weather. The same seed always rolls the same weather, so a reload keeps it. Turn it off and restart the game to get the usual weather back.
 - **No debt collector** works best turned on before the loan shark's first visit. A visit already under way finishes as usual.
 - **Start with all areas open** skips the story events that would open those areas (finding the keys, clearing the stairs and the cellar), so their rewards and story are skipped too. An event already under way in a loaded save stays in the event list. Opening both floors may unlock the matching achievement. Building spots unlocked with talents are not changed.
-- **Start with all areas open** only opens areas after the disaster. Before the disaster, the house you play in is technically a separate map from the one after it, and that map has no way onto the other floors or into the locked rooms. Making them work there would be a monumental effort, so the areas open at the start of the post-disaster game instead. Before the disaster they stay locked, the same as in the game.
-- **Whole-floor heat** makes rooms warm up more easily, so warm-room progress is easier to reach.
+- **Start with all areas open** only opens areas after the disaster. Before the disaster you play in a separate copy of the house, and that copy has no way onto the other floors or into the locked rooms. So the areas open when the disaster hits, and before that they stay locked like they normally are.
+- **Whole-floor heat** makes rooms warm up more easily, so anything that needs a warm room is easier to reach.
 - **Rat visit chance** does not apply during a Rat Infestation.
 - **Cold wave strength** also changes whether strangers you support count the day as cold.
 - **Action stamina cost**: the game still uses the full cost to check whether you have enough stamina for an action, and shows the full cost. Buffs that cut stamina use, and the crash after Adrenaline, work like they normally do.
-- **Stimulant strength**: item tooltips still show the game's numbers.
+- **Stimulant strength**: item tooltips still show the normal numbers.
 - **Stimulant daily limit**: each kind of stimulant has its own count, and uses from before you turned the limit on that day do not count.
 - **Maximum satiety and morale**: when you lower a maximum, a satiety or morale above it comes down the next time that stat changes.
-- **With Vital Signs**: its `StaminaDrain` and `StaminaGain` multiply with `ActionStaminaCost` and `StimulantStrength`.
+- **With Vital Signs**: its `StaminaDrain` multiplies with `ActionStaminaCost`, and its `StaminaGain` with `StimulantStrength`. At 0.5 in both, an action costs a quarter of the normal stamina.
 
 ## Moving from Whole Floor Climate
 
@@ -57,7 +57,7 @@ The first time it starts, Game Rules copies your heat sharing settings from Whol
 
 ## Requirements
 
-- Survival Log 1.1.20719. Built for this version; a game update can break it until the mod is updated.
+- Survival Log 1.1.20719. It is built for this version, and a game update can break it until the mod is updated.
 - The [BepInEx Pack for Survival Log](https://www.nexusmods.com/survivallog/mods/12), the BepInEx 6 (IL2CPP) build for the game.
 - [Exiled's Toolkit](https://github.com/AnExiledDev/SurvivalLog-ExiledToolkit) 0.20.0 or newer. Game Rules does not load without it. It applies settings changed on the Mod Manager's Mods screen without a restart, and it lets each world keep its own rules.
 - Optional: [Mod Manager](https://www.nexusmods.com/survivallog/mods/73). With it, you can change every setting in game on its Mods screen and see what each one does, without opening the config file.
@@ -76,11 +76,11 @@ Delete `GameRules.dll` from the `BepInEx\plugins` folder. For a clean slate, als
 
 ## Configuration
 
-Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, created the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. Changed on the Mods screen, every setting takes effect at once except `NoRestartLimit`, `StartWithAllAreasOpen` and the `Weather` settings, which take effect at the next game start. Each setting in the cfg file is explained in English and Simplified Chinese. See [CONFIG.md](CONFIG.md) for every setting. Each world can keep its own value of every setting that takes effect at once: pick them for a new world in Customizable Difficulty, or, while you play, change them for that world alone on the Mods screen.
+Settings live in `BepInEx\config\com.dev.survivallog.gamerules.cfg`, which is made the first time the game starts with the mod. Change them in game on the Mod Manager's Mods screen, or edit the file while the game is closed. A setting you change on the Mods screen works right away, except `NoRestartLimit`, `StartWithAllAreasOpen` and the `Weather` settings, which work from the next game start. Each setting in the cfg file is explained in English and Simplified Chinese. See [CONFIG.md](CONFIG.md) for every setting. Each world can keep its own value for every setting that works right away. Pick them for a new world in Customizable Difficulty, or change them for the world you are playing on the Mods screen.
 
 ## Troubleshooting
 
-Check `BepInEx\LogOutput.log` for `===== Game Rules 0.9.0 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts. Past 1 MB it is moved to `game-rules.log.1` and started again. A line starting `could not hook` or `keep the game's` means that rule is off and the game's numbers are used.
+Check `BepInEx\LogOutput.log` for `===== Game Rules 0.9.1 started`, followed by lines saying what each rule does. A setting changed on the Mods screen writes its line again. The same lines are in `BepInEx\game-rules.log`, which survives restarts. Past 1 MB it is moved to `game-rules.log.1` and started again. A line starting `could not hook` means that rule is off and the game works as normal. A line starting `failed` means one check went wrong, and the normal numbers were used that time.
 
 ## Feedback and bug reports
 

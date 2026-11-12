@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.1
+
+- Clearer wording in the settings and on the mod page.
+- Made for Survival Log 1.1.20719.
+
 ## 0.9.0
 
 - New setting `SkillXp`: skills gain more or less proficiency, from none to 10x. Works together with `FullCraftingXp`.
@@ -7,7 +12,7 @@
 - New setting `StimulantStrength`: coffee, Sports Drink, Adrenaline and Stimulants give more or less stamina, from none to 5x.
 - New setting `StimulantDailyLimit`: how many times a day you can use each kind of stimulant. Off by default, so there is no limit until you set one.
 - New settings `ExtraMaxSatiety` and `ExtraMaxMorale`: raise or lower your maximum satiety and morale.
-- Every new setting starts at the game's value, so nothing changes until you set it.
+- Every new setting starts at the normal value, so nothing changes until you set it.
 - Made for Survival Log 1.1.20719.
 
 ## 0.8.2
@@ -22,7 +27,7 @@
 
 ## 0.8.0
 
-- Each world can keep its own rules. With Exiled's Toolkit 0.17.0 or newer, pick them for a new world in Customizable Difficulty, or change them for the world you are playing on the Mod Manager's Mods screen. Every setting that takes effect at once can be kept this way; NoRestartLimit, StartWithAllAreasOpen and the Weather settings stay the same for every world.
+- Each world can keep its own rules. With Exiled's Toolkit 0.17.0 or newer, pick them for a new world in Customizable Difficulty, or change them for the world you are playing on the Mod Manager's Mods screen. Every setting that works right away can be kept this way. NoRestartLimit, StartWithAllAreasOpen and the Weather settings stay the same for every world.
 - Made for Survival Log 1.1.20151.
 
 ## 0.7.1
@@ -48,7 +53,7 @@
 
 ## 0.6.1
 
-- Less stutter with shared device heat on: each zone's heat is read from the game once per frame instead of dozens of times, and the once-a-second checks no longer all run on the same frame.
+- Less stutter with shared device heat on. Each zone's heat is now read once per frame instead of dozens of times, and the once-a-second checks no longer all run on the same frame.
 - Made for Survival Log 1.1.19611.
 
 ## 0.6.0
@@ -57,7 +62,7 @@
 
 ## 0.5.0
 
-- Food: raw food sickness chance, and Appetite Loss from eating the same food can be turned off, made shorter or longer, and made milder or harsher.
+- Food: set how likely raw food is to make you sick. Appetite Loss from eating the same food can be turned off, made shorter or longer, and made milder or harsher.
 - Mold: Disinfectant Spray radius and cost, how fast moldy food spoils, how often mold spreads, how many items it spreads to, and how many items start moldy.
 - Rats: rat visit chance, and how long a rat stays before it escapes.
 - Sickness: turn off the Outbreak crisis or only its worsening, and set the Wind Chill and High Temperature chances in a cold wave.
@@ -78,7 +83,7 @@
 
 ## 0.4.1
 
-- Start with all areas open now opens the areas when the disaster hits, not before. Before the disaster the house is a separate map with no way onto the other floors, so opened floors could not be reached there. Building spots on those floors are no longer opened before the disaster.
+- Start with all areas open now opens the areas when the disaster hits. Before the disaster you play in a separate copy of the house with no way onto the other floors, so opened floors could not be reached there. Building spots on those floors are no longer opened before the disaster.
 
 ## 0.4.0
 
@@ -94,10 +99,10 @@
 
 ## 0.2.0
 
-- Battery multiplier: batteries hold 0.1x to 10x the game's power.
+- Battery multiplier: batteries hold 0.1x to 10x their normal power.
 - Turn off the door-smasher ("Midnight Door Pounding") and the debt collector (the loan shark's visits and texts).
-- Random weather: roll the weather from chances you set, with a seed. Cold waves and fixed story days keep the game's weather.
-- Every new setting defaults to the game's rule.
+- Random weather: roll the weather from chances you set, with a seed. Cold waves and story days with set weather keep their usual weather.
+- Every new setting starts at the normal value.
 
 ## 0.1.0
 
@@ -107,4 +112,4 @@
 - A solar multiplier, and solar power in bad weather.
 - Food spoilage speed.
 - Heat shared across a whole floor, from Whole Floor Climate.
-- Every setting defaults to the game's rule.
+- Every setting starts at the normal value.

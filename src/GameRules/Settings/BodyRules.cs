@@ -57,32 +57,32 @@ internal static class BodyRules
 
             _skillXp = config.Bind("Skills", "SkillXp", game.SkillXp,
                 new ConfigDescription(
-                    "How much proficiency every skill gains, times the game's amount: 2 levels skills twice as fast, 0.5 half as fast. 0 gives none. Works together with FullCraftingXp. 1 is the game's.\n" +
-                    "所有技能获得的「熟练度」，为游戏原本的倍数：2 为升级快一倍，0.5 为慢一倍。0 为不获得。可与 FullCraftingXp 同时使用。1 为游戏原本的数值。",
+                    "How much proficiency every skill gains, times the normal amount. 2 levels your skills twice as fast and 0.5 half as fast. 0 means skills gain nothing. You can use it together with FullCraftingXp. 1 is the default.\n" +
+                    "所有技能获得的「熟练度」，为游戏原本的倍数。2 为升级速度翻倍，0.5 为速度减半。0 为技能不再获得熟练度。可以与 FullCraftingXp 一起使用。1 为游戏原本的数值。",
                     new AcceptableValueRange<float>(0f, 10f), SettingTags.WorldRule));
             _actionStaminaCost = config.Bind("Stamina", "ActionStaminaCost", game.ActionStaminaCost,
                 new ConfigDescription(
-                    "How much stamina your actions cost (crafting, building, searching, working at furniture and the like), times the game's cost: 0.5 is half. 0 means actions cost no stamina. Stamina you lose over time or to a buff is not changed. 1 is the game's.\n" +
-                    "行动消耗的「精力」（制作、建造、搜索、使用家具等），为游戏原本的倍数：0.5 为一半。0 为行动不消耗精力。随时间或因状态失去的精力不受影响。1 为游戏原本的数值。",
+                    "How much stamina your actions cost, such as crafting, building, searching and working at furniture, times the normal cost. 0.5 is half the cost, and 0 means actions cost no stamina. Stamina you lose over time or from a buff doesn't change. 1 is the default.\n" +
+                    "制作、建造、搜索、使用家具等行动消耗的「精力」，为游戏原本的倍数。0.5 为消耗一半，0 为行动不消耗精力。随时间流逝或因状态失去的精力不受影响。1 为游戏原本的数值。",
                     new AcceptableValueRange<float>(0f, 3f), SettingTags.WorldRule));
             _stimulantStrength = config.Bind("Stimulants", "StimulantStrength", game.StimulantStrength,
                 new ConfigDescription(
-                    "How much stamina coffee, Sports Drink, Adrenaline and Stimulants give, times the game's amount, including what they keep giving over the next hours: 2 is twice as much. 0 gives none. 1 is the game's.\n" +
-                    "「咖啡」、「能量饮料」、「肾上腺激素」和「兴奋剂」恢复的「精力」，为游戏原本的倍数，之后几小时内持续恢复的部分也一同调整：2 为两倍。0 为不恢复。1 为游戏原本的数值。",
+                    "How much stamina coffee, Sports Drink, Adrenaline and Stimulants give, times the normal amount. This also covers the stamina Sports Drink and Stimulants keep giving over the next hours. 2 is twice as much, and 0 gives no stamina. 1 is the default.\n" +
+                    "「咖啡」、「能量饮料」、「肾上腺激素」和「兴奋剂」恢复的「精力」，为游戏原本的倍数。能量饮料和兴奋剂在之后几小时内持续恢复的精力也一起调整。2 为两倍，0 为不恢复精力。1 为游戏原本的数值。",
                     new AcceptableValueRange<float>(0f, 5f), SettingTags.WorldRule));
             _stimulantDailyLimit = config.Bind("Stimulants", "StimulantDailyLimit", game.StimulantDailyLimit,
                 new ConfigDescription(
-                    "How many times a day you can use each kind of coffee, Sports Drink, Adrenaline and Stimulants. Each kind counts on its own, so Coffee (Good) and Coffee (Perfect) each have their own count. The count starts again each day. 0 means no limit.\n" +
-                    "每天可以使用每种「咖啡」、「能量饮料」、「肾上腺激素」和「兴奋剂」的次数。每种分开计算，例如不同品质的咖啡各有自己的次数。每天重新计数。0 为不限次数，与游戏原本相同。",
+                    "How many times a day you can use each kind of coffee, Sports Drink, Adrenaline and Stimulants. Each kind has its own count, so Coffee (Good) and Coffee (Perfect) are counted separately. The count starts over every day. 0 means no limit, which is the default.\n" +
+                    "每种「咖啡」、「能量饮料」、「肾上腺激素」和「兴奋剂」每天可以使用的次数。每种分开计数，比如不同品质的咖啡各算各的。每天重新计数。0 为不限次数，与游戏原本相同。",
                     new AcceptableValueRange<int>(0, 10), SettingTags.WorldRule));
             _extraMaxSatiety = config.Bind("Stats", "ExtraMaxSatiety", game.ExtraMaxSatiety,
                 new ConfigDescription(
-                    "Points added to your maximum satiety: 50 lets you eat 50 more before you are full. A negative number lowers it. 0 is the game's.\n" +
-                    "「饱腹（上限）」增加的点数：50 为吃饱前可以多吃 50 点。负数为降低上限。0 为游戏原本的数值。",
+                    "Points added to your maximum satiety. At 50 you can eat 50 more before you are full. A negative number lowers the maximum. 0 is the default.\n" +
+                    "「饱腹（上限）」增加的点数。设为 50 时，吃饱前可以多吃 50 点。负数为降低上限。0 为游戏原本的数值。",
                     new AcceptableValueRange<int>(-50, 400), SettingTags.WorldRule));
             _extraMaxMorale = config.Bind("Stats", "ExtraMaxMorale", game.ExtraMaxMorale,
                 new ConfigDescription(
-                    "Points added to your maximum morale. A negative number lowers it. 0 is the game's.\n" +
+                    "Points added to your maximum morale. A negative number lowers the maximum. 0 is the default.\n" +
                     "「心态（上限）」增加的点数。负数为降低上限。0 为游戏原本的数值。",
                     new AcceptableValueRange<int>(-50, 400), SettingTags.WorldRule));
 
