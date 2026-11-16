@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.3
+
+- Settings that change the game's numbers, like the sickness chances, stimulant limits and random weather, are now written once after the game starts, and again when you change a setting or load a save. Before, the mod checked them every second or two the whole time you played.
+- Made for Survival Log 1.1.21271.
+
 ## 0.9.2
 
 - Clearer wording in the log.

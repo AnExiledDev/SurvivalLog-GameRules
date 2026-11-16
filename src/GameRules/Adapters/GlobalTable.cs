@@ -12,36 +12,50 @@ namespace GameRules.Adapters;
 /// Writes the settings groups' changes into the game's GlobalSetting table. Every GameKey.GlobalSetting_X getter fills
 /// the static field GameKey._GlobalSetting_X from the table entry (Params1 for an int getter, Params2 for a float one)
 /// only while the field is 0, and trusts the field from then on, so both the entry and the field are written. An int
-/// entry whose Params2 matches its Params1 gets Params2 written too, for game code that reads the key by name. Checked
-/// every second: the table loads after the plugin, and a reload builds fresh entries holding the game's values.
+/// entry whose Params2 matches its Params1 gets Params2 written too, for game code that reads the key by name. The
+/// game builds the table once and nothing resets the fields, so one pass writes them; it is tried each second until the
+/// table has loaded, and runs again when a setting changes or a save loads.
 /// </summary>
 internal sealed class GlobalTable
 {
-    private const float CheckSeconds = 1f;
-
     private readonly TableKeeper _keeper = new();
+    private readonly TablePass _pass = new(retrySeconds: 1f);
+    private readonly TableChanges _changes;
     private readonly TableKeys _keys;
     private readonly Dictionary<string, Slot?> _slots = new();
     private readonly Dictionary<string, float> _reported = new();
     private readonly Action<string> _log;
-    private float _nextCheckAt;
+    private int _passVersion = -1;
 
     public GlobalTable(TableChanges changes, Action<string> log)
     {
+        _changes = changes;
         _keys = new TableKeys(changes, _keeper);
         _log = log;
     }
 
+    /// <summary>A save loaded: one more pass, in case anything put the game's values back.</summary>
+    public void Redo() => _pass.Redo();
+
     public void Tick(float now)
     {
-        if (now < _nextCheckAt) return;
+        if (_changes.Version != _passVersion)
+        {
+            _passVersion = _changes.Version;
+            _pass.Redo();
+        }
 
-        _nextCheckAt = now + CheckSeconds;
+        if (!_pass.IsDue(now)) return;
 
         // The key list is only rebuilt when a setting changes; with nothing to keep, the game is not read at all.
         var keys = _keys.Keys;
 
-        if (keys.Count == 0) return;
+        if (keys.Count == 0)
+        {
+            _pass.Done();
+
+            return;
+        }
 
         var table = GameSingleton.Existing<ConfigManager>()?._Config_GlobalSetting_Dict;
 
@@ -64,6 +78,8 @@ internal sealed class GlobalTable
             Write(slot, entry, target);
             Report(key, slot, target);
         }
+
+        _pass.Done();
     }
 
     private static void Write(Slot slot, Config_GlobalSetting entry, float target)
@@ -83,7 +99,7 @@ internal sealed class GlobalTable
         if (!slot.GetFloat!().Equals(target)) slot.SetFloat!(target);
     }
 
-    /// <summary>Logged when a key's value changes, not every second.</summary>
+    /// <summary>Logged when a key's value changes, not at every pass.</summary>
     private void Report(string key, Slot slot, float target)
     {
         if (_reported.TryGetValue(key, out var last) && last == target) return;
@@ -113,7 +129,7 @@ internal sealed class GlobalTable
 
     /// <summary>
     /// The static field is read and written through typed delegates made once: through reflection every read and write
-    /// boxes the value, for every key, every second.
+    /// boxes the value, for every key, at every pass.
     /// </summary>
     private sealed record Slot(string TableKey, bool IsInt, Func<int>? GetInt, Action<int>? SetInt, Func<float>? GetFloat, Action<float>? SetFloat)
     {

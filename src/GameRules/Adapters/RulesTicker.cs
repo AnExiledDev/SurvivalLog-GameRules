@@ -28,8 +28,8 @@ public sealed class RulesTicker : MonoBehaviour
     private static readonly long Start = Stopwatch.GetTimestamp();
 
     /// <summary>
-    /// One check per frame, in turn. Each check runs on its own 1-2 second timer, and all of them started together,
-    /// so running them all every frame put every table read on the same frame. The time comes from .NET's own clock:
+    /// One check per frame, in turn. The checks that retry do so every 1-2 seconds, and all of them started
+    /// together, so running them all every frame put every table read on the same frame. The time comes from .NET's own clock:
     /// Unity's Time.realtimeSinceStartup through interop boxes its answer on every frame.
     /// </summary>
     private void Update()

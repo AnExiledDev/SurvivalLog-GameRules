@@ -17,7 +17,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     private const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.9.2";
+    private const string Version = "0.9.3";
 
     /// <summary>Lines add up over many sessions, so past 1 MB the file is moved to game-rules.log.1 and started again.</summary>
     private const long MaxLogBytes = 1024 * 1024;
@@ -51,6 +51,7 @@ public sealed class Plugin : BasePlugin
         StartOpenAreas(hooks, openAreas, log.Write);
         StartWeather(weather, log.Write);
         StartGroups(hooks, log.Write);
+        LoadPass.Apply(hooks);
         StartTicker(log.Write);
     }
 
@@ -63,7 +64,10 @@ public sealed class Plugin : BasePlugin
         HouseAndZombieRules.Start(Config, hooks, table, log);
         PeopleAndMoraleRules.Start(Config, hooks, table, log);
         BodyRules.Start(Config, hooks, log);
-        RulesTicker.Checks.Add(new GlobalTable(table, log).Tick);
+        var globals = new GlobalTable(table, log);
+
+        RulesTicker.Checks.Add(globals.Tick);
+        LoadPass.Redos.Add(globals.Redo);
     }
 
     private RuleEntries BindRules()
@@ -169,7 +173,12 @@ public sealed class Plugin : BasePlugin
 
     private static void StartWeather(WeatherSettings weather, System.Action<string> log)
     {
-        if (weather.IsActive) RulesTicker.Checks.Add(new WeatherTable(weather, log).Tick);
+        if (!weather.IsActive) return;
+
+        var table = new WeatherTable(weather, log);
+
+        RulesTicker.Checks.Add(table.Tick);
+        LoadPass.Redos.Add(table.Redo);
     }
 
     /// <summary>One Unity object runs every check, so it is only added when a setting needs one.</summary>

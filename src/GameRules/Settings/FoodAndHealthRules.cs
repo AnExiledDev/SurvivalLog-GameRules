@@ -18,6 +18,7 @@ internal static class FoodAndHealthRules
         var sickness = new SicknessChanceTable(log);
 
         RulesTicker.Checks.Add(sickness.Tick);
+        LoadPass.Redos.Add(sickness.Redo);
 
         LiveSettings.Watch(() =>
         {

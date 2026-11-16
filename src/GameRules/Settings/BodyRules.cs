@@ -16,6 +16,7 @@ internal static class BodyRules
         var limits = new StimulantLimitTable(log);
 
         RulesTicker.Checks.Add(limits.Tick);
+        LoadPass.Redos.Add(limits.Redo);
         RulesTicker.Checks.Add(StatCaps.Tick);
 
         LiveSettings.Watch(() =>

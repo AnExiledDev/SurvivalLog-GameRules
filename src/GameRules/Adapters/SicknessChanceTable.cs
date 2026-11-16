@@ -9,13 +9,11 @@ namespace GameRules.Adapters;
 /// <summary>
 /// Writes the chance of catching Wind Chill or a High Temperature in a cold wave without heat. Each is FloatValue0 of
 /// its row in the game's effect table (Config_Effect), read every time the game rolls for it, so a changed row takes
-/// effect at the next roll. Checked every two seconds: the table loads after the plugin, and a reload builds fresh
-/// rows holding the game's values. The keeper remembers the game's chance, so a setting put back to 1 restores it.
+/// effect at the next roll. The game builds the table once, so one pass writes the chances; it is tried every two
+/// seconds until the table has loaded, and runs again when a setting changes or a save loads. The keeper remembers the game's chance, so a setting put back to 1 restores it.
 /// </summary>
 internal sealed class SicknessChanceTable
 {
-    private const float CheckSeconds = 2f;
-
     private static readonly Dictionary<int, string> Names = new()
     {
         [FoodHealthSettings.WindChillEffect] = "Wind Chill",
@@ -23,10 +21,10 @@ internal sealed class SicknessChanceTable
     };
 
     private readonly TableKeeper _keeper = new();
+    private readonly TablePass _pass = new(retrySeconds: 2f);
     private readonly Dictionary<int, float> _reported = new();
     private readonly Action<string> _log;
     private IReadOnlyDictionary<int, TableChange> _changes = new Dictionary<int, TableChange>();
-    private float _nextCheckAt;
 
     public SicknessChanceTable(Action<string> log)
     {
@@ -37,17 +35,23 @@ internal sealed class SicknessChanceTable
     public void Use(IReadOnlyDictionary<int, TableChange> changes)
     {
         _changes = changes;
-        _nextCheckAt = 0f;
+        _pass.Redo();
     }
+
+    /// <summary>A save loaded: one more pass, in case anything put the game's values back.</summary>
+    public void Redo() => _pass.Redo();
 
     public void Tick(float now)
     {
-        if (now < _nextCheckAt) return;
-
-        _nextCheckAt = now + CheckSeconds;
+        if (!_pass.IsDue(now)) return;
 
         // At the game's chances, with none ever changed, there is nothing to write or put back, so the game is not read.
-        if (_changes.Count == 0 && _keeper.IsEmpty) return;
+        if (_changes.Count == 0 && _keeper.IsEmpty)
+        {
+            _pass.Done();
+
+            return;
+        }
 
         var rows = GameSingleton.Existing<ConfigManager>()?._Config_Effect_Dict;
 
@@ -67,9 +71,11 @@ internal sealed class SicknessChanceTable
 
             Report(effectId, key, chance);
         }
+
+        _pass.Done();
     }
 
-    /// <summary>Logged when a chance changes, not every check.</summary>
+    /// <summary>Logged when a chance changes, not at every pass.</summary>
     private void Report(int effectId, string key, float chance)
     {
         if (_reported.TryGetValue(effectId, out var last) && last == chance) return;

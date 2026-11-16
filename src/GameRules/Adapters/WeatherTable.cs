@@ -12,17 +12,15 @@ namespace GameRules.Adapters;
 /// Rewrites the game's day-by-day weather table (Config_DailyWeather, days 1-100, one row per hour). The game reads
 /// each hour's weather from it when the hour comes, and tomorrow's forecast from it too, then applies the difficulty's
 /// own weather changes on top, so rewriting the table changes the weather, the forecast and nothing else. Endless mode
-/// rolls its weather elsewhere and is not affected. The table is only there once the game has loaded its configs, and
-/// a reload builds fresh rows, so the first row is checked every few seconds and a new one means the table is
-/// rewritten again.
+/// rolls its weather elsewhere and is not affected. The game builds the table once, when it starts, so it is rewritten
+/// once: tried every two seconds until the table has loaded, then again only after a save loads, and only if the table
+/// holds new rows by then (rolling the same rows twice would change the weather).
 /// </summary>
 internal sealed class WeatherTable
 {
-    private const float CheckSeconds = 2f;
-
     private readonly WeatherSettings _settings;
     private readonly Action<string> _log;
-    private float _nextCheckAt;
+    private readonly TablePass _pass = new(retrySeconds: 2f);
     private IntPtr _rewrittenFirstRow;
 
     public WeatherTable(WeatherSettings settings, Action<string> log)
@@ -31,11 +29,12 @@ internal sealed class WeatherTable
         _log = log;
     }
 
+    /// <summary>A save loaded: one more look, in case the game built the table again.</summary>
+    public void Redo() => _pass.Redo();
+
     public void Tick(float now)
     {
-        if (now < _nextCheckAt) return;
-
-        _nextCheckAt = now + CheckSeconds;
+        if (!_pass.IsDue(now)) return;
 
         var config = GameSingleton.Existing<ConfigManager>();
         var rows = config?._Config_DailyWeather_Dict;
@@ -44,7 +43,11 @@ internal sealed class WeatherTable
 
         var firstRow = config.Get_Config_DailyWeather_ByDayHour(1, 0);
 
-        if (firstRow == null || firstRow.Pointer == _rewrittenFirstRow) return;
+        if (firstRow == null) return;
+
+        _pass.Done();
+
+        if (firstRow.Pointer == _rewrittenFirstRow) return;
 
         _rewrittenFirstRow = firstRow.Pointer;
         Rewrite(config, rows);

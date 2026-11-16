@@ -9,20 +9,18 @@ namespace GameRules.Adapters;
 /// <summary>
 /// Writes the daily limit on each stimulant: DailyMax of its row in the game's item table (Config_Item). The game
 /// checks it every time an item is used or a queued use starts (ItemManager.IsDailyMaxReached), counts uses only while
-/// it is above 0, and clears the count each new day. Checked every two seconds: the table loads after the plugin, and
-/// a reload builds fresh rows holding the game's values. The keeper remembers the game's 0, so turning the limit off
+/// it is above 0, and clears the count each new day. The game builds the table once, so one pass writes the limits; it
+/// is tried every two seconds until the table has loaded, and runs again when a setting changes or a save loads. The keeper remembers the game's 0, so turning the limit off
 /// puts it back.
 /// </summary>
 internal sealed class StimulantLimitTable
 {
-    private const float CheckSeconds = 2f;
-
     private readonly TableKeeper _keeper = new();
+    private readonly TablePass _pass = new(retrySeconds: 2f);
     private readonly Action<string> _log;
     private IReadOnlyDictionary<int, TableChange> _changes = new Dictionary<int, TableChange>();
     private int _limit;
     private int? _reported;
-    private float _nextCheckAt;
 
     public StimulantLimitTable(Action<string> log)
     {
@@ -34,17 +32,23 @@ internal sealed class StimulantLimitTable
     {
         _limit = Math.Max(0, settings.StimulantDailyLimit);
         _changes = settings.DailyLimitChanges();
-        _nextCheckAt = 0f;
+        _pass.Redo();
     }
+
+    /// <summary>A save loaded: one more pass, in case anything put the game's values back.</summary>
+    public void Redo() => _pass.Redo();
 
     public void Tick(float now)
     {
-        if (now < _nextCheckAt) return;
-
-        _nextCheckAt = now + CheckSeconds;
+        if (!_pass.IsDue(now)) return;
 
         // With no limit, and none ever set, there is nothing to write or put back, so the game is not read.
-        if (_changes.Count == 0 && _keeper.IsEmpty) return;
+        if (_changes.Count == 0 && _keeper.IsEmpty)
+        {
+            _pass.Done();
+
+            return;
+        }
 
         var rows = GameSingleton.Existing<ConfigManager>()?._Config_Item_Dict;
 
@@ -67,10 +71,12 @@ internal sealed class StimulantLimitTable
             written++;
         }
 
+        _pass.Done();
+
         if (written > 0) Report();
     }
 
-    /// <summary>Logged when the limit changes, not every check.</summary>
+    /// <summary>Logged when the limit changes, not at every pass.</summary>
     private void Report()
     {
         if (_reported == _limit) return;
