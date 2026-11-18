@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.4
+
+- Mod Manager's Conflicts tab can now see what Game Rules changes in the game, like the weather and the restart cap, so it can show when another mod changes the same things.
+- Now needs Exiled's Toolkit 0.25.0 or newer.
+- Made for Survival Log 1.1.21271.
+
 ## 0.9.3
 
 - Settings that change the game's numbers, like the sickness chances, stimulant limits and random weather, are now written once after the game starts, and again when you change a setting or load a save. Before, the mod checked them every second or two the whole time you played.

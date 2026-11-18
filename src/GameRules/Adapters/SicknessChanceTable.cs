@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ExiledToolkit;
 using ExiledToolkit.Game;
 using GameCore.HotUpdate;
 using GameRules.Core;
@@ -69,10 +70,20 @@ internal sealed class SicknessChanceTable
 
             if (row._FloatValue0_k__BackingField != chance) row._FloatValue0_k__BackingField = chance;
 
+            ReportRow(effectId, chance, _keeper.GameValue(key));
             Report(effectId, key, chance);
         }
 
         _pass.Done();
+    }
+
+    /// <summary>Tells Mod Manager the row holds the mod's chance, or that it was put back to the game's.</summary>
+    private static void ReportRow(int effectId, float chance, float? gameChance)
+    {
+        var field = nameof(Config_Effect.FloatValue0);
+
+        if (chance == gameChance) Claims.PutBack(Plugin.Guid, nameof(Config_Effect), effectId, field);
+        else Claims.Wrote(Plugin.Guid, nameof(Config_Effect), effectId, field, chance);
     }
 
     /// <summary>Logged when a chance changes, not at every pass.</summary>

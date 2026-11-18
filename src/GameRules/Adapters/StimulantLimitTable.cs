@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ExiledToolkit;
 using ExiledToolkit.Game;
 using GameCore.HotUpdate;
 using GameRules.Core;
@@ -62,11 +63,15 @@ internal sealed class StimulantLimitTable
 
             _changes.TryGetValue(item, out var change);
 
-            if (_keeper.Target(BodySettings.DailyLimitKey(item), row.Pointer.ToInt64(), row._DailyMax_k__BackingField, change) is not { } target) continue;
+            var key = BodySettings.DailyLimitKey(item);
+
+            if (_keeper.Target(key, row.Pointer.ToInt64(), row._DailyMax_k__BackingField, change) is not { } target) continue;
 
             var limit = (int)Math.Round(target);
 
             if (row._DailyMax_k__BackingField != limit) row._DailyMax_k__BackingField = limit;
+
+            ReportRow(item, limit, _keeper.GameValue(key));
 
             written++;
         }
@@ -74,6 +79,15 @@ internal sealed class StimulantLimitTable
         _pass.Done();
 
         if (written > 0) Report();
+    }
+
+    /// <summary>Tells Mod Manager the row holds the mod's limit, or that it was put back to the game's.</summary>
+    private static void ReportRow(int item, int limit, float? gameLimit)
+    {
+        var field = nameof(Config_Item.DailyMax);
+
+        if (gameLimit is { } game && limit == (int)Math.Round(game)) Claims.PutBack(Plugin.Guid, nameof(Config_Item), item, field);
+        else Claims.Wrote(Plugin.Guid, nameof(Config_Item), item, field, limit);
     }
 
     /// <summary>Logged when the limit changes, not at every pass.</summary>

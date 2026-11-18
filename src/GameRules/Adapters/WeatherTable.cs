@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExiledToolkit;
 using ExiledToolkit.Game;
 using GameCore.HotUpdate;
 using GameCore.HotUpdate.Battle.Logic;
@@ -14,13 +15,16 @@ namespace GameRules.Adapters;
 /// own weather changes on top, so rewriting the table changes the weather, the forecast and nothing else. Endless mode
 /// rolls its weather elsewhere and is not affected. The game builds the table once, when it starts, so it is rewritten
 /// once: tried every two seconds until the table has loaded, then again only after a save loads, and only if the table
-/// holds new rows by then (rolling the same rows twice would change the weather).
+/// holds new rows by then (rolling the same rows twice would change the weather). Each hour it changes is reported
+/// to Mod Manager, and a table built again holds the game's weather, so the hours reported for the old one are taken
+/// back first.
 /// </summary>
 internal sealed class WeatherTable
 {
     private readonly WeatherSettings _settings;
     private readonly Action<string> _log;
     private readonly TablePass _pass = new(retrySeconds: 2f);
+    private readonly List<int> _reported = new();
     private IntPtr _rewrittenFirstRow;
 
     public WeatherTable(WeatherSettings settings, Action<string> log)
@@ -50,6 +54,7 @@ internal sealed class WeatherTable
         if (firstRow.Pointer == _rewrittenFirstRow) return;
 
         _rewrittenFirstRow = firstRow.Pointer;
+        TakeBack();
         Rewrite(config, rows);
     }
 
@@ -84,11 +89,30 @@ internal sealed class WeatherTable
         var table = byHour.Select(pair => new WeatherHour(pair.Key.Day, pair.Key.Hour, pair.Value._WeatherID_k__BackingField));
         var changes = WeatherShuffle.Plan(table, _settings, IsKeptWeather, anchorDays.Contains);
 
-        foreach (var change in changes) byHour[(change.Day, change.Hour)]._WeatherID_k__BackingField = change.Weather;
+        foreach (var change in changes)
+        {
+            var row = byHour[(change.Day, change.Hour)];
+
+            row._WeatherID_k__BackingField = change.Weather;
+            Report(row);
+        }
 
         var mix = string.Join(", ", byHour.Values.GroupBy(row => row._WeatherID_k__BackingField).OrderBy(group => group.Key).Select(group => $"{group.Key}: {group.Count()}h"));
 
         _log($"weather rolled with seed {_settings.Seed}: {changes.Count} of {byHour.Count} hours changed; cold waves and fixed-weather days kept. Hours per weather id now {mix}");
+    }
+
+    private void Report(Config_DailyWeather row)
+    {
+        Claims.Wrote(Plugin.Guid, nameof(Config_DailyWeather), row._ID_k__BackingField, nameof(Config_DailyWeather.WeatherID), row._WeatherID_k__BackingField);
+        _reported.Add(row._ID_k__BackingField);
+    }
+
+    private void TakeBack()
+    {
+        foreach (var id in _reported) Claims.PutBack(Plugin.Guid, nameof(Config_DailyWeather), id, nameof(Config_DailyWeather.WeatherID));
+
+        _reported.Clear();
     }
 
     /// <summary>Cold waves belong to the game's cold-wave events, so they stay where the game put them.</summary>

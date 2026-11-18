@@ -1,4 +1,5 @@
 using System;
+using ExiledToolkit;
 using ExiledToolkit.Game;
 using GameCore.HotUpdate;
 using GameRules.Core;
@@ -39,17 +40,30 @@ internal sealed class RestartCapField
 
         if (_keeper.Next(current, RestartsUsed()) is not { } write) return;
 
-        Write(write.Max);
+        Write(write);
         Report(write);
     }
 
     private static int? RestartsUsed() => GameSingleton.Existing<GameSaveManager>()?.gameSave?.RebirthChancesUsed;
 
-    private static void Write(int max)
+    private static void Write(RestartWrite write)
     {
-        GameKey._GlobalSetting_RebirthMaxChances = max;
+        GameKey._GlobalSetting_RebirthMaxChances = write.Max;
 
-        if (TableEntry() is { } entry) entry._Params1_k__BackingField = max;
+        if (TableEntry() is not { } entry) return;
+
+        entry._Params1_k__BackingField = write.Max;
+        ReportEntry(write);
+    }
+
+    /// <summary>Tells Mod Manager the entry holds the mod's cap. With no restarts used, the cap is the game's, so the entry counts as put back.</summary>
+    private static void ReportEntry(RestartWrite write)
+    {
+        var key = GameKey.Key_GlobalSetting_RebirthMaxChances;
+        var field = nameof(Config_GlobalSetting.Params1);
+
+        if (write.Max == write.GameMax) Claims.PutBack(Plugin.Guid, nameof(Config_GlobalSetting), key, field);
+        else Claims.Wrote(Plugin.Guid, nameof(Config_GlobalSetting), key, field, write.Max);
     }
 
     /// <summary>

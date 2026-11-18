@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ExiledToolkit;
 using ExiledToolkit.Game;
 using GameCore.HotUpdate;
 using GameRules.Core;
@@ -14,7 +15,8 @@ namespace GameRules.Adapters;
 /// only while the field is 0, and trusts the field from then on, so both the entry and the field are written. An int
 /// entry whose Params2 matches its Params1 gets Params2 written too, for game code that reads the key by name. The
 /// game builds the table once and nothing resets the fields, so one pass writes them; it is tried each second until the
-/// table has loaded, and runs again when a setting changes or a save loads.
+/// table has loaded, and runs again when a setting changes or a save loads. The entries are reported to Mod Manager;
+/// the static fields are a copy the game keeps, so they are not.
 /// </summary>
 internal sealed class GlobalTable
 {
@@ -75,7 +77,10 @@ internal sealed class GlobalTable
 
             if (_keeper.Target(key, entry.Pointer.ToInt64(), entryValue, change) is not { } target) continue;
 
+            var keepsParams2InStep = slot.IsInt && IntEntry.KeepsParams2InStep(entry._Params1_k__BackingField, entry._Params2_k__BackingField);
+
             Write(slot, entry, target);
+            ReportEntry(slot, target, keepsParams2InStep, _keeper.GameValue(key));
             Report(key, slot, target);
         }
 
@@ -97,6 +102,35 @@ internal sealed class GlobalTable
 
         if (entry._Params2_k__BackingField != target) entry._Params2_k__BackingField = target;
         if (!slot.GetFloat!().Equals(target)) slot.SetFloat!(target);
+    }
+
+    /// <summary>
+    /// Tells Mod Manager which columns of the entry hold the mod's value: Params1 for a whole number, with Params2 when
+    /// the two are kept in step, and Params2 for a decimal. Back at the game's value, they count as put back.
+    /// </summary>
+    private static void ReportEntry(Slot slot, float target, bool keepsParams2InStep, float? gameValue)
+    {
+        var table = nameof(Config_GlobalSetting);
+        var isGameValue = gameValue is { } game && (slot.IsInt ? Math.Round(target) == Math.Round(game) : target == game);
+
+        void Column(string field, object written)
+        {
+            if (isGameValue) Claims.PutBack(Plugin.Guid, table, slot.TableKey, field);
+            else Claims.Wrote(Plugin.Guid, table, slot.TableKey, field, written);
+        }
+
+        if (!slot.IsInt)
+        {
+            Column(nameof(Config_GlobalSetting.Params2), target);
+
+            return;
+        }
+
+        var value = (int)Math.Round(target);
+
+        Column(nameof(Config_GlobalSetting.Params1), value);
+
+        if (keepsParams2InStep) Column(nameof(Config_GlobalSetting.Params2), (float)value);
     }
 
     /// <summary>Logged when a key's value changes, not at every pass.</summary>
