@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.5
+
+- Small speed up: when you leave the max satiety, max morale and stamina settings alone, the mod no longer reads your character every second.
+- A game table that is built again now gets the mod's values on a new game too, not only on a load or a trip.
+- StartWithAllAreasOpen now removes the Warehouse doors in every run you load, even when the game kept parts of the last run.
+- Made for Survival Log 1.1.21671.
+
 ## 0.9.4
 
 - Mod Manager's Conflicts tab can now see what Game Rules changes in the game, like the weather and the restart cap, so it can show when another mod changes the same things.

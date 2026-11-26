@@ -22,12 +22,15 @@ internal sealed class AreaOpener
     private readonly HashSet<int> _reportedRefusals = new();
     private readonly TagMemo _tagMemo = new();
     private float _nextCheckAt;
-    private IntPtr _doorsGoneIn;
+    private bool _areDoorsGone;
 
     public AreaOpener(Action<string> log)
     {
         _log = log;
     }
+
+    /// <summary>A new start of play has its doors again.</summary>
+    public void Redo() => _areDoorsGone = false;
 
     public void Tick(float now)
     {
@@ -93,7 +96,7 @@ internal sealed class AreaOpener
     /// </summary>
     private void RemoveOpenedDoors(BattleLogicWorld world, int role, bool isBeforeDisaster)
     {
-        if (world.Pointer == _doorsGoneIn) return;
+        if (_areDoorsGone) return;
 
         var doors = OpenAreas.DoorsToRemove(role, isBeforeDisaster, _tagMemo.HasTag);
 
@@ -116,7 +119,7 @@ internal sealed class AreaOpener
             }
         }
 
-        if (doors.Count == OpenAreas.WarehouseDoorCount) _doorsGoneIn = world.Pointer;
+        if (doors.Count == OpenAreas.WarehouseDoorCount) _areDoorsGone = true;
     }
 
     private static (BattleLogicWorld World, TagManager Tags, DynamicEventManager Events, int Role, bool IsBeforeDisaster)? ReadyRun()

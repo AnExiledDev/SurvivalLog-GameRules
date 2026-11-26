@@ -57,6 +57,8 @@ internal static class StatCaps
 
         _nextCheckAt = now + CheckSeconds;
 
+        if (IsAtGameRule() && !BodyPatches.NeedsHero) return;
+
         var role = GameSingleton.Existing<BattleLogicWorld>()?._AgentManager?.GetLeadingRole();
 
         BodyPatches.HeroId = role?.InstanceId ?? 0;

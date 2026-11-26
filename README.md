@@ -57,7 +57,7 @@ The first time it starts, Game Rules copies your heat sharing settings from Whol
 
 ## Requirements
 
-- Survival Log 1.1.20719. It is built for this version, and a game update can break it until the mod is updated.
+- Survival Log 1.1.21671. It is built for this version, and a game update can break it until the mod is updated.
 - The [BepInEx Pack for Survival Log](https://www.nexusmods.com/survivallog/mods/12), the BepInEx 6 (IL2CPP) build for the game.
 - [Exiled's Toolkit](https://github.com/AnExiledDev/SurvivalLog-ExiledToolkit) 0.25.0 or newer. Game Rules does not load without it. It applies settings changed on the Mod Manager's Mods screen without a restart, and it lets each world keep its own rules.
 - Optional: [Mod Manager](https://www.nexusmods.com/survivallog/mods/73). With it, you can change every setting in game on its Mods screen and see what each one does, without opening the config file.

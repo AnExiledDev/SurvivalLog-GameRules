@@ -17,7 +17,7 @@ namespace GameRules;
 public sealed class Plugin : BasePlugin
 {
     internal const string Guid = "com.dev.survivallog.gamerules";
-    private const string Version = "0.9.4";
+    private const string Version = "0.9.5";
 
     /// <summary>Lines add up over many sessions, so past 1 MB the file is moved to game-rules.log.1 and started again.</summary>
     private const long MaxLogBytes = 1024 * 1024;
@@ -195,7 +195,10 @@ public sealed class Plugin : BasePlugin
         if (!openAreas) return;
 
         AreaPatches.Apply(hooks, log);
-        RulesTicker.Checks.Add(new AreaOpener(log).Tick);
+        var opener = new AreaOpener(log);
+
+        RulesTicker.Checks.Add(opener.Tick);
+        LoadPass.Redos.Add(opener.Redo);
         log("every locked area opens once the disaster has hit");
     }
 

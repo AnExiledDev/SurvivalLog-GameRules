@@ -34,7 +34,7 @@
     <AssemblyMetadata Include="ModManager.Description" Value="Change some of the game's rules: restarts, mold, food spoilage, skill XP, stamina, stimulants, maximum satiety and morale, night visitors, locked areas, the weather and heat sharing.&#10;修改游戏的一些规则：重生次数、霉菌、食物腐败、熟练度、精力、兴奋剂、饱腹和心态上限、夜间访客、锁住的区域、天气和热量共享。" />
     <AssemblyMetadata Include="ModManager.Author" Value="AnExiledDev" />
     <AssemblyMetadata Include="ModManager.Category" Value="Gameplay" />
-    <AssemblyMetadata Include="ModManager.GameVersion" Value="1.1.20719" />
+    <AssemblyMetadata Include="ModManager.GameVersion" Value="1.1.21671" />
     <AssemblyMetadata Include="ModManager.Settings" Value="Restart" />
     <AssemblyMetadata Include="ModManager.GitHub" Value="AnExiledDev/SurvivalLog-GameRules" />
     <AssemblyMetadata Include="ModManager.NexusId" Value="84" />
